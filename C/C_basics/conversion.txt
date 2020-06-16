@@ -1,0 +1,65 @@
+Conversions
+
+* smaller than int size variables interacting in arithmetic : integral promotions
+* different size variables interacting with each other : arithmetic conversion
+* different sign variables interactiong with each other : value preserving.
+
+http://publications.gbdirect.co.uk/c_book/chapter2/expressions_and_arithmetic.html
+
+1.Integral promotions
+
+No arithmetic is done by C at a precision shorter than int, so these
+conversions are implied almost whenever you use one of the objects listed below
+in an expression. The conversion is defined as follows:
+
+Whenever a short or a char (or a bitfield or enumeration type which we haven't
+met yet) has the integral promotions applied
+if an int can hold all of the values of the original type then the value is
+converted to int
+otherwise, the conversion will be to unsigned int
+
+Note that whether a plain char is treated as signed or unsigned is
+implementation dependent.
+
+2. Signed and unsigned integers
+
+
+3. Floating and integral
+
+Converting a floating to an integral type simply throws away any fractional
+part. If the integral type can't hold the value that is left, then the
+behaviour is undefined?this is a sort of overflow.
+As has already been said, going up the scale from float to double to long
+double, there is no problem with conversions?each higher one in the list can
+hold all the values of the lower ones, so the conversion occurs with no loss of
+information.
+Converting in the opposite direction, if the value is outside the range that
+can be held, the behaviour is undefined. If the value is in range, but can't be
+held exactly, then the result is one of the two nearest values that can be
+held, chosen in a way that the implementation defines. This means that there
+will be a loss of precision.
+
+4. The usual arithmetic conversions
+
+A lot of expressions involve the use of subexpressions of mixed types together
+with operators such as +, * and so on. If the operands in an expression have
+different types, then there will have to be a conversion applied so that a
+common resulting type can be established; these are the conversions:
+If either operand is a long double, then the other one is converted to long
+double and that is the type of the result.
+Otherwise, if either operand is a double, then the other one is converted to
+double, and that is the type of the result.
+Otherwise, if either operand is a float, then the other one is converted to
+float, and that is the type of the result.
+Otherwise the integral promotions are applied to both operands and the
+following conversions are applied:
+If either operand is an unsigned long int, then the other one is converted to
+unsigned long int, and that is the type of the result.
+Otherwise, if either operand is a long int, then the other one is converted to
+long int, and that is the type of the result.
+Otherwise, if either operand is an unsigned int, then the other one is
+converted to unsigned int, and that is the type of the result.
+Otherwise, both operands must be of type int, so that is the type of the
+result.
+
+

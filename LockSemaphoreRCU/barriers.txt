@@ -1,0 +1,94 @@
+* volatile :
+Note to compiler. do not optimise.
+
+Means if a variable was just loaded into a register and is accessed a few
+instructions later, re-issue another load, do not use the value in register
+from previous load.
+
+https://www.kernel.org/doc/Documentation/memory-barriers.txt
+
+
+Powerpc :
+
+* mbar : weak memory sync
+
+In e500, loads can go ahead of stores and stores can go ahead of earlier stores
+if to a different block (32B address granules). Also, load may be satisfied
+from earlier stores. Use mbar to avoid this if needed.
+
+mbar says go ahead and keep pipelining loads and stores through the system
+(internally and out to the bus), but also insert an mbar transaction in with
+the loads and stores. It's then up to each stage of the pipeline (internally
+and out on the bus) to not let any loads or store that are issued after the
+mbar to be effective until all the loads and stores before the mbar have been
+effective (updated memory or whatever). In that sense, it's a "flowing" barrier
+that goes through the pipe along with all the loads and stores. So instruction
+execution doesn't have to stop and wait like it does for msync.
+
+* msync : hard memory barrier
+msync ; waits until all instructions before it are completed. msync provides a
+hard memory barrier throughout the memory hierarchy. msync waits for proceeding
+data memory accesses to become visible to the entire memory hierarchy; then it
+is broadcast on the bus.
+
+msync effectively says don't start a new instruction (not just load or store)
+until all previous ones have completed. That usually means that msync itself
+doesn't complete. 
+
+msync latency depends on the processor state when it is
+dispatched and on various system-level conditions. Frequent use of msync
+degrades performance.
+
+E500 core's mac (called as eTSEC) accesses buffer descriptors (BDs) which are
+kept in main memory.  The BDs hold a 32-bit pointer to pak and 32-bit for
+Status and length and ownership etc flags.  So update of pointer in first
+32-bit store and then length and ownership 32-bit store, is not atomic and
+these two stores can execute out of order.  Mbar must be used in between the
+two stores to enforce program order, even though the buffer descriptors are in
+main memory.
+
+
+* Speculative execution (loads only/ with branches)
+Marking the memory as guarded does not solve the issue since Guard bit only
+turns off speculative execution.
+
+Example of speculative execution that can be turned off with the help of Guard
+bit in TLB.
+
+lw $t0, Addr1
+bne $t0, ...
+nop
+lw $t1, Addr2  <----- this can be 'speculatively' executed unless G bit is on.
+
+Loads can be speculative, stores can not.
+
+
+There is no way to turn off out of order execution all together and there is no
+interrupt or exception to catch it. We believe that any code that touches
+ASICs in which asic registers are unrelated addresses but have a relationship
+or sequence between register accesses, MAY be affected. 
+
+
+Real-life Code running into problem :
+
+static inline 
+ void sman_set_ft_entry (volatile superman_t *sman_p, 
+                         earl_l2_ft_addr ft_addr, sman_ft_ram *ram) 
+ {
+	leveltype level = disable_interrupts(); 
+	sman_p->ft_addr = (ft_addr & SMAN_FT_ADDR_MASK); 
+	sman_p->ft_data0 = ram->rw_regs.registers[0]; 
+	sman_p->ft_data1 = ram->rw_regs.registers[1]; 
+	sman_p->ft_data2 = ram->rw_regs.registers[2]; 
+	sman_p->ft_data3 = ram->rw_regs.registers[3]; 
+	enable_interrupts(level);
+ } 
+
+An address is written to sman_p and then data is read from ram. 
+The compiler wont reorder it due to marking it volatile. 
+This is store followed by load from uncached and TLB bypassed space in MIPS. 
+Even if you keep this code uncached in powerpc, it is vulnerable to
+out-of-order execution by the cpu.
+
+Depending on the load store and WIMG TLB attribute combo, insert msync() or
+mbar() between the load/store, please refer to the table in next slide.

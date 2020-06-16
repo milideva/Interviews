@@ -1,0 +1,155 @@
+Architectural patterns :
+- Monolith
+- SOA (Service oriented Arch)
+- Microservices
+- Hexagonal
+
+Monolith
+- centralized arch, released as one single unit
+- easier to test and debug 
+- scaling is an issue, whole application needs to be scaled
+
+Advantages
+- deployment flexibility (independent deployment)
+- technology flexibility (may be in different languages/platforms)
+- independent development (in parallel)
+- scale independently
+- fault isolation
+
+Disadvantages
+- more complexity in deployment 
+- with multiple versions, it can blow up to thousands/ difficult to maintain
+- discover other services
+- increases delay due to RPC
+
+Service discovery :
+Client side - Netflix's Eureka
+Server side - Apache ZooKeeper
+
+Api Gatewaay (Netflix's Zuul or Apigee):
+Routing
+Authentication
+Authorization
+Policy Management
+
+Best practices to design microservices
+- separate DB for each microservice
+- separate build for each microservice
+- deploy in containers
+- treat servers as stateless
+
+Clients ---> identity provider --> API gateway --> services  private DB per service
+
+Each microservice has a set of REST Apis
+
+Circuit Breaker Pattern
+Saga Design pattern for data consistency
+
+DRY : Dont repeat yourself
+
+Conway's law :  organizations design systems that mirror their own communication structure.
+
+The 12 factor App.
+
+AWS EC2 Cloudwatch for autoscaling
+
+1. Clean Separation of Stateless and Stateful Services
+Applications composed of microservices contain both stateless and stateful services.
+
+If a service relies on the state, it should be separated into a dedicated
+container that’s easily accessible.
+One of the key advantages of microservices is the ability to scale rapidly.
+Like other distributed computing architectures, microservices scale better when
+they are stateless. 
+
+2. Do Not Share Libraries or SDKs
+
+Every service is a self-contained unit of OS, runtime, framework, third- party
+libraries and code. When one or more containers rely on the same library, it
+may be tempting to share the dependencies.
+Upgrading the library or SDK might end up breaking a service.
+
+3. Avoid Host affinity
+
+4. Focus on Services with One Task in Mind
+
+5. Use Lightweight Messaging Protocol for Communication
+
+REST for synchronous
+AMQP for asynch
+
+6. Implement a Self-Registration and Discovery Mechanism
+
+7 Maintain Independent Revisions and build env
+
+8 Prefer Polyglot Over Single Stack
+
+
+Monolith to microservices
+- faster delivery, frequent releases
+- isolation, single micro service can not crash system
+- scaling, scale individual micro service instead of whole monolith scaling
+- culture, micro service owned by one team
+- flexibility, polyglot (diff tech tracks for different service)
+
+Infra Problems when monolith broken into microservices
+- service discovery using registry 
+  Service registry is SPOF (single point of failure)
+  need to add client code in each microservice to talk to registry
+  need to manage Service registry across AZs
+- Run different versions at same time
+- Load balance between different versions
+- Rolling deploys 100% switch
+  Canary deploy - load balance 1% traffic to new version
+- Distributed tracing needed
+- Security issues (networking whitelisting, TLS between services)
+- Authentication
+- Authorization
+- Monitoring
+
+Do not burden application code with above infrastructure work.
+Enter Sidecar.
+Each service used to talk to each other, talks to its own sidecar instead.
+
+Sidecar proxy offloads all the above communication heavy lifting from application code.
+
+Control tower :
+A program to manage sidecar of each microservice (instructions/policies/configs etc)
+=> control plane
+
+Micro service + Sidecar => Data plane
+
+No need to write code to manage sidecars, imagine for 100s of microservices.
+Control tower + Sidecar = Service Mesh
+
+Example of Sidecar : Envoy
+Example of control plane : Istio
+
+* Circuit breaker
+
+The circuit breaker is valuable for monitoring; monitor, log, and recover any
+circuit breaker state changes to ensure service availability. Testing circuit
+breaker states helps you to add logic for a fault tolerant system. For example,
+if the product catalog service is not available (the circuit is open), then the
+UI can fetch the product list from the cache. The circuit breaker pattern
+handles downtime and slowness of key services gracefully and helps those
+services recover by reducing load.
+
+- When the circuit breaker is in the CLOSED state, all calls go through to the
+  Supplier Microservice, which  responds without any latency.
+
+- If the Supplier Microservice is experiencing slowness, the circuit breaker
+  receives timeouts for any requests to that service. Once number of timeouts
+reaches a predetermined threshold,  it trips the circuit breaker to the OPEN
+state. In the OPEN state the circuit breaker returns an  error for all calls to
+the service without making the calls to the Supplier Microservice. This
+behavior allows the Supplier Microservice to recover  by reducing its load.
+
+- The circuit breaker uses a monitoring and feedback mechanism called the
+  HALF-OPEN state to know if and when the Supplier Microservice has recovered.
+It uses this mechanism to make a trial call to the supplier microservice
+periodically to check if it has recovered. If the call to the Supplier
+Microservice times out, the circuit breaker remains in the OPEN state. If the
+call returns success, then the circuit switches to the CLOSED state. The
+circuit breaker then returns all external calls to the service with an error
+during the HALF-OPEN state. 

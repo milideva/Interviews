@@ -1,0 +1,11 @@
+https://medium.com/@davidecerbo/everything-i-know-about-distributed-locks-2bf54de2df71
+
+To use optimistic lock we usually use a version field on the database record we
+have to handle, and when we update it we check if the data we read has the same
+version of the data we are writing.
+
+The pessimistic lock instead will rely on an external system that will hold the
+lock for our microservices.
+
+https://news.ycombinator.com/item?id=11059738
+

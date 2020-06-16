@@ -1,0 +1,12 @@
+
+bool str2num(char *str, unsigned num_dig, unsigned *num) {
+
+    if (!str || num_dig > 2 || !num) return false;
+
+    if (num_dig == 1) {
+        *num = *str + a'
+    }
+
+}
+
+// "1234" 1 or 12, 2 or 23, 3, 4

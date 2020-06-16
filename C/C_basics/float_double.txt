@@ -1,0 +1,98 @@
+1.
+
+When do you use float and when do you use double ?
+
+The default choice for a floating-point type should be double. This is also the
+type that you get with floating-point literals without a suffix or (in C)
+standard functions that operate on floating point numbers (e.g. exp, sin,
+etc.).
+
+float should only be used if you need to operate on a lot of floating-point
+numbers (think in the order of millions or more) and analysis of the algorithm
+has shown that the reduced range and accuracy don't pose a problem.
+
+long double can be used if you need more range or accuracy than double, and if
+it provides this on your target platform.
+
+In summary, float and long double should be reserved for use by the
+specialists, with double for "every-day" use.
+
+
+Some platforms (ARM Cortex-M2, Cortex-M4 etc) don't support double (It can
+always be checked in the reference manual to your processor. If there is no
+compilation warnings or errors, it does not mean that code is optimal. double
+can be emulated.). That is why you may need to stick to int or float.
+You can check the famous article by D. Goldberg ("What Every Computer Scientist
+Should Know About Floating-Point Arithmetic"). You should think twice before
+using floating-point arithmetic.
+
+
+http://perso.ens-lyon.fr/jean-michel.muller/goldberg.pdf
+
+2.
+
+http://stackoverflow.com/questions/5098558/float-vs-double-precision
+
+Q :
+The following code
+
+  float x = 3.141592653589793238;
+  double z = 3.141592653589793238;
+  printf("x=%f\n", x);
+  printf("z=%f\n", z);
+  printf("x=%20.18f\n", x);
+  printf("z=%20.18f\n", z);
+will give you the output
+
+x=3.141593
+z=3.141593
+x=3.141592741012573242
+z=3.141592653589793116
+
+where on the third line of output 741012573242 is garbage and on the fourth
+line 116 is garbage. Do doubles always have 16 significant figures while floats
+always have 7 significant figures? Why don't doubles have 14 significant
+figures?
+
+
+
+
+Floating point numbers in C use IEEE 754 encoding.
+This type of encoding uses a sign, a significand, and an exponent.
+
+Because of this encoding, many numbers will have small changes to allow them to
+be stored. Also, the number of significant digits can change slightly since it
+is a binary representation, not a decimal one.
+
+Single precision (float) gives you 23 bits of significand, 8 bits of exponent,
+and 1 sign bit.
+
+Double precision (double) gives you 52 bits of significand, 11 bits of
+exponent, and 1 sign bit.
+
+3.
+
+
+There are three floating point types in C
+
+float
+double
+long double
+
+What the Standard Has to Say
+
+There are exactly two guarantees provided by the standard:
+
+a)
+precision(float) <= precision(double) <= precision(long double). 
+
+We are guaranteed that float has no more precision than double and double has
+no more precision than long double. It is possible for all three to be the same
+data type in a given implementation.
+
+b)
+The default floating point type is double, that is, typeid(3.3) is double.
+f suffix : 
+If you want a float constant, you must specify this with the f suffix: 3.3f.
+L suffix :
+Similarly, a long double constant must be specified with the L suffix: 3.3L.

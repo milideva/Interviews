@@ -1,0 +1,1400 @@
+“Network virtualization”
+========================
+
+Comes from Service Provider companies such as AT&T, BT, Deutsche Telecom. 
+Move network function into virtual appliances
+
+- reduce capex
+- reduce opEx by automation and scalability
+- elastic scaling
+- vendor neutrality
+
+no new protocols (like in SDN)
+no control/data plane separation (as in SDN)
+
+1. Fast and standard hw running sw based services :
+
+"white box implementation". COTS (commercial off the shelf) hw
+
+2.function modules (both data and control)
+move nw app from dedicated hw to virtual containers.
+most of them based on cloud tech such as Openstack
+
+What can be NFV.ed :
+switches (openVSwitch), router (eg. click), firewall, DPI, NAT, DHCP etc.
+LTE/3G, mobile/cell networking functions, 
+
+
+3. VM implementation.
+virtual appliances. all adv of virtualization 
+(quick provisioning, scale, mobility. reduced capex, reduced opex etc)
+
+4. standard APIs mostly from European Telecom Std Insti ETSI 
+
+Why we need NFV
+virtu
+orchestration
+programmable
+dynamic scaling
+automation
+multi tenancy
+open
+
+Concept of NFV originated from SDN
+NFV and SDN are independent and complementary (both or either)
+
+Adv of VM :
+Peformance is gained by scalability.
+Cost down and grow/shrink on demand.
+
+Industry Specification Group (ISG)
+Four working groups
+1. INF : Arch for virt infra
+2. MANO : Mgmt and orchestration
+3. SWA : sw arch
+4. REL : Reliability and availability
+
+Two expert groups:
+1. security
+2. performance and portability
+
+
+
+Many VMs on one server. But only 1 (or 2) physical NIC (pNic)
+VSwitch in HyperVisor, has vNIC.
+
+How to do Virtual Bridging - 3 IEEE solutions by 3 types of vendors.
+- In VM (VmWare)VEB , switch internally within hypervisor vSwitch.
+  Adv. No need to buy external switch
+  Disadv : can not enforce any policies as traffic is not seen outside.
+
+- In Switch (Cisco et al). 
+  Adv * visibility * policy enforcement * simpler vSwitch (less load on cpu).
+
+  HP : VEPA (802.1Qbg), switch externally. 
+  Virtual Ethernet Port Aggregator (VEPA) : inter-VM switching via an external 
+  switch. 
+  Traffic goes out of port and comes back in same port.
+  Needs new standard. as this is not allowed currently : 
+  new mode : Hairpin mode.
+
+  Cisco : VN-Tag (802.1Qbh)
+  The frames from each VM is tagged with an identifier (VN-Tag) by the VF.
+  
+- In NIC (Intel) SR-IOV. Single NIC shows up as many virtualized NICs.
+  Read up on S-channel.
+  Hypervisor talks to PF (physical function) which is i/f to physical card.
+  Thus hypervisor accesses PF to configure VF s. and then have each VM access 
+  a VF directly. 
+  So for this to work the Hypervisor/OS must support SR-IOV, 
+  such as VMWare’s VMDirectPath Dynamic feature.
+
+PCIe : serial point-to-point : ethernet, FC, video, audio etc
+Root complex.
+PF
+Multiple VF
+After configuration by hypervisor, VFs allow direct VM access without Hypervisor.
+
+Multi-root IOV.
+Move PCIe adapter out of server into a PCIe switch. Share NICs.
+16 servers but only 4 cards.
+fewer adapters, less cooling.
+No adapters, => thinner servers.
+
+Combining bridges :
+Issue :
+* #VMs growing fast. Need switches with very large #ports
+* Easy to manage one bridge than 100 10-port bridges.
+How to make large switches with 1000s of ports :
+* VSS
+* VPC
+* FEX
+* VBE
+
+
+IETF layer-3 and up (IP and up).
+IEEE - L2 only for example 802.1Q, 802.3 (CSMA/CD), 802.11 (wireless)
+
+* Virtualizing computation :
+- ip addresses locators, change when move. eth addr globally unique.
+- old days, VM moves inside subnet/rack, - no need to change IP.fast.
+	    VM moves from one subnet to another - all connections break: new IP addr.
+=> Need overlay
+
+Many technologies to use overlay.
+1. Q-in-Q : 
+* Provider-tag (Vlan) outer - right next to Customer-tag (vlan) inner.
+allows 4K inner * 4K outer = 16 million.
+* No new control protocol needed.
+- Issue is customer mac is not hidden.
+
+2. IEEE 802.1ad Ethernet Provider Bridging.
+IEEE 802.1ah Provider Backbone bridging (PBB)
+PBB encaps customer traffic into provider mac.
+can hide customer mac.
+challenges :
+- no multipathing.
+
+Allow ethernet to span long distances => global VM mobility
+
+3. Fabricpath :
+* mac-in-mac IS-IS for control plane.
+* conversational mac learning. learn src only if you know the dst mac.
+
+4. TriLL - IETF standard.
+
+5. OTV (Overlay Transport Virtualization) 
+Cisco proprietary
+Only 4K Vlans.
+Mac in UDP
+
+OTV is a new DCI (Data Center Interconnect) technology that routes MAC-based
+information by encapsulating traffic in normal IP packets for transit.
+
+Traditional L2VPN technologies, like EoMPLS and VPLS, rely heavily on
+tunnels. Rather than creating stateful tunnels, OTV encapsulates layer2 traffic
+with an IP header and does not create any fixed tunnels.
+
+The underlying routing-protocol used in the control-plane is IS-IS
+(Intermediate System to Intermediate System). IS-IS hellos and LSPs are
+encapsulated in the OTV IP multicast header. The OTV IS-IS packets use a
+distinct Layer-2 multicast destination address. Therefore, OTV IS-IS packets do
+not conflict with IS-IS packets used for other technologies
+
+The use of IS-IS is obvious to two reasons.
+
+* Firstly IS-IS does not use IP to carry routing information messages, it uses
+  CLNS. Thus IS-IS is neutral regarding the type of network addresses for which
+  it can route traffic, making it ideal to route MAC reachability information.
+
+* Secondly through the use of TLVs. A TLV (Type, Length, Value) is an encoding
+  format used to add optional information to data communication protocols like
+  IS-IS. This is how IS-IS could easily be extended to carry the new
+  information fields
+
+
+OTV versus VPLS
++ Simple. Just 4 commands on CE side.
+  VPLS tunnels PE (provider edge) side
+
++ OTV is transport agnostic. As long as there is IPv4 connectivity between Data
+  Centers, OTV can be used. For AToMPLS or VPLS, these both require that the
+  transport network be MPLS aware, which can limit your selections of Service
+  Providers for the DCI. 
+
+
+OTV uses IS-IS to advertise the VLAN and MAC address information of the end
+hosts over the Data Center Interconnect.  This means that IS-IS is directly
+encapsulated over layer 2, unlike OSPF or EIGRP which ride over IP at layer
+3. How then can IS-IS be encapsulated over the DCI network that is using IPv4
+for transport? The answer? A fancy GRE tunnel.
+
+OTV Top Concerns: 
+
+- Proprietary solution: It requires all WAN devices in the OTV domain to be a
+Cisco Device.  Cisco has proposed OTV to IETF, but it is unclear whether OTV
+will become an industry standard.
+
+- Does not support Traffic Engineering: MPLS based solutions support traffic
+engineering that allows Optimal Bandwidth utilization using MPLS Traffic
+Engineering.  
+
+- Does not offer a high level of resiliency: In case of a WAN link failure, OTV
+over IP takes seconds to converge; with MPLS FRR, convergence takes less than
+50ms.  
+
+
+6. VxLAN
+16million segment id.
+Mac in UDP.
+
+Control plane : None. Forwarding of L2 BUM :
+encap uses IP multicast as dest IP.
+each VNI is mapped to a multicast group
+multiple VNIs can share same multicast group.
+
+More on the above later.
+
+
+* Virtualizing storage :
+Initially data centers used SAN (FC) for server-to-storage and eth for 
+sever-to-server.
+IEEE added 4 new standards to make ethernet offer low loss like FC
+- PFC IEEE 801.1Qbb
+- ETS IEEE 801.1Qaz
+- QCongestion control IEEE 801.1Qau : switches only. 
+  Hosts not using this. So this is not working.
+- DCB exchange IEEE 801.1Qaz
+
+Result : Unified networking. Significant CapEx/OpEx savings.
+
+* Virtualizing rack storage connectivity
+SR-IOV allows storage to be virtualized and shared between VMs
+MR-IOV no need to have pcie card per server. can be shared.
+These technologies help us keep data local.
+
+* Virtualizing DC storage/ VNE 802.1BR
+storage and severs can be located anywhere in dC
+but appear connected to one switch.
+
+* Virtualizing metro storage.
+- VxLan, NVGRE, TRILL.
+data centers located far away appear to be on same eth.
+
+VPC - 
+VDC - similar to VRF. Virtual Data Center.
+OTV
+
+Evolution
+=========
+* Etherchannel 
+
+* Etherchannel over multiple chassis (VSS - cat6k , stackwise - cat3750).
+
+Stackwise :  dual redundant loop back plane connection 
+Looks like one switch. Cat3750
+
+Stackwise+ : nonblocking 64Gbps
+
+
+* VPC Virtual Port Channel (between two different switches)
+
+The vPC is actually eliminate the need of STP on the member vPC ports and allow for efficient load sharing capabilities.
+
+* VPC+ (fabric path by Cisco / TriLL standard)
+
+
+
+Server: one port to LAN 1/10G, one port to SAN (fc).
+
+Converged Network Adapter : same cable SAN + LAN
+
+vSan
+vtrunk
+zoning
+
+
+VM : compute virtualization
+SAN : storage virtualization
+SDN : way of network virtualization
+
+Separate data and control plane.
+No modularity.
+
+SDN : two control plane abstractions.
+1. Global network view : implemented in Network Operating System
+2. Forwarding model : Openflow. Specification of <header,action> flow entries.
+
+NFV
+=====
+network services in dedicated appliances
+Service providers tired of buying appliances 
+It’s essentially x86 server + sometimes asic glue dealing with L4 and above layers
+
+In DC : Firewall and load balancer, SIP gateways DPI 
+1. Can not move from DC-A to DC-B
+2. Expensive. One appliance for each tenant not possible.
+virtualize FW and LB - easy to move or restart
+Can not beat performance of one physical box with one VM.
+But scalability of VMs - can be hundreds - can beat in performance and price.
+
+Just like server virtualization in network services. Virtual appliances.
+
+Instead of buying dedicated appliances (and not using to full capacity), 
+buy server farms and deploy network services on generic x86 - on bare metal or VM 
+
+NFV performance
+4Gbps per cpu
+TCP offload does not work with everything
+
+ISG (industry spec gr) Four working groups :
+1. INF : working on virtualization Architect
+2. MANO : management and orchestration
+3. SWA : Software architecture
+4. REL : Reliability and availability, fault tolerance etc
+
+Fabric path
+===========
+mac in mac routing.  Layer-2 routing for mac addresses using IS-IS
+* is-is for control plane.
+Why IS-IS is used ?
+* already tried and proved.
+* no need to run ipv4/ipv6, runs on l2 natively.
+* natively extensible as it supports new tlv
+* supports ECMP
+* classic ethernet (CE) in fabricpath tunneling
+
+Fabricpath is not ethernet
+- limited hardware supports F1/F2 and N5500 only
+
+Fabricpath is not TriLL
+
+Conversational MAC learning
+Learn src mac only if you already know dst mac
+Leaf switch must be SPT root for CE 
+smaller domain, smaller disruptions
+
+
+DAS (direct attached storage)
+---
+tcp/ip --- server --- physical SCSI to DAS (direct attached storage).
+With many servers, lot of unused storage, can not share.
+
+NAS
+---
+Centralize storage over network. NFS, CIFS.
+sharable
+but file level transfer, needs file system.
+slower, not all applications supported the file system.
+biggest problem file based protocol.
+
+
+SAN
+----
+1. Block level transfer!
+Can allocate Logical Unit Number (LUN) on demand. LUN ~~ Volume
+
+2. storage allocated to a server A is dedicated and on-demand.
+If Oracle server needs more storage, you can just add more on-demand.
+If email server was allocated more and is using less, can reduce its capacity.
+Without any downtime.
+
+Server ---------  iSCSI/ Fiber Channel Switch --------  SAN storage
+
+Fiber Channel(FC) : expensive and faster (4G)
+=================
+For FC, HBA card is needed on server to talk FC to SAN (similar to NIC to IP)
+HBA card, fiber, special FC switch : expensive.
+
++ low latency and high throughput : if you want high performance, go for FC.
+
+- high cost : need dedicated storage switches and HBA in hosts : makes it high cost.
+- over long distance (remote site) : expensive
+- need special skill set to manage FC networks.
+ 
+iSCSI : cheaper and slower (1G)
+======
+Uses scsi over tcp/ip. So can go over WAN as well.
+
+iSCSI initiator (called iSCSI client) runs on server (PC). 
+Sends scsi commands over ip (iscsi) 
+
+iSCSI server/target. 
+Uses LUN for storage allocation. IP based auth using CHAP for security. bidirectional auth.
+
+standard ethernet is iSCSI switch, no need for special switches.
+
+
+
++ Regular ethernet/IP switch in middle => cheaper alternative to FC.
++ can go over wan, remote site (mostly for SAN to SAN replication).
+
+- because tcp/ip, it becomes slow. performance dropped by mS. 
+  Not suitable for high transactional I/O workloads.
+
+
+bottle neck is not pipe (1G/4G) but the disk I/O.
+
+
+fcoe (FC over ethernet)
+==== 
+FC communities answer to iSCSI.
+no tcp/ip, just ethernet. so faster than iSCSI.
+
+Eth LAN ----- FcoE switch ----- FC SAN
+		|
+		|
+	Lossless 10G eth CNA in Servers (no expensive HBA as in FC)
+
+CNA : converged network adapter = lossless nic + hba 
+
+
+- can not be routed over WAN.
+
+FCoIP
+=====
+fcoe can not go over wan.
+So FCoIP.
+
+
+Virtualization
+===============
+
+
+Bare metal 
+is a single tenant server. This means only you are taking the resources of the
+server. The server belongs to you and you only. Compared to the cloud model
+where multiple users (multi-tenancy) reside on the same physical server, the
+bare-metal server only has one customer on the server.
+The operating system (CentOS, Debian, Redhat, SUSE, Ubuntu, Windows Server,
+etc.) is installed directly on the server, and applications are running
+natively in the operating system.
+
+Type 1 hypervisor (VMM)
+hypervisor is an OS that allows to run VMs 
+Hypervisor runs directly on top of hw
+Better performance
+e.g. Vsphere ESXi, Microsoft Hyper-V, Citrix XenServer, KVM
+
+Type 2 hypervisor on top of native OS
+E.g. Fusion, Oracle VM, Parallels
+
+Proof of Concept
+Lab, replicating a user experience (whatever OS customer is using).
+Isolation. 
+Run windows on Mac to run apps that run only on Windows.
+
+Ring 0 Hypervisor runs here.
+Ring 1 VMs run here. Device drivers run here.
+Instructions that do not trap when running in ring1 (fail silently), binary translated to instructions that
+Shadow : MMU, Page table, segment descriptors.
+
+Ring 2 largely unused.
+Ring 3 Applications.
+
+
+Virtualization needs:
+--------------------
+One server for each application. One web server machine. Another for Database. Another for email etc.
+Many servers : Low server utilization.
+Many servers : consume more power.
+Many servers : IT can not manage software/OS independent of hardware.
+Downtime with upgrades.
+
+Restoring VM is file restoration.
+
+Scalability : VMs can be added seamlessly at one click now.
+VMware sw may not be cheap but great saving in time to deploy.
+Example ->
+New sw release by say JPM, very easy to download and install remotely and dynamically grow or shrink the scale.
+
+
+
+Desktop Virtualization (type-2):
+--------------------------------
+1. Similar to VNC. Access using a thin client (wyse) or tablets.
+network connection between client and virtual desktop using protocol RDP (remote desktop protocol).
+
+powerful desktop remotely accessed.
+
+* Rapid provisioning.
+* clients need low power device to access powerful servers
+* centralized access control, data on servers , not clients, more secure.
+* Incompatible or unsupported apps can be accessed. MSOffice on iPad.
+
+2. Windows on Mac.
+VMWare player on windows to install SCO.
+
+
+Application virtualization
+--------------------------
+- different apps may not play well together. 
+MS app and adobe OS may not work together.
+Need two different VMs.
+Instead of that, on same OS, use App Virtualization.
+
+XenApp
+eg Cameyo : no need to install app locally
+Turnkey : virtual appliance
+
+Storage virtualization
+----------------------
+
+* JBOD : Just bunch of disks. Personal disks - no organization. No management.
+* Disk Arrays : Early Data centers used disk arrays.
+  * Block access. block size = X #sectors. (1/4/16)
+  * File access. 
+* SCSI
+  * 8-16 devices on one bus. Each device has an ID. Any #hosts.
+  * Each device may have multiple LUN.
+* ATA
+* Fiber channel. point to point or arbitrated loop (ring) or switched fabric.
+  hosts —> fabric —> storage.
+  FC HostBusAdapter(HBA) 64b World Wide Name (like mac)
+
+Storage virtualization : distance/Size/type/implementation does not matter.
++ HA, disaster recovery, sharing storage (improved capex) etc
+
+* RAID : Redundant array of Inexpensive disks. 
+Invented at Berkeley.
+Now Redundant array of independent disks.
+Divide and replicate data among multiple drives.
+
+RAID-0 block level striping without parity, two disks. Not redundant. because two disks, throughput of rd/wr more.
+RAID-1 mirroring without parity.
+More on wiki.
+RAID for performance (since blocks spread over 2 or more disks, more rd/wr perf).
+or for fault tolerance.
+
+* iSCSI
+IETF protocol to carry SCSI over TCP/IP.
+Can use same ethernet port to connect to storage device.
+TCP makes it heavy weight and hence slow.
+
+* Infiniband (mellanox and intel)
+packets form a message. A message can be RDMA (remote direct mem access).
+RDMA is memory to memory without any encap of eth/IP etc.
+So latency is in nanoseconds.
+Supports QoS and FaiOver.
+So used in High Performance Computing.
+
+google for infiniband versus ethernet.
+
+Network virtualization
+----------------------
+
+VLAN
+VPN tunnel L3 solution connect two sites, encrypt for security
+VRF on router
+VSS
+vSwitch 
+vPC
+VPLS emulated LAN between sites broadcast to multicast. L2 solution
+
+
+vSwitch
+========
+vSwitch maps physical nic pNic to N vNics
+No need of one pNic per VM
+Allows VMs to keep traffic on-host.
+NIC-teaming for load balancing or failover.
+
+Cisco NX1000V, IBM 5000V
+
+Distributed virtual switch (vDS)
+- Single management interface/policy for a cluster of hosts.
+- vPath
+
+VDC
+===
+One data center but Multiple customers can share same physical Sup/LC (n7K, n5k only)
+Data from ports on one VDC not visible to other VDC. Virtually two different Switches.
+Crash in one VDC does not impact other VDC.
+Can allocate per VDC: ports, portchannels, bridge domains, vlans, ACLs, routes, vrf etc
+
+VxLAN
+======
+
++ IPv4 multi-pathing.
+
+Mobility 
+- IP address won’t. move server from one rack to another, IP address reconfig!
+  IP addresses are location dependent.
+=> Need to use Mac addresses. 
+- Use LAN. mac addresses work anywhere.
+
+issues with LAN
+- suboptimal path
+- links disabled - so not used.
+- no multipathing.
+
+Take best of both worlds. Mac address + routing.
+
+IP subnet
+* Designed to Scale within a data center. 
+  Issue solved with 24 bit segment id = 16 Million instead of 12 bit vlan id.
+* encapsulates packets into UDP+IP (mac-in-udp). 
+* Uses IP multicast to emulate broadcast domain.
+* When VM moves from one host to another, mac and IP must be same.
+Otherwise connectivity issue.
+Use tunnels to create L2 logical network. L2 inside L3. 
+* Virtual Switch VTEP does translation at the edge, network is not vxlan aware. 
+  VTEP : Virtual Tunnel End point.
+
+mac in UDP is used rather than mac in gre :
+1. Better L3 ECMP and vPC ECMP(load balance) using udp src port. Hash of 5-tuple.
+2. Better security ACL with udp dest port (well known). Most firewalls and routers do not parse GRE.
+
+VXLAN is an L2 overlay over an L3 network. Each overlay network is known as a
+VXLAN Segment and identified by a unique 24-bit segment ID called a VXLAN
+Network Identifier (VNI).  Only virtual machine on the same VNI are allowed to
+communicate with each other.  Virtual machines are identified uniquely by the
+combination of their MAC addresses and VNI.  As such it is possible to have
+duplicate MAC addresses in different VXLAN Segments without issue, but not in
+the same VXLAN Segments.
+
+No control plane.
+* Mac learning : 
+How to handle broadcast/unknown unicast/multicast (BUM) - options :
+* IP multicast. But Customers may not want to turn on multicast.
+* Unicast vxlan (google for this). 
+Keeps table of vxlan id to list of VTEP IPs. and send unicast packet to them for BUM.
+
+* VxLan support required at endpoints only. No change needed in the network.
+* L3 ECMP => scalability and failover.
+* Core does not need to learn mac addresses.
+
+VTEP scale:
+* Software : limited by CPU and RAM. 
+* Hardware : limited by size of table in asic.
+
+* ReplicaIon node vs fully distributed head-­‐end replication* External SDN Controller vs Standalone Neutron
+
+OTV
+===
+
+Designed to solve another problem - that of L2 mobility for 4K vlans.
+Carry 4K vlans from one data center to another over L3 across internet without multicast.
+No flooding. If unknown, advertise mac reachability across using IS-IS.
+Mac routing table is built on external interface of each OTV edge device dynamically.
+
+LISP
+====
+L3 mobility (maintain same IP address of a VM).
+virtualization mobility presents an issue :
+IP address can not change.
+Moved to new subnet/different data center.
+How to find server now that has the same IP as before?
+
+Network part and host part - IPv4
+prefix (n/w part) and interface part (end pt) - IPv6.
+
+Database : maps IP of end point of tunnel to IP of locations
+
+VN-Tag
+--------
+VN-Tag is the basis of 802.1qbh ‘Bridge Port Extension.’  
+Using VN-Tag an additional header is added into the Ethernet frame which allows individual identification for virtual interfaces (VIF.)
+
+The core ideas behind 802.1Qbh are very simple:
+
+After power-up, the port extender finds its controlling bridge (connected to the upstream port)
+Port extender tells the controlling bridge how many ports it has;
+The controlling bridge creates a logical interface for each port extender port and associates a tag value with it;
+Port extender tags all packets received through its ports with tags assigned by the controlling bridge;
+
+With the VN-Tag technology (implemented in Palo adapter), a single physical NIC
+can appear as multiple NICs to the operating system, with each NIC acting as an
+independent Ethernet adapter. A logical port in the 6100 switch is associated
+with each virtual NIC in the Palo adapter and VN-Tag is used to tag frames,
+allowing the Palo adapter and the switch to place them in the right input
+queues.
+
+The Nexus 5000/2000 combination and the Cisco UCS Fabric Interconnect/IO Module
+combination both use an additional header in Ethernet frames called VN-Tag,
+which uniquely identifies some remote port which will receive a virtual
+Ethernet port on the local switch (50xx or 61xx).  This causes the Nexus 2000
+or UCS IO Module to act as a remote line card to the host device, and doesn’t
+have to be managed individually.   All switching happens in the host device
+(50xx or 61xx).  The same VN-Tag technology is used by the Cisco Virtual
+Interface Card (VIC, or Palo) to identify the virtual interfaces being
+supported by the card.  With this tag added into the Ethernet frame, the host
+device (50xx or 61xx) can uniquely identify the source port (virtual or
+physical) and apply policy or configuration to it.
+
+SDN
+===
+Openflow is a protocol to implement SDN.
+
+1. SDN is data and control separation.
+Not exactly virtualization of network.
+2. Programmable on the fly
+Open standard based, vendor neutral
+3. Dynamic scaling
+4. Management :
+performance, monitor
+5. Automation :
+Reaction to problems automatically.
+Troubleshooting
+Policy enforcement.
+
+6. provisioning
+
+7. Orchestration layer :
+Control and manage many devices with one command.
+
+Multi tenancy
+
+Virtualization
+
+
+App1 App2 App3
+  |    |   |     (NorthBound APIs)
+Network Controller
+     |         |  (Southbound APIs)
+Switch  Switch  Switch
+
+APIs
+————
+Northbound : I2RS, I2AEX, Alto
+   |
+Controller
+   |
+Controller : PCE, ForCES
+(PCE path computation element)
+Southbound : XMPP (JNPR), OnePK (Cisco) , Openflow v1.0, v1.1,v1.4
+   |
+Switches
+   |
+Overlay : VxLAN, trill, LISP, STT …
+
+Configuration API : NetConf
+
+* XMPP : eXtensible Messaging and Presence Protocol
+IETF standard of jabber.
+extensible using XML
+example Skype, google talk, fb talk etc
+
+text : messaging only (does not tell online or not)
+need presence part of protocol.
+sets up connection with server => online = Presence.
+messages are pushed (text message for example)
+
+Chat with machine.
+Machine is online. Start this/stop that.
+Arista switches managed by XMPP
+IOT and data centers also use it
+
+* ALTO (app layer traffic optimization)
+IETF working group to optimize P2P traffic.
+Provide guidance in peer selection.
+Service provider can tell where the peers are located.
+Intelligently select a peer.
+bitTorrent.
+Alto Server : has knowledge of distributed resources.
+Alto client : requests info.
+Alto Server discovery
+
+Alto extensions
+(to locate resources in data center)
+We know the resources (memory, storage, cpu, nw), cost of these, constraints (bandwidth)
+Issue of privacy.
+Move VM to appropriate server.
+
+
+* RESTful
+http method to talk to all objects
+server is stateless (since it talks to millions of clients)
+responses can be cached.
+CRUD
+Create (POST)
+Read (GET)
+Update (POST)
+Delete
+
+Example:
+amazon REST services 
+twitter
+facebook 
+google (query maps for longitude/latitude) etc
+
+Northbound APIs restful. Also dlux by google.
+
+http://fqdn-or-ip/rest/v1/model/Data types/optional-id?optional-query
+
+Data type : controller, firewall rule, switch, port, link flow entry etc
+
+Much like Web Services, a REST service is:
+- Platform-independent (you don't care if the server is Unix, the client is a Mac, or anything else),
+- Language-independent (C# can talk to Java, etc.),
+- Standards-based (runs on top of HTTP), and
+- Can easily be used in the presence of firewalls.
+
+Like Web Services, REST offers no built-in security features, encryption,
+session management, QoS guarantees, etc. But also as with Web Services, these
+can be added by building on top of HTTP:
+
+For security, username/password tokens are often used.
+For encryption, REST can be used on top of HTTPS (secure sockets).
+... etc.
+One thing that is not part of a good REST design is cookies: The "ST" in "REST"
+stands for "State Transfer", and indeed, in a good REST design operations are
+self-contained, and each request carries with it (transfers) all the
+information (state) that the server needs in order to complete it.
+
+
+OSGi
+
+OpenDayLight SDN controller Platform (OSCP)
+NO-Openflow (Not Only open flow) - multiple south bound protocols via plugins
+dynamically linked to service abstraction layer (SAL)
+
+Opendaylight tools
+
+Openflow
+========
+
+- Data plane (forwarding, fragmentation/reassembly, replication etc)
+- Control plane (routing tables), policies, protocols etc
+- Management plane - optional : provisioning, monitoring.
+  FCAPS (fault, configuration, accounting, performance, security)
+- Services - optional : middle box to improve performance or security
+
+Control slow path, so can be centralized.
+
+Controller —> openflow —> Flow table = routing table.
+
+Openflow 1.0
+============
+match header fields with flow entries and if match, update counters and perform actions
+
+idle timeout, hard timeout.
+
+did not cover MPLS, Q-in-Q, ECMP and efficient multicast.
+
+OpenVSwitch
+============
+Openflow
+Inter-VM Monitoring via netflow/IPFIX etc
+LACP
+802.1Q
+VxLan
+
+OVSDB
+=====
+* ovsdb server
+* ovs-vswitchd
+* forwarding path
+
+
+ovsdb : protocol between controller and switch
+db because tables queried
+stores provisioning and operational state.
+
+openflow : programming forwarding.
+
+json used for schema format and json-rpc over TCP for wire protocol
+RPC methods : list, get schema, update, lock etc
+
+Openflow 1.1
+============
+
+Introduced table chaining, group tables.
+
+mpls: stack of labels.
+Q-in-Q : push/pop vlan headers
+
+Openflow 1.0 did not cover MPLS, Q-in-Q, ECMP and efficient multicast.
+
+
+Openflow 1.2
+============
+IPv6 added.
+extensible : now matches using TLB
+Experimental extensions
+
+* Bootstrapping
+uses LLDP : one way protocol
+to advertise capabilities at fixed intervals
+forwards lldp packets to controller.
+So Controller knows who is connected to what port
+
+* OF-config
+For configuration and management of open flow switches.
+
+Openflow controllers (all are open source):
+* NOX by Nicira, superseded by POX. in C++.
+* POX Python based newer version of NOX.
+* SNAC Gui based without modifying code.
+* Beacon by Stanford in Java
+* Trema in Ruby and C by NEC research
+* Maestro in Java by Rice Univ - multithreaded
+* Floodlight Java based. By BigSwitch Networks.
+
+Cisco OnePK
+============
+One developer interface to manage Cisco routers. In C, Python, REST, Java.
+Regardless of which OS and cli syntax.
+
+
+Rackspace
+----------
+Server provisioning under 3 minutes!
+1. Pick region
+2. Pick OS 32 options RHEL, Ubuntu, windows, various flavors. adds license costs.
+3. Pick RAM, disk space : cost shown.
+4. Public/internal IP address
+Create server : 
+
+Backup and restore VM image, automatically or manually.
+Reboot/resize, change password etc
+
+Von Neumann model 
+------------------
+Instruction and data in memory share bus.
+Simple but bottleneck.
+
+Harvard architecture
+--------------------
+one dedicated set of address and data buses for reading data from and writing data to memory, and another set of address and data buses for fetching instructions.
+
+What technology is driving Virtualization?
+------------------------------------------
+Slowness in virtualization is offset by various factors today.
+Makes it acceptable price/performance number.
+
+Servers:
+- Faster servers, multi-core today.
+- CPU virtualization assist Intel VT-x / AMD-V
+- IO/MMU virtualization assist Intel VT-d / AMD Vi
+  Allow direct hw access to IO devices and page table for guestOS.
+- ccNUMA memory architecture. Page address extension (PAE)
+
+Storage
+- FCoE
+
+Network
+- Faster cheaper LAN/MAN/WAN
+
+UMA (Uniform Memory architecture): 
+All cpus connect to one RAM bus. All RAM chips hang off same RAM bus.
+RAM bus becomes hotspot.
+
+Solution:
+NUMA (Non-Uniform Memory architecture):
+———————————————————
+Break multi cpu, multi RAM into groups and interconnect the memory bus.
+Less hotspot on ram bus now.
+Faster memory access time for cpus in a given group.
+Slower memory access time for cpus outside of RAM group.
+
+Of course all CPUs in a given Group need to have cache coherency.
+But no coherency between two cpus on two different groups.
+Correctness problem.
+
+ccNUMA:
+All caches are coherent. 
+No correctness problem anymore.
+Only thing is, OS needs to worry about scheduling threads on same cpu for performance reasons (cache).
+
+Any thread can run on any core. But cache reasons, try to maintain cpu affinity.
+
+MESI (Modified - dirty, Exclusive - clean, Shared - clean, Invalid - unused) protocol to maintain cache coherency for write-back cache.
+
+
+Cloud storage 
+* Google drive
+* box.com
+* dropbox
+* Microsoft OneDrive
+* Amazon : Simple Storage Service (Amazon S3) - object storage, EBS (elastic block storage)
+
+IAAS (systems cloud):
+======
+Provider provides raw compute, storage, network.
+Avoids buying servers etc and also avoids estimating resource needs.
+
+Abstract : compute resources and network connectivity.
+Install your own OS.
+
+AWS EC2 (Elastic Compute cloud).
+Rackspace
+IBM smartcloud
+Google Compute Engine
+
+If you add sw tools, it becomes PaaS  ==>
+
+PaaS (Developer cloud):
+======
+Provide platform for building apps
+Avoid worrying about scalability of platform.
+No concept of VM or OS. Code it and deploy it.
+Abstract : Web app dev tools available. No tools to install. 
+Target web developers.
+
+Google App Engine
+heroku (supports Ruby, Java, node.js, scala, python, PHP etc)
+force.com
+MS azure
+
+SaaS (user cloud):
+======
+Renting access to sw/app
+Provider licenses apps as service.
+avoids costs of install/maintain/patches etc
+
+MS online. 
+Adobe.
+Workday. 
+Google Apps. 
+Any end user can use this.
+
+On-demand licensing. Every employee does not need to install word. IT overhead saved.
+Software patches, version upgrade saved. Done by provider.
+
+
+Public cloud : internet, all apps strictly outside enterprise.
+============
+- pay-as-you-go (per hours). No contract.
+- Shared-hardware (Multi-tenant), shared servers, storage, network.
+- No control over performance. A VM is placed anywhere.
+
+
+Private cloud : intranet Need VPN 
+============
+- Security. Single tenant (mostly). 
+- Customizable.
+- Compliance PCI SOX.
+- No loss of control. 
+- Hybrid deployment. A dedicated high performance server can be added (as opposed to a VM)
+
+
+Cloud Management
+- capacity planning
+- billing
+- SLA management
+- provisioning (open source : cobbler, spacewalk, crowbar) 
+- patching, upgrades
+- automation
+- Orchestration (automation of tasks for managing, coordinating between  services)
+- configuration (chef and puppet, server config mgmt, salt)
+- monitoring (graphite, zenoss, zabbix, nagios)
+- security
+- accounting
+
+Toolchain :
+output of one becomes input of other.
+Generate image : SUSE studio/BoxGrinder 
+==>
+Bootstrapped image : Openstack/ Cloudstack
+==>
+Provision : Cobbler
+==>
+Configuration : Puppet, Chef
+==> 
+Start/Stop services : RunDeck, Capistrano
+==>
+Monitoring : Nagios, Zenoss, Cacti
+
+Scale-up versus Scale-out
+**** Scale-up (vertical scaling)
+* Grow VM/workload footprint. Adding more power cpu/ram/I/O to existing machine.
+* reboot needed on reconfigure, downtime due to moving from smaller to bigger vm.
+* Simple, legacy compatible, no distributed app logic
+* upper limit constraints
+* single point of OS failure / HA sub-optimal
+
+*** Scale-out
+* Adding more machines into pool of resources.
+* application arch needs to be distributed (HA, Apache hadoop)
+
+Scale :
+1 million instances.
+5000 compute nodes. 200 instances/hypervisor.
+
+
+Why Open Source
+- user-driven solutions to real problems.
+- large user base, users helping users
+- try before you buy
+- open data, open standards, open api
+
+Open Virtualization Format (OVF):
+open standard for packaging and distributing virtual appliances.
+current : 
+Amazon - AMI amazon machine image, 
+Hyper-V VHD virtual hard disk,
+KVM - QCOW2 qemu copy on writev2
+Vmware - VMDK Virtual Machine disk.
+Xen - IMG virtual machine image.
+
+
+Open Hypervisors:
+Xen
+KVM
+VirtualBox
+OpenVZ
+
+Proprietary Hypervisors:
+Vmware
+Citrix XenServer
+Hyper-V
+OracleVM 
+
+Compute clouds (IaaS)
+Cloudstack
+Eucalyptus
+Openstack
+OpenNebula
+
+Storage :
+GlusterFS
+CEPH
+Openstack Swift
+Sheepdog
+
+
+* File based : NAS . file based. filename and hierarchy.
+
+* Block based : SAN (fiber channel + switch). tracks and sectors.
+
+With block storage, files are split into evenly sized blocks of data, each with its own address but with no additional information (metadata) to provide more context for what that block of data is.
+
+* Object storage : flat, no hierarchy. accessed via http.
+File based : Fixed name to location in directory.
+Object based : an Object id is returned at the time of storing.
+At the time of accessing it, id is input, file is output.
+Exact location of file may change.
+Just like Valet parking at a restaurant 
+- car parking may change parking spot multiple times while you dine.
+- makes perfect case for cloud. exact location of data may move.
+For data that does NOT change frequently:
+- archives/backups/snapshot versioned objects - only delta stored. 
+- file sharing (dropbox) documents/songs (spotify) etc
+- for images, videos, VM images.
+
+- Slower since http. but can be accessed from anywhere.
+- Eventual consistency. Takes time to update all replicas.
+  So won’t work if data changes fast.
+- Disaster recovery : entire volume replicated.
+  Object Metadata decides whether to version or not, or 
+  how many replicas and where to store each version
+
++ Object storage, by contrast, doesn’t split files up into raw blocks of data. Instead, entire clumps of data are stored in, yes, an object that contains the data, metadata, and the unique identifier. There is no limit on the type or amount of metadata, which makes object storage powerful and customizable. Metadata can include anything from the security classification of the file within the object to the importance of the application associated with the information.
+
+- 
+However, object storage generally doesn’t provide you with the ability to incrementally edit one part of a file (as block storage does). Objects have to be manipulated as a whole unit, requiring the entire object to be accessed, updated, then re-written in their entirety. That can have performance implications.
+
++ Object storage works very well for unstructured data sets where data is generally read but not written-to. Static Web content, data backups and archival images, and multimedia (videos, pictures, or music) files are best stored as objects. Databases in an object storage environment ideally have data sets that are unstructured, where the use cases suggests the data will not require a large number of writes or incremental updates.
+
+
+
+Object storage systems are eventually consistent while block storage systems are strongly consistent.
+
+Eventual consistency can provide virtually unlimited scalability. It ensures high availability for data that needs to be durably stored but is relatively static and will not change much, if at all. This is why storing photos, video, and other unstructured data is an ideal use case for object storage systems; it does not need to be constantly altered. The downside to eventual consistency is that there is no guarantee that a read request returns the most recent version of the data.
+
+Strong consistency is needed for real-time systems such as transactional databases that are constantly being written to, but provide limited scalability and reduced availability as a result of hardware failures. Scalability becomes even more difficult within a geographically distributed system. Strong consistency is a requirement, however, whenever a read request must return the most updated version of the data.
+
+
+Traditional file system designed for smaller group of files for read and write.
+So it needs to manage permissions, locking for concurrency.
+Today millions of data files get generated (pics for example).
+They are not modified. Many times not accessed again. 
+Difficult to gather context and content of Unstructured data such as images to make storage decision.
+
+When an MRI scan is stored as a file the typical metadata attached to it is basic and may include only information such as file name, creation data, creator, and file type. 
+
+When the MRI scan is stored as an  Object, on the other hand, the generating application can include all the file metadata plus additional  metadata information that might summarize the content contained within the file and include the patient name, the patient’s ID, the procedure date, the attending physician’s name, the physician’s notes, as well as any other metadata that can help add context to the MRI scan.
+
+The custom metadata present in Object Storage gives users the context and content information they need to properly manage and access unstructured data.
+
+Object Storage and Traditional NAS Coexist.
+Object Storage is ideal for archiving when the data is  relatively static and not frequently accessed. This isn’t a restrictive criterion for Object Storage use 
+cases. By some estimates, 70% of data that is generated is never accessed after its initial creation and remains static, while 20% is semi-active. However, 10% of all data is actively used, and it is for this data that traditional file systems, such as NAS, are best suited.
+
+http://www.dell.com/downloads/global/products/pvaul/en/object-storage-overview.pdf
+
+Server Virtualization leaders :
+-------------------------------
+* ESX Server - is Linux kernel, ESXi Server - vmware kernel, 
+free but no tech support, few features cut.
+
+* Microsoft HyperV - can also be free. must be domain 0 install. 
+Parent partition Win 2008 as vmm.
+
+* Citrix Xen. Bought from Univ of Cambridge.
+Free Open src of Xen is also available.
+
+* Parallels used by godaddy.
+
+* Virtual Iron. Acquired by Oracle. Based on open src Xen
+virtual box.
+
+* KVM : klm turns linux into hyper
+
+Cisco Desktop Virtualization solutions VxI
+
+For the desktop:
+VMWare workstation in Windows. Fusion for MAC
+
+Application virtualization players:
+-----------------------------------
+Run apps without installing. Just executable.
+ThinApp, vFabric VMWare
+XenApp Citrix
+App-V MS
+
+MS-limited :
+Cameyo
+Installfree
+AppZero
+Spoon studio.
+
+Linux limited:
+RunZ .iso + launcher
+Novell ZENworks
+
+
+
+vSphere
+vCloud
+vCenter : create new VMs, orchestration, automation.
+vShield :
+vMotion : move based on load or failure
+ThinApp : App virtualization
+
+
+KVM : runs as a klm on top of kernel.
+kvm can then run virtual machines on top.
+Can still run apps outside of VM on top of kvm/linux kernel.
+In real type-1 hypervisors, can not run apps on top outside of a VM.
+So KVM is a type-2 
+
+
+Open source cloud :
+* Openstack - rackspace + Nasa nebula cloud
+* cloudstack - cloud.com bought by citrix, cloud.com engineered with some openstack code.
+  apache license.
+* open nebula
+* Eucalyptus : only compatible with EC2 and S3. Amazon specific.
+
+IaaS
+- Automation
+- Provisioning
+- configuration management
+- monitoring
+
+
+Openstack 
+=========
+massively scalable
+Free under apache 2.0
+Webex based on this.
+
+Provides IaaS
+
+Application provisioning and lifecycle management (LM)
+
+* Application catalog (Murano)
+A single point to publish cloud-ready apps to users.
+(lang/os/platform agnostic)
+Environment : Dev staging test 
+Deployment engine
+access control
+billing rules
+Murano user personas
+- app publisher - describes app definition, dependencies, templates
+- Cloud owner - billing/review
+- Cloud user
+Leverages heat and HOT templates.
+
+KeyStone: identity security
+Nova: compute
+Neutron: network
+Glance : catalog and repository for vm Images, a DB that can be queried for metadata of img
+Cinder: Block storage
+Swift : Object storage
+Heat : Orchestration for stack management (instances, images, apps, IPs, volumes, security etc) Stack provisioning, sw deployment, sw config.
+Horizon : Dashboard UI
+Ceilometer : metrics collection
+Solum : application LM. git->build/test->func test->deploy
+
+ 
+NIC teaming 802.3ad
+===================
+vNIC to pNIC n:m 
+increased bandwidth for VM
+load balancing
+increased security issue.
+improved HA
+
+Catbird virtualization software defined security
+promiscuous mode NIC an issue.
+
+SAN bottleneck
+--------------
+1 vm per core
+quad core standard now.
+intel 64 cores cpu
+
+8 blades per chassis
+2 cpu per blade
+6 cores per cpu
+40 chassis chained
+1 UCS = 3840 cores
+3 vm per core
+11,500 vm !!!!
+
+Now SAN bottle neck for IO operations, not cpu.
+
+
+UCS
+===
+Uses cross-bar tech within chassis to interconnect server blades.
+Fabric extenders connect 40 chassis to be a single logical chassis
+
+
+Libvirt
+=======
+Hypervisor agnostic VMM library to manage VM
+- general vm life cycle mgmt
+- mgmt shell interface virsh : shell 
+- cpu pinning
+- xml format to store/define VM config
+- snapshot 
+etc
+sudo virtsh start devd-ubun —console
+
+libguestfs and virt-tools
+
+live snapshot, live migration etc
+
+
+Sharding
+=========
+
+Sharding is just another name for "horizontal partitioning" of a database. 
+
+    Horizontal partitioning is a design principle whereby rows of a database table are held separately, rather than splitting by columns (as for normalization). Each partition forms part of a shard, which may in turn be located on a separate database server or physical location. The advantage is the number of rows in each table is reduced (this reduces index size, thus improves search performance). If the sharding is based on some real-world aspect of the data (e.g. European customers vs. American customers) then it may be possible to infer the appropriate shard membership easily and automatically, and query only the relevant shard.
+
+Firstly, each database server is identical, having the same table structure. Secondly, the data records are logically split up in a sharded database. Unlike the partitioned database, each complete data record exists in only one shard (unless there's mirroring for backup/redundancy) with all CRUD operations performed just in that database. You may not like the terminology used, but this does represent a different way of organizing a logical database into smaller parts.
+
+
+Data center traffic patterns:
+
+Server to server traffic is considered east-west, while client-server is known as north-south.  
+
+Traffic in the Data Center generally flows in three directions. 
+* “North-South” traffic is limited to traffic that enters and exits the DC. It is the sort of traffic that most DC security solutions focus on as it crosses the DC boundary. 
+* “East-West” traffic, on the other hand, flows between DC devices and applications and never leaves the DC. 
+* Finally, there is “Inter-DC” traffic, which flows between multiple DCs, and between DCs and the private/public cloud.
+
+Unlike in campus networks, the dominant volume of traffic in the DC traverses in an “East-West” direction  (76%), followed by “North-South” traffic  (17%), and finally, inter-DC traffic, which is currently comprises only at 7%, but is gradually growing. 
+In campus networks, traffic is primarily (90+%) “North-South”traffic.
+
+
+“North-South traffic”
+Traffic to/from external clients (outside of datacenter)
+Handled by front-end (web) servers, mid-tier application servers, and back-end databases
+Traffic patterns fairly stable, though diurnal variations
+
+
+“East-West traffic”
+Traffic within data-parallel computations within datacenter    (e.g. “Partition/Aggregate” programs like Map Reduce)
+Data in distributed storage, partitions transferred to compute nodes, results joined at aggregation points, stored back into FS
+Traffic may shift on small timescales (e.g., minutes)
+
+
+Modern applications such as “big data analytics" : the algorithms involved (map-reduce) entail tremendous amounts of machine to machine communication to assemble a response.  Something like Facebook has 1000x more bandwidth between machines (east-west) vs to the customer (north south), based on published data from FB engineering teams.
+
+Newer arch: from silo.ed (north) web-app-db (south) to server virtualization web 2.0 mashups etc
+Server virtualization : several VMs per physical server. VM-to-VM traffic.
+Multi-core, blade servers, high bandwidth 
+VM migration : bigger L2 domain.
+
+
+1. S-GW (Serving gateway)
+Lawful intercept
+dscp marking
+
+main : mobility anchor
+
+s5 or s8 connect
+
+2. P-Gateway
+
+Access Point name
+
+3. MME Mobility mgmt Entity
+s11
+Authentication
+Security
+
+
+4. HSS
+subscription
+
+
+5. PCRF
+
+Policy Charging Resource F

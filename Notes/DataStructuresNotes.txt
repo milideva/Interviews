@@ -1,0 +1,711 @@
+
+Basically for algorithm related questions :
+1. determine which data structures to use
+2. running time/space complexity
+
+Why big oh :
+1. remove dependencies of languages or platforms.
+2. Useful when the data set is very high, approaches infinity.
+If it's very small then simpler data structs make sense.
+
+* Arrays
++ fast, indexed
++ If you do not have insert and delete, choose array.
+Can do search, min/max, pred/succ, rank, etc very fast.
++ Random access very fast
++ Space efficiency - contains purely data. No wastage of space.
++ Great locality ( Excellent cache hit rate)
+
+- delete: hard to remove elements/recopy remaining elements.
+
+* Dynamic arrays. 
+
+Suppose we start with an array of size 1, and double its size
+from m to 2m each time we run out of space. This doubling process involves
+allocating a new contiguous array of size 2m, copying the contents of the old
+array to the lower half of the new one, and returning the space used by the
+old array.
+
+The apparent waste in this procedure involves the recopying of the old contents
+on each expansion. How many times might an element have to be recopied after a
+total of n insertions? Well, the first inserted element will have been recopied
+when the array expands after the first, second, fourth, eighth,
+. . . insertions. It will take log2 n doublings until the array gets to have n
+positions. However, most elements do not suffer much upheaval. Indeed, the (n/2
++ 1)st through nth elements will move at most once and might never have to move
+at all.  If half the elements move once, a quarter of the elements twice, and
+so on, the total number of movements M is given by 
+M = (Sigma : for i=1 lg n)  i · n/2^i <= 2n 
+=> amortization.
+
+Thus, each of the n elements move only two times on average, and the total work
+of managing the dynamic array is the same O(n) as it would have been if a
+single array of sufficient size had been allocated in advance!
+
+* Hash table
+insert, delete, lookup based on a key
+Can not find min/max/sort etc - use tree/list etc for those.
+great for fast index/search.
+also good to find duplicates.
++ Great cache hit since it's an array.
+
+Dictionary
+
+Application :
+- De-duplication
+(remove duplicates, find distinct visitors)
+- 2-sum problem 
+i/p unsorted array. o/p two numbers that add up to given sum.
+
+1. Naive : O(n*n)
+2. sort first nlog(n), then walk each one, 
+look for sum-current num (search) nlog(n).
+3. Insert all in H. then for each x in A, lookup sum-x in H
+- Symbol tables in compiler : already defined or not.
+
+
+* list
+dynamic sizing easy 
+(use for insert/delete, otherwise, you may want to use array)
+sorted (ordered)
+variation : stack/fifo
+
+* Skip list
+maintain a skip list of size square root of n
+search through linked list much smaller now.
+with O(√n) extra space, we are able to reduce the time complexity to O(√n).
+
+* trees
+
+- Binary trees : only 2 children (binary tree, BST, AVL, RB tree)
+
+- B-tree (#children > 2)
+
+- Min/Max Heap (highest (or lowest) is always stored at the root). not a sorted
+ structure. (partially ordered). no particular relationship among nodes on any
+ given level, even among the siblings.
+
+- Trie
+
+- Radix tree is a space optimized trie.
+for eg roman and romantic share a node "roman"
+
+- Patricia tree is a type of trie
+issue with trie is for sparsely populated trie key, most internal nodes have only one child.
+(consumes high space). 
+Uses position in the node (say 5 or 2) to decide branching
+http://www.allisons.org/ll/AlgDS/Tree/PATRICIA/
+Practical Algorithm to Retrieve Information Coded in Alphanumeric
+
+
+* Binary tree 
+Every node has upto 2 children : a left and right child (no
+particular relationship among left and right)
+e.g. of Binary tree
+  1
+ / \
+2   3
+
+- Binary tree versus BST :
+BST : Binary search tree: Used for searching. Has strict ordering.
+All left subtree must be < parent
+All right subtree must be > parent
+No duplicates
+e.g. of BST 
+  2
+ / \
+1   3
+
+The binary tree can easily degenerate into its worst-case form, which is a
+linked list, since simple binary trees are not balanced.
+
+Applications of Binary tree : 
+
+https://stackoverflow.com/questions/2130416/what-are-the-applications-of-binary-trees
+
+- Huffman encoding (variable-length code table for encoding a source symbol
+based on the estimated probability or frequency of occurrence (weight) for each
+possible value of the source symbol.  more common symbols are generally
+represented using fewer bits than less common symbols.
+
+- Syntax tree (or Abstract syntax tree in Compilers)
+or “parse tree” or “expression tree” for parsing a programming language
+
+For example, the expression (1+3)*2 can be expressed as:
+
+    *
+   / \
+  +   2
+ / \
+1   3
+
+- The organization of Morse code is a binary tree.
+
+This use of a binary tree is akin to reverse polish notation in a sense, in
+that the order in which operations are performed is identical. Also one thing
+to note is that it doesn't necessarily have to be a binary tree, it's just that
+most commonly used operators are binary.
+
+Traversals :
+
+— depth-first traversal
+
+There are 3 types of depth-first traversals, :
+
+* PreOrder traversal - process current first and then left and then right;
+Application (when to use): 
+1. Duplicating a tree
+2. polish notation (prefix) example + 3 4 
+
+preorder(node)
+  if node == null then return
+  visit(node)
+  preorder(node.left) 
+  preorder(node.right)
+
+
+iterativePreorder(node)
+  parentStack = empty stack
+  while (not parentStack.isEmpty() or node ? null)
+    if (node ? null) 
+      visit(node)
+      if (node.right ? null) parentStack.push(node.right) 
+      node = node.left   
+    else     
+      node = parentStack.pop()
+
+* InOrder traversal - visit left child, then current and then right child;
+Application : 
+It gives the values in a sorted order.
+1. Finding nth element in a given order. like, find 3rd smallest int in a BST.
+2. Comparator for BST
+
+inorder(node)
+  if node == null then return
+  inorder(node.left)
+  visit(node)
+  inorder(node.right)
+
+iterativeInorder(node)
+  parentStack = empty stack
+  while (not parentStack.isEmpty() or node ? null)
+    if (node ? null)
+      parentStack.push(node)
+      node = node.left
+    else
+      node = parentStack.pop()
+      visit(node)
+      node = node.right
+
+* PostOrder traversal - visit left child, then right child and then current;
+Application : 
+1. freeing (or deleting) nodes or a tree
+2. Reverse Polish notation (or postfix) 3 4 +
+
+postorder(node)
+  if node == null then return
+  postorder(node.left)
+  postorder(node.right)
+  visit(node)
+
+iterativePostorder(node)
+  parentStack = empty stack  
+  lastnodevisited = null 
+  while (not parentStack.isEmpty() or node ? null)
+    if (node ? null)
+      parentStack.push(node)
+      node = node.left
+    else
+      peeknode = parentStack.peek()
+      if (peeknode.right ? null and lastnodevisited ? peeknode.right) 
+        /* if right child exists AND traversing node from left child, 
+        move right */
+        node = peeknode.right
+      else
+        visit(peeknode)
+        lastnodevisited = parentStack.pop() 
+
+— breadth-first traversal
+
+There is only one kind of breadth-first traversal : the level order traversal. 
+BFS visits nodes by levels from top to bottom and from left to right.
+
+levelorder(root)
+  q = empty queue
+  q.enqueue(root)
+  while not q.empty do
+    node := q.dequeue()
+    visit(node)
+    if node.left not null then
+      q.enqueue(node.left)
+    if node.right not null then
+      q.enqueue(node.right)
+
+
+BFS(G, start_v, end_v)     
+    visited[v] = true
+    Q.enqueue(start_v)
+    while Q is not empty do
+        v := Q.dequeue()
+        if v == end_v then
+            return true
+        for all edges from v to w in G.adjacentEdges(v) :
+            if visited[w] == false :
+                 visited[w] = true
+                 Q.enqueue(w)
+
+* Binary search tree (it's NOT Balanced Search Tree)
+
+BST is a binary tree with following properties :
+- the keys in the left subtree are less then the key in its parent node P, 
+in short L < P;
+- the keys in the right subtree are greater the key in its parent node, 
+in short P < R;
+- duplicate keys are not allowed.
+
+A "binary search tree" (BST) or "ordered binary tree" is a type of binary tree
+where the nodes are arranged in order: for each node, all elements in its left
+subtree are less-or-equal to the node (<=), and all the elements in its right
+subtree are greater than the node (>).
+
+Disadv of "binary tree" (and BST as well):
+shape of a binary tree depends on order of insertions.
+A BST although ordered, can also be unbalanced depending on what is the first
+(root) node value and subsequent insertion values
+=> They both can degenerate into O(n)!!! Height can go from log(n) to n.
+
+This is exactly why some form of balanced trees are needed (for example AVL
+trees/ RB tree etc).
+NOTE : BST may NOT be a balanced tree.
+
+Application of BST :
+Search for free memory blocks in set of fixed memory ranges.
+
+Summary :
+Binary tree - no order, no balance
+BST - ordered, no balance
+AVL tree - ordered, balanced
+
+InOrder traversal - 
+	InOrder(left child)
+	visit(node)
+	InOrder(right child
+
+The problem with this algorithm is that, because of its recursion, it uses
+stack space proportional to the height of a tree. If the tree is fairly
+balanced, this amounts to O(log n) space for a tree containing n elements. In
+the worst case, when the tree takes the form of a chain, the height of the tree
+is n so the algorithm takes O(n) space.
+
+    Single Threaded: each node is threaded towards either the in-order
+    predecessor or successor (left or right).
+
+    Double threaded: each node is threaded towards both the in-order
+    predecessor and successor (left and right).
+
+* AVL tree:
+
+In an AVL tree, the heights of the two child subtrees of any node differ by at
+most one; if at any time they differ by more than one, rebalancing is done to
+restore this property. Lookup, insertion, and deletion all take O(log n) time
+in both the average and worst cases
+
+* AVL tree versus RB tree
+
+- AVL trees maintain a more rigid balance than red-black trees. The path from
+  the root to the deepest leaf in an AVL tree is at most ~1.44 lg(n+2), while
+  in red black trees it's at most ~2 lg (n+1).
+
+As a result, lookup in an AVL tree is typically faster, but this comes at the
+cost of slower insertion and deletion due to more rotation operations. So use
+an AVL tree if you expect the number of lookups to dominate the number of
+updates to the tree.
+
+- RB tree constraint is that the path from the root to the furthest leaf is no
+  more than twice as long as the path from the root to the nearest leaf. The
+  result is that the tree is roughly height-balanced. Not rigidly balanced like
+  AVL. So less number of rotations for insertion.
+
+AVL tree : faster for lookups (since rigid)
+https://stackoverflow.com/questions/16257761/difference-between-red-black-trees-and-avl-trees
+
+Used when not much insert/delete
+
+RB-tree : faster for insertions (less rigid, less rotations)
+
+RB-Tree applications : for frequent insertions/deletion 
+- Fax VoIP sessions
+- http client sessions
+- OSPF Ack cache
+- H.323 call 
+
+* B-tree versus B+ tree
+http://stackoverflow.com/questions/870218/b-trees-b-trees-difference
+In a b-tree you can store both keys and data in the internal and leaf nodes,
+but in a b+ tree you have to store the data in the leaf nodes only.
+
+Advantages of B+ trees:
+
+Because B+ trees don't have data associated with interior nodes, more keys can
+fit on a page of memory. Therefore, it will require fewer cache misses in order
+to access data that is on a leaf node.
+
+The leaf nodes of B+ trees are linked, so doing a full scan of all objects in a
+tree requires just one linear pass through all the leaf nodes. A B tree, on the
+other hand, would require a traversal of every level in the tree. This
+full-tree traversal will likely involve more cache misses than the linear
+traversal of B+ leaves.
+
+Advantage of B trees:
+
+Because B trees contain data with each key, frequently accessed nodes can lie
+closer to the root, and therefore can be accessed more quickly.
+
+
+* Binary heap, Min-heap/Max-heap
+- Shape property, complete binary tree, except the last level.
+- All nodes are either >= or <= than all of its children.
+
+Heaps are commonly implemented with an array. Any binary tree can be stored in
+an array, but because a binary heap is always a complete binary tree, it can be
+stored compactly. No space is required for pointers; instead, the parent and
+children of each node can be found by arithmetic on array indices.
+
+Search O(n) // because there is no ordering of siblings.
+Insert/delete O(log n)
+
+Max heap : key(node) >= key(both children) at each level
+Min heap : key(node) <= key(both children) at each level
+
+insert in max heap (always inserts at the end or last leaf and then rebalance)
+Step 1 − Create a new node at the end of heap.
+Step 2 − Assign new value to the node.
+Step 3 − Compare the value of this child node with its parent.
+Step 4 − If value of parent is less than child, then swap them.
+Step 5 − Repeat step 3 & 4 until Heap property holds.
+
+delete in max heap (always deletes root and then rebalance)
+Step 1 − Remove root node.
+Step 2 − Move the last element of last level to root.
+Step 3 − Compare the value of new root parent with both the children
+Step 4 − If heap property of parent holds, we are done. 
+Else If value of parent is less than child, then swap them.
+Step 5 − Repeat step 3 & 4 until Heap property holds.
+
+* hash tables
+key-value pairs : no ordering
+O(1) search
+properties of a hash func: 
+deterministic, uniform distribution,  variable range, crypto,
+continuity (similar neighbors, hash almost same).
+cuckoo hashing for collisions (two hash functions).
+L2 mac tables use hash table.
+
+* bloom filter : http://billmill.org/bloomfilter-tutorial/
+
+new password check in dictionary - reject if edit distance of 1
+
+graphs
+can represent a network
+
+2. determine the algorithm
+- search
+
+* sort
+Divide and Conquer
+- 1. divide in subproblem 
+  2. solve subproblems recursively 
+  3. merge
+example Merge sort
+why is merge sort nlog n ?
+recursively sort left half (every time this becomes half-> log n)
+recursively sort right half
+merge two sorted arrays (4n+2)
+
+merge :
+C = o/p array length n
+A= 1st sorted array n/2
+B = 2nd sorted array n/2
+i = j = 1					cost 2
+for k = 1 to n					cost n
+    if A[i] < B[j] : C[k] = A[i]; i++		cost 3n
+    else C[k] = B[j]; j++
+
+total cost 4n+2
+
+at each level i=0,1,2,...,logn, there are 2^i subproblems. each size n/(2^i)
+total cost at level i:  2^i * ( n/(2^i) ) = n
+#levels : log n
+total cost of sort : nlogn
+
+total cost of merge sort : cost of merge(=n)  + cost of sort(= nlogn)
+
+* Counting sort
+The lower bound n log n does not apply to algorithms that do not compare array
+elements but use some other information. 
+
+Counting sort sorts an array in O(n) time assuming that every element in the
+array is an integer between 0...c and c=O(n). The algorithm creates a
+bookkeeping array, whose indices are elements of the original array. 
+The algorithm iterates through the original array and calculates how many times
+each element appears in the array.
+
+
+
+* Topological sort
+Maven build system specifies dependencies in a pom file.
+Course work has pre-requisites.
+Process Scheduling - A process can be scheduled only after dependent processes are done. 
+Instruction scheduling
+Packaging tools
+
+dfs (u, visited[], stack) :
+    visited[u] = true
+    for all v = adj[u] :
+        if (visited[v] == false) :
+            dfs(v, visited, stack)
+    // put in stack only when all edges are done
+    // thus stack contains the topological sort
+    stack.push(u)
+
+topological_sort () :
+    // set visited false for all vertices
+    // start from any node
+    for all vertices u = vertex
+        if visited[u] == false :
+            dfs(u, visited, stack)
+    // Stack contains topological sort
+    while (stack not empty) :
+        print stack.pop()
+
+* Counting inversion 
+Input : array with numbers in arbitrary order
+Output: #entries in out of order : = #pairs (i,j) i < j && A[i] > A[j]
+
+Application : netflix movies. rank by person A and person B
+how (dis)similar personA and person B ranking is.
+depending on that we can sell the products (show relevant ad etc)
+=> collaborative filtering
+
+#inversions
+sorted : 0
+reverse order : n(n-1)/2
+count_inversion (A, n) :
+     if n=1 return 0
+     x = count_inversion(left half of A, n/2)
+     y = count_inversion(right half of A, n/2)
+     z = count_SPLIT_inversion(A, n)
+
+     return x+y+z
+
+While merging two sorted subarrays, when an elem of 2nd right subarray
+gets copied to o/p array, #split_inversions = #elems remaining in left array.
+since all those elements in left array > this elem in right array.
+
+* Randomized algorithms
+Use randomness in the logic.
+Two types :
+1. Las Vegas Algorithms : random i/p random amt of time but correct o/p
+2. Monte Carlo Algorithms : random i/p deterministic amt of time chance 
+   of producing an incorrect o/p
+
+example of randomization in algorithms :
+quick sort, random pivot element
+Also bloom filters.
+
+Probabilistic data structures :
+
+* Bloom filters
+Similar to hash table : fast insert, fast lookup
++ Space efficient than hash table
++ If an object was not found, definitely not inserted.
+- can not store the associated object
+- no deletions
+- small false positives possible.
+
+Application :
+spell checkers in dictionary.
+forbidden passwords
+routers (space constraint, speed) blocked IP addr
+blacklisting URLs
+
+Array of n bits
+k hash functions
+
+Greedy algorithms
+- sequence of decisions myopic/shortsighted
+example Dijkstra’s shortest path
+
+easy to come up with one (heuristic)
+hard to establish correctness - sometimes incorrect also (Dijkstra’s assumes no
+negative edges, with -ve, it fails).
+
+
+* Graphs :
+G(V,E) n=|V| and m = |E|
+adjacency matrix : space O(n*n)
+adjacency list : space O(n+m)
+
+* DFS and BFS
+
+stack for DFS.
+queue for BFS
+
+BFS (used for shortest path)
+- uses queue
+- use when breadth is more and not much depth
+- when you want to reach a node by traversing as few edges (or moves) as possible.
+=> to find shortest path in unweighted graph.
+
+BFS is better for problems related to finding the shortest paths or somewhat
+related problems. Because here you go from one node to all node that are
+adjacent to it and hence you effectively move from path length one to path
+length two and so on.  
+
+* When to use BFS ?
+- shortest path, maximum flow
+- linkedin kind of search, person A to  person G connected?
+- for finding the neighbour nodes in peer to peer networks like BitTorrent, GPS systems to find nearby locations, 
+- social networking sites to find people in the specified distance and things like that.
+
+Time complexity O(|V|+|E|)
+
+DFS - recursive - thus uses stack.
+
+Connectivity
+Detecting cycles
+Topological Sorting
+Maze solving
+
+- DFS is more space-efficient than BFS, but may go to unnecessary depths.
+
+If you had an infinite sized graph then DFS would never find an element if it
+exists outside of the first path it chooses. It would essentially keep going
+down the first path and would never find the element. The BFS would eventually
+find the element
+
+DFS (graph G, start vertex s)
+	- mark S explored
+	- for every edge (s, v)
+		if (v not explored)
+			DFS(G, v)
+
+Running time linear because we do not do same work again (since we track “explored”).
+O(m+n) m = |V|, n = |E|
+
+When to use DFS?
+- In games, like Chess, tic-tac-toe when you are deciding what move to make,
+  you can mentally imagine a move, then your opponent’s possible responses,
+then your responses, and so on. You can decide what to do by seeing which move
+leads to the best outcome.
+  Only some paths in a game tree lead to your win. Some lead to a win by your
+opponent, when you reach such an ending, you must back up, or backtrack, to a
+previous node and try a different path. 
+  In this way you explore the tree until you find a path with a successful
+conclusion. Then you make the first move along this path.
+
+
+* Topological sort
+https://en.wikipedia.org/wiki/Topological_sorting
+reverse post-order (not saame as pre-order)
+
+Applications:
+Scheduling a sequence of jobs or tasks based on their dependencies
+Instruction scheduling
+Determining the order of compilation tasks to perform in makefiles,
+Resolving symbol dependencies in linkers
+
+For every edge (u,v) f(u) < f(v)
+As long as there is no cycle, we can compute topological order in O(m+n) using DFS.
+Edges are one directional if u -> v, then no v -> u.
+
+Draw edges left to right (forward) and connect all vertices.
+No edge should go right to left (backwards) => topological order.
+Every DAG has one sink vertex.
+
+Example : pre-requisites of courses in university.
+
+* Heap: 2 operations
+Insert O(log n)
+Extract-min (or extract-max) 
+Heapify O(n)
+Delete O(log n)
+
+
+Selection Sort :
+1 to n, pick the smallest,
+2 to n, pick smallest 
+…
+quadratic
+
+Heapsort :
+insert in heap  - 
+from last element of “full binary tree” to bubble-up with swap
+extract-min pick smaller of child as root and bubble-down.
+
+2nlog(n)
+
+* Priority queue
+Synonym for heap
+
+Application :
+Median maintenance : input - 1 million numbers. Find median.
+
+Solution : Keep two heaps.
+
+lowHeap smallest half -> maxHeap
+highHeap biggest half -> minHeap
+odd number can reside in any one.
+
+example 
+lowHeap holds small 10
+highHeap holds big 10
+
+21st element comes in, if smaller than rootlowHeap go to lowHeap, if bigger
+than roothighHeap, then go to highHeap. if it’s between rootlowHeap and
+roothighHeap, then choose anyone.  let’s say lowHeap now holds 11.  now 22nd
+element comes in, let’s say it’s less than max in LowHeap.  so we insert in
+lowHeap. 12 in lowHeap, 10 in highHeap.  extract from lowHeap and insert in
+highHeap.
+
+
+Quicksort
+pivot element needs to be chosen
+rearrange such that left of pivot : less than pivot.
+right of pivot : > pivot
+note that left or right partitions, not sorted yet.
+
+Dynamic programming
+
+- break down into overlapping subproblems. 
+- solve each subproblem only once.
+- compute once and store result (memoization)
+
+
+Graphs
+G(V,E) n=|V| and m = |E|
+undirected : networks, phone network
+directed : web (head points to a link), 
+road (1-way, highway, with different #lanes each dir, uphill/downhill)
+
+If we add distance X to all edges of the graph, will shortest path still be
+same?  
+
+- It may change (#edges times X,#edges can be different for diff paths).
+
+If we multiple all edges of the graph by X, will shortest path be same?
+- Yes.
+
+* Edit distance : how dissimilar two strings are. 
+Application : Spelling correction.
+
+Levenshtein distance : 
+
+The edit distance d(a, b) is the minimum-weight series of edit operations that
+transforms a into b. Allowed operations : insertion, deletion, substitution.
+
+
+Longest common subsequence (LCS) distance is edit distance with insertion and
+deletion as the only two edit operations, both at unit cost.
+
+

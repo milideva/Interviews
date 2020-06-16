@@ -1,0 +1,36 @@
+Read up on timer wheels first.
+
+https://blog.acolyer.org/2015/11/23/hashed-and-hierarchical-timing-wheels/
+
+also,
+
+https://lwn.net/Articles/156329/
+
+but the current Linux kernel uses a third algorithm: the timer wheels.  
+This is a variant of the simple 'array of future jiffies' model, but 
+instead of representing every future jiffy in a bucket, it categorizes 
+future jiffies into a 'logarithmic array of arrays' where the arrays 
+represent buckets with larger and larger 'scope/granularity': the 
+further a jiffy is in the future, the more jiffies belong to the same 
+single bucket.
+
+In practice it's done by categorizing all future jiffies into 5 groups:
+
+1..256, 257..16384, 16385..1048576, 1048577..67108864, 67108865..4294967295
+
+the first category consists of 256 buckets (each bucket representing a 
+single jiffy), the second category consists of 64 buckets equally 
+divided (each bucket represents 256 subsequent jiffies), the third 
+category consists of 64 buckets too (each bucket representing 256*64 == 
+16384 jiffies), the fourth category consists of 64 buckets too (each 
+bucket representing 256*64*64 == 1048576 jiffies), the fifth category 
+consists of 64 buckets too (each bucket representing 67108864 jiffies).
+
+the buckets of each category are put into a per-category fixed-size 
+array, called the "timer vector" - named tv1, tv2, tv3, tv4 and tv5.
+
+as you can see, we only used 256+64+64+64+64 == 512 buckets, but we've 
+managed to map all 4294967295 future jiffies to these buckets! In other 
+words: we've split up the 32 bits of 'timeout' value into 8+6+6+6+6 
+bits.
+

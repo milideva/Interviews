@@ -1,0 +1,333 @@
+
+Hadoop
+======
+
+Moore’s law.
+
+Distributed system
+* Synchronization
+* Bandwidth constraint
+* Dealing with partial failures. Retransmit/resume/continue on no ack.
+  2 generals problem
+* Data on SAN or NAS. At compute time,data is copied to compute nodes.
+  Fine for small amounts of data.
+* Data generated faster than ever. Rate is increasing, not just volume.
+* Getting data to cpu becomes the bottleneck. 
+  Moving 100G data to CPU @ 75MB/sec disk data transfer rate  = 22min.
+
+Requirements :
+———————
+Partial failure support
+- Expect failure.
+
+Data recoverability
+-workload should be taken over by functioning units. should not result in loss of data.
+
+After recovery, automatic rejoin the system.
+
+Consistency : Outcome should be same (with or without failure).
+
+Scalability.
+
+Core hadoop concepts
+——————————————————————
+* Applications written in hight level code, 
+  do not worry about network programming, temporal dependencies etc
+* Nodes talk to each other as little as possible.
+- ‘shared nothing’ architecture
+* Data is spread among machines in advance.
+
+* Data is typically processed where it is local
+ 
+Durability - no loss of data ever.
+Fault tolerance - access to data 
+
+Data split into blocks (64MB or 128MB)
+map tasks work on small amount of data (1 block or so)
+master program allocates work to nodes such that map task will work on local block
+
+
+Sources of data
+———————
+
+Science : medical, genome, weather, satellite etc
+Industry : financial, pharma, manufacturing,insurance, online, energy, retail etc
+Legacy : sales, customers, products, accounting
+System data : log files, network messages, web analytics, intrusion detection, etc
+
+Challenges
+—————
+* volume
+* different formats: xml, csv, edi, sql, json, binary, mp3 etc
+* unstructured
+
+Hadoop-able problems :
+Volume
+* Nature of data : complex, multiple sourced, lot of data.
+
+Velocity
+* injection rate is high
+
+Variety
+
+Nature of analysis : batch, parallel, spread data over clusters, take compute to data.
+
+
+8 categories of analysis with Hadoop
+* Text mining
+* Index building
+* Graph creation and analysis
+* Pattern recognition
+* Collaboratibe filtering
+* Prediction models
+* Sentiment analysis
+* Risk assessment
+
+
+Collaborative filtering : collect taste info from users.
+2007 netflix challenge : improve recommendation by 10%
+took a long time to improve algorithm to predict what movie user likes
+from delivering DVDs to movie streaming.
+(how long is movie watched, what was searched for etc)
+More data beats better algorithms.
+
+Open Time Series DataBase OpenTSDB
+
+orbitz before hadoop
+* keeping only transactional data : Enterprise data warehouse (EDW).
+* non-transactional data in Hadoop: throwing away clicks, searches, abandoned carts etc
+Hadoop won’t replace EDW.
+
+netflix : post hadoop : ingesting 1TB data per day.
+
+Hadoop hardware
+===============
+small cluster 4-6 nodes. experimenting. Hadoop can be run on single node.
+
+example
+1TB data per week. 
+replicated 3 times = 3TB. hadoop intermediate data overhead : 30% approx = 4TB data.
+
+data growth possible, 1.5TB per week a month from now.
+
+Master node (runs job tracker, name node or secondary name node daemon)
+or 
+Slave/worker node (runs Datanode, track tracker).
+
+Slave nodes hardware :
+======================
+expected to fail. 
+- NameNode will rereplicate blocks on failed node.
+- JobTracker will re-assign tasks to other nodes.
+
+Hard drive 4 * 1 TB or 2TB (JBOD)
+CPU 2 * quad core
+RAM 24-32GB
+NIC 1G/sec
+
+Cluster with more nodes performs better than cluster with less with  fewer but faster nodes. Save the money for more nodes than faster.
+
+Bottle neck:  not cpu bound. disk or n/w IO bound
+
+More #disks better (rather than more total capacity).
+8 X 1.5TB drives better than 6 X 2TB drives.
+7200 rpm SATA is fine (no need for 15000rpm)
+
+12 disks per node.
+24TB per data node.
+When node fails, hadoop will rereplicate data (transfer) 96TB data.
+
+RAID is not recommended.
+HDFS provides built-in redundancy by replicating blocks across multiple nodes.
+RAID striping (RAID 0) is slower than JBOD.
+RAID0 read and write limited by the speed of slowest disk.
+
+Virtualization is not recommended (performance).
+Hadoop runs optimally when it can use all the disks at once.
+
+Blade servers not recommended.
+failure of blade chassis - many nodes unavailable.
+individual blades have limited HD capacity (defeats the purpose of bringing compute to data)
+nw connection between chassis and ToR - bottleneck
+
+Master Nodes:
+=============
+Single point of failure. Spend more $$ on master nodes.
+Meta data extremely important.
+
+Carrier class (slave commodity)
+Dual power supply
+Dual eth cards (bonded to provide failover)
+RAIDed hard drive
+RAM at least 32GB.
+
+Common CentOS and RHEL
+CentOS : geared towards servers.
+RHEL : enterprise.
+
+fedora core : for workstations.
+ubuntu : for workstations mostly but also has server version.
+SuSe : Europe
+
+mount with noatime (do not update atime), reduce swapping (reduce virtual memory).
+ntp important for HBase, log/debugs
+Hadoop in JVM, JDK 1.6 required. 
+
+HDFS (written in Java) :storing data.
+* Each block is 64MB or 128MB.
+A block is replicated 3 times, replica on different nodes on different rack, called DataNodes => reliability and availability. Now3 tasks can operate on that data independently.
+
+* logical file system on top of native FS such as ext3/4 orXFS etc
+
+* Write once. No random writes and no random reads.
+read 128MB one time into memory.
+
+* Master node called NameNode keeps track of which blocks make up a file,and where those blocks are located. Called MetaData.
+Does not hold data. Actual Data is on DataNode.
+
+* Only for streaming reads of large data (not for random reads).
+
+NameNode must be on reliable hw. Holds all metadata in RAM. records changes on disk.
+Secondary Namenode is just to offload housekeeping, NOT a backup name node.
+
+Active/Standby NameNode : HA.
+
+Apps Rd/Wr HDFS files via Java APIs.
+Files created in local FS need to be moved into HDFS and vice-versa.
+Reading a file : contact NameNode, who knows where the block is,
+then get it from DataNode. Thus NameNode is like DNS, only for resolution.
+
+hadoop fs -ls
+hadoop fs -cat 
+hadoop fs -put 
+hadoop fs -mkdir
+
+MapReduce 
+distribute task across multiple nodes.
+1.Map
+Converts data into (key,value) pairs
+
+Shuffle and sort : intermediate stage.
+Grouping and sorting.
+
+2.Reduce
+
+
+MapReduce programs mostly in Java but can be written in any language. using Hadoop Streaming.
+
+JobTracker resides on Master Node.
+Client submits MapReduce job to JobTracker.
+JobTracker “assigns” Map and reduce tasks to nodes in cluster.
+TaskTracker : “executes” map and reduce tasks on datanodes.
+Each node runs TaskTracker which instantiates Map or Reduce and reports progress back to JobTracker.
+
+Job = full program, complete exec of mapper+reducer.
+task = execution of single mapper or reducer over slice of data.
+task attempt = instance of attempt to execute a task
+speculative execution : slow running task, noticed by hadoop. starts another task.
+
+Mapper : input key1, value1 —> output key2, value2
+let map(k, v) = emit(v.length(v), v)
+(foo, bar) -> (3, bar)
+(baz, other) -> (5, other)
+(foo, abracadabra) -> (11, abracadabra)
+
+After map phase is over, all intermediate values for a given intermediate key are combined in a list.
+This list is given to a reducer.
+All values for a given key are given to same reducer.
+There may be more than one reducer.
+Intermediate keys and their value lists are passed to Reducer in sorted key order.
+This is shuffle and sort.
+
+Reducer outputs zero or more final key<->value pairs.
+These are written to HDFS
+
+let reduce(k, val_list) :
+	sum = 0
+	for each i in val_list:
+		sum += i	
+	emit(k, sum)
+
+Map tasks : Hadoop tries for data locality. Map task works on local data.
+No such concept for reducers.
+all mappers send data to all reducers.
+
+reduce method can not start until all mappers are done.
+But hadoop starts transferring the data from mappers that are finished.
+slow mapper can be a bottleneck.
+(machine with hd failure/nw issue/cpu slow etc).
+Speculative execution in case of slowness.
+
+Developer runs map/reduce on pseudo distributed mode (single machine cluster).
+Then on developer cluster.
+Then submit to production cluster.
+
+5 daemons
+NameNode : holds metadata for HDFS. master node.
+Secondary NameNode: performs housekeeping. not a backup and not a standby.
+DataNode : stores actual hdfs data.
+Jobtracker : assigns map reduce jobs. distributes.
+taskTracker : instantiate and monitor individual map reduce tasks
+
+No node on a real cluster runs all 5 daemons.
+
+Master Nodes run NameNode, Secondary NameNode, JobTracker daemons.
+Only one of these daemons runs on the cluster. 
+Could be on same machine or 3 machines.
+
+A slave Nodes runs both DataNode and TaskTracker daemons.
+N number of slave Nodes.
+
+Client => XML config file + .jar file => submits to JobTracker.
+fires up dataNode/tasktracker.
+
+Intermediate data is held on task tracker’s local disk.
+When Reducers start, this is distributed over network to reducers.
+Reducers write to HDFS.
+After job is completed, intermediate data is deleted.
+
+Hive abstraction on top of MapReduce written by Facebook.
+No need to write Java.
+similar to SQL. 
+
+Pig another abstraction. Developed at Yahoo.
+data flow scripting language : PagLatin. Iterative language.
+
+Impala : open src by Cloudera. Does not use MapReduce.
+real-time queries. Faster than Hive.
+
+Flume
+- Import data into HDFS as it is generated.
+- instead of batch processing the data later.
+e.g. log files from web server : streaming data into hadoop cluster.
+
+Sqoop
+import data from tables from Relational DB into HDFS.
+- map-only map reduce
+- can also ‘go the other way’, HDFS -> database tables.
+
+Oozie
+create workflow of MapReduce.
+Multiple jobs (filter data, transformation, aggregation).
+Each one is map reduce. Sequencing between them, dependancies.
+
+HBase
+- Hadoop database.
+- NoSQL datastore
+- scale tera/peta bytes
+- high write throughput. modeled after bigtable by google.
+- copes well with sparse data.
+- constrained access model. only one column indexed.
+
+		RDBMS 		HBase
+		Row		Column oriented
+Query		SQL		Get/put/scan
+Index		On arg col	row-key only
+security	auth built in	kerberos
+throughput	1000queries/sec	millions/sec  **
+max data size	TB		Peta Bytes    **
+
+** if you are not using HBase for last two items, may be ok to use RDBMS
+
+To be continued …
+

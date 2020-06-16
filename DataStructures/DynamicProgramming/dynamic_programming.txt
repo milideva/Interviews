@@ -1,0 +1,10 @@
+An important property of a problem that is being solved through dynamic
+programming is that it should have overlapping subproblems. This is what
+distinguishes DP from divide and conquer in which storing the simpler values
+isn't necessary.
+
+The dynamic programming algorithm is based on a recursive function that goes
+through all possibilities how to solve, like a brute force algorithm.
+However, the dynamic programming algorithm is efficient because it uses
+memoization and calculates the answer to each subproblem only once.
+

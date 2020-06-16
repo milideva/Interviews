@@ -1,0 +1,84 @@
+1. System Design
+2. Programming
+3. Distributed systems
+4. OS, virtualization
+5. Networking
+6. Resume
+
+* Data structures
+array
+string
+linked list (single, double)
+stack/queue
+binary tree
+binary search tree (BST)
+Balanced trees (AVL/RB tree etc)
+Priority queue
+Heap (min/max)
+Hash Table
+trie/prefix trees / patricia tree
+Graphs
+m-ary tree
+B tree
+B+ tree
+quad tree
+Splay tree
+
+* Algorithms
+BFS
+DFS
+Sorting
+
+* Leetcode
+
+* Popular
+LRU/LFU cache
+producer consumer multi threaded (using semaphores, using mutex)
+timer implementation (do timer wheels)
+bloom filter
+implement rw locks 
+implement a memory allocator
+
+* Computational complexity
+P, NP complete, NP hard
+
+* Databases
+ACID
+SQL, NoSQL
+
+* Distributed Systems
+Consistent Hashing
+Sharding
+CAP theorem
+FLP impossibility
+Consensus
+Promise theory
+
+Softwares commonly used :
+Cassandra
+ZooKeeper
+PaxOS
+RAFT
+Redis
+memcached
+
+* Networking
+Microsegmentation
+SD WAN
+SD Access
+Edge computing
+DPDK (User space networking)
+
+* Operating systems
+Unikernels
+Docker internals
+iptables
+veth/tap/tun
+XDP and eBPF
+
+* Latest
+Microservices
+AWS networking
+Kubernetes
+Service Mesh / Sidecar
+

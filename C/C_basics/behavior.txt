@@ -1,0 +1,35 @@
+
+What is the difference between undefined, unspecified, and
+implementation-defined behavior in C?
+
+3.4.1 1 implementation-defined behavior unspecified behavior where each
+    implementation documents how the choice is made
+
+2 EXAMPLE An example of implementation-defined behavior is the propagation of
+the high-order bit when a signed integer is shifted right.
+
+The language says that we have data-types. The compiler vendors specify what
+sizes shall they use, and provide a documentation of what they did.
+
+sizeof int
+
+3.4.3 1 undefined behavior behavior, upon use of a nonportable or erroneous
+    program construct or of erroneous data, for which this International
+    Standard imposes no requirements
+
+2 NOTE Possible undefined behavior ranges from ignoring the situation
+completely with unpredictable results, to behaving during translation or
+program execution in a documented manner characteristic of the environment
+(with or without the issuance of a diagnostic message), to terminating a
+translation or execution (with the issuance of a diagnostic message).
+
+3 EXAMPLE An example of undefined behavior is the behavior on integer overflow.
+
+3.4.4 1 unspecified behavior use of an unspecified value, or other behavior
+    where this International Standard provides two or more possibilities and
+    imposes no further requirements on which is chosen in any instance
+
+2 EXAMPLE An example of unspecified behavior is the order in which the
+arguments to a function are evaluated.
+
+function(fun1(), fun2()); // which one is executed first?

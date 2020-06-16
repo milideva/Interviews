@@ -1,0 +1,22 @@
+A thread-safe function can be called simultaneously from multiple threads, even
+when the invocations use shared data, because all references to the shared data
+are serialized.  Use mutex or such to protect critical section.
+
+
+A reentrant function can also be called simultaneously from multiple threads,
+but only if each invocation uses its own data.  
+1. No static
+2. no global 
+3. no self modifying code.  
+4. does not call a non-reentrant functions.
+
+Function could be interrupted at any place in its code and same function can be
+called again from say interrupt or singal handler or from same thread
+(recursion). This is a stronger concept than thread safety.
+
+http://blogs.msdn.com/b/oldnewthing/archive/2004/06/29/168719.aspx
+
+A function may also be re-entered on the same thread as a result of recursion -
+either directly or indirectly (ie, function a() calls function b() which calls
+function c() which calls function a() ).
+

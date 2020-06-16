@@ -1,0 +1,108 @@
+*Simple Interview questions for a software engineer candidate *
+
+1. 
+int a,b,x,y, result;
+
+a= 1; b= 2; x=3; y= 4;
+
+result= (a>b) && (x++ < x---y);
+
+what is the value of x and y?
+
+2. Explain
+int *g(), (*f)();
+
+Please write a declaration for an array of function pointers.
+
+3. what is volatile variable? When do you use it? 
+
+What are reentrant functions, how do you make them reentrant?
+do not use global memory 
+do not use static data
+
+(a function should be able to call itself or by someone else and so have 
+multiple instances of its data - which does not hold true for global or 
+static , for example a function may be called from different threads , 
+this may sound like on uniprocessor not a problem but it's if an interrupt 
+comes and it calls the same function on a uniprocessor then it'll modify 
+the global/static data and thus when ISR is done , the earlier running 
+instance of function is modified - not acceptable)
+
+if you had a static and wanna get rid of it - do not make it global - pass 
+it as an argument instead. try to keep things local (parameters and non 
+global stuff is essentially coming from stack frame , and thus its conext 
+is saved when ISR comes or current process is swapped out in the middle of 
+a function call for some reason)
+
+
+4.Implement memcpy, toupper, atoi
+
+5.How do you pass a 2-D array and access it in a function?
+How do you pass an array by value in C ?
+
+6.Please write some code to find if a machine is big endian or little endian.
+
+7.What is segmentation fault , what is bus error?
+
+what is safe cast :
+alignment modulus of type Source should be >= that of type Dest
+else bus error (alignment problem)
+
+8.Explain from a software perspective, what happens when a packet arrives 
+on an interface.
+
+9.Unix commands
+how do you schedule jobs a) regularly b) only once
+
+how do you detect a memory leak 
+swap -s ; ps -lu username look at SZ ; pagesize
+
+which commands will you use to find one of the 2 programs is fast?
+
+what is memory corruption
+do you know alloca()
+when do you use realloc()
+what is the diff between malloc and calloc
+
+10.write a structure with bit fields 4 , 2 unused and 6 bits
+How do we align it on a natural boundary of the type?
+
+11.draw the runtime memory lay out of a user process
+why does stack grow downward and heap grows up?
+which mem comes from malloc
+How do we adjust "break" 
+
+When you compile foo.c into a.out, what is inside a.out?
+Explain .rodata, .bss, .text, etc
+
+12.write a function to return randomly a value between 50 and 100 only 
+once.
+
+13.write a function to 
+find if given number is a power of 2
+count the number of 1s in a given number
+
+14.what is
+char * c1,c2;
+
+15.what is the difference between typedef and #define ?
+
+typedef obeys scoping rule ( can be declared inside a function )
+
+typedef char * charPtr;
+charPtr c1, c2; // both are pointers
+
+#define charPtr char *
+charPtr c1, c2; // only c1 is ptr , c2 is char
+
+16.why is stack needed ? 
+
+at compile time we do not know how much memory is needed and how much deep 
+call stack will be, at runtime. grow shrink ... for recursions
+
+17.what is const in C
+= read only not really a constant , we can have volatile const
+granularity of interrupts , write a typical interrupt handler ( no 
+arg/return values, no malloc /printf or such slow calls etc )
+
+

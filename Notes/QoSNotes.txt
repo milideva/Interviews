@@ -1,0 +1,138 @@
+
+QoS
+====
+Handle traffic with priority.
+
+Why do we need QoS ?
+
+* Congestion
+Speed mismatch (LAN to WAN) => Congestion.
+Aggregation ==> congestion
+Oversubscription ===> congestion
+
+QoS solution : congestion management
+which packets egress? classify and assign prio to queues.
+4 types :
+- fifo
+- weighted fair queueing
+- custom queuing
+- Priority queuing
+
+* Loss : Congestion leads to packet loss
+QoS : intelligently drop traffic
+
+* delay : processing, queuing, propagation delay.
+
+* jitter (variation in delay) concern for video/voice.
+random drops, rerouting, retransmission, out-of-order packets
+
+Methods:
+* Best effort : fifo
+* IntServ : reservation (like HoV) using RSVP. end to end.
+* Diffserv : no reservation. Per hop. Policy per router. 
+A packet seen high prio by one router could be seen as normal prio by another.
+
+DSCP
+class selector
+000 : best effort (BE)
+001-100 (1-4) : assured forwarding (AF)
+101 (5) : expedited forwarding (EF)
+110-111 (6,7) : reserved for control traffic (Control)
+
+drop precedence - high/med/low
+
+queue : ingress queue, waiting to ingress
+standard queue or strict priority queue (voice/video)
+Congestion management = queueing
+
+classification : use access list/nbar or some means to classify packet.
+
+marking : mark at the source such as access layer
+mark based on classification
+
+Xp Yq Zt 
+X=#priority q, Y=#standard queues, Z=bandwidth thresholds
+1p4q4t : 1 prioQ, 4 standard queues, 4 thresholds
+
+trust boundary : if qos is already set for incoming packet.
+trust if packet came from your own switches in network else do not trust.
+if no trust, then remark and dscp to cos mutation
+
+Cisco (config-if)# qos trust cos
+Trust cos on this interface.
+
+Mutation
+cos to dscp mutation.
+or
+dscp to dscp mutation (ISP to our network). 
+
+Policing :
+Tie down bandwidth (ingress or egress).
+Web traffic to 5 Mbps.
+Exceed ? assign lower QoS (markdown) or drop if violate threshold exceeds.
+
+Cir = Bc (size)/ time  that is BurstCommitted / TokenCommited
+8000 bits / 125 ms
+after 125 mS you get next set of tokens
+
+
+
+shaping : delay packets (egress only): smoothing out burst, do not drop.
+large congestion will still drop.
+
+Scheduling : for outgoing traffic in egress queue.
+
+Congestion avoidance :
+* tail drop : queue full. 
+dumb, last coming packets dropped. needs to discriminate type of traffic.
+
+senders TCP throttles back, slow-start.
+multiple senders pick up speed slowly and end up in same state.
+==> global synchronization.
+
+* random early detection RED
+Do not wait till queue is full. Drop randomly as thresholds are crossed.
+Not fair again. Avoids global synchronization.
+
+* Weighted RED.
+Use QoS as weight to decide what packet to drop.
+IP prec 0, 1 : 50%
+When queue capacity reaches 50% start dropping ip prec 0, 1.
+IP prec 2, 3 : 80%
+When queue capacity reaches 80% start dropping ip prec 2, 3.
+
+Buffering :  
+Absorb bursts. Manage congestion.
+
+Queuing :
+Buffer according to traffic class.
+dedicated buffer for different priorities
+
+Scheduling :
+Controlling transmission of buffered packets.
+
+At various stages.
+Ingess queuing , 
+- RED/wRED effective only for TCP.
+(udp no sequence numbers, no flow control)
+
+- non-IP traffic gets IP prec 0
+
+
+
+ingress ---> classify --> prio Q, class based q1, cbq2, cbq3, default --->
+marking ---> policing ---> shaping ---> WRED ---> LFI
+
+
+LFI
+====
+Link fragmentation and Interleaving.
+
+LAN ingress to WAN egress
+Voice packet, voice packet, big data packet ->egress
+delay due to big data packet.
+
+Fragment data packet and interleave with voice packets.
+Note that, Extra headers added on data packets due to fragmentation.
+At one point, >768Kbps, no need. Only needed for egress speed < 768kbps.
+

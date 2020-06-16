@@ -1,0 +1,520 @@
+* There is a simple way to explain the difference: a mutex is used to protect a
+  critical section, a semaphore is used to signal from one task to another that
+  an event has occurred or a condition has been met.
+
+The essence of the difference between a mutex and a semaphore has to do with
+the concept of ownership. When a mutex is taken, we think of that thread as
+owning the mutex and that same thread must later release the mutex back to
+release the resource.
+
+For a semaphore, think of taking the semaphore as consuming the resource, but
+not actually taking ownership of it. This is generally referred to as the
+semaphore being "empty" rather than owned by a thread. The feature of the
+semaphore is then that a different thread can "fill" the semaphore back to
+"full" state.
+
+Therefore, mutexes are usually used for the concurrency protection of resources
+(ie: MUTual EXlusion) while semaphores are used for signaling between threads
+(like semaphore flags signaling between ships). A mutex by itself can't really
+be used for signaling, but semaphores can. So, selecting one over the other
+depends on what you are trying to do.
+
+
+* mutex lock is for protection (mutual exclusion): only the process which
+  locked the resource is allowed to unlock it.
+
+Unfortunately you cannot implement synchronization with mutexes, that's why we
+have condition variables. Also notice that with condition variables you can
+unlock all the waiting threads in the same instant by using the broadcast
+unlocking. This cannot be done with semaphores.
+
+  When multiple threads work on same critical section in same way.
+
+  lock
+  critical section
+  unlock
+
+For managing access to a shared resource where only ONE thread should be
+working with the resource at any one time, simply use a mutex. Note here that a
+mutex != a semaphore with a count of 1.
+
+
+* mutex lock has ownership concept.
+  unlock can only be done by the one that locks it.
+  no such ownership in semaphores, anyone can post and/or wait. 
+
+Locking general issues :
+* Race conditions
+* Deadlocks (no progress)
+* Livelocks (same prio threads, not blocked, but can not progress)
+
+Note : starvation (low prio process starves due to greedy high prio process)
+not related to locking.
+ 
+* multiple locks - need to be taken in order. else deadlock. need to be careful.
+* priority inversion - solved by priority inheritance
+* lock contention - affects scalability
+* blocking! So not available from interrupt context
+* thread holding lock is killed.
+* lock convoy 
+
+
+* Livelock  example :
+1.
+two people trying to get past each other in a corridor
+solution - always enforce lock ordering.
+e.g. both move to their own left
+
+2.
+A husband and wife are trying to eat soup, but only have one spoon between
+them. Each spouse is too polite, and will check if the other is hungry and if so
+will pass the spoon if the other has not yet eaten.
+solution : check who is first (or waiting longest) or enforce a tie-breaker
+such as lower thread id wins.
+
+* What is Lock convoy problem ?
+
+lock convoy problem ?
+1 for(;;) {
+2   lock(mutex)
+3   do_stuff // long time spent here
+4   unlock(mutex)
+5 }
+
+if Thread#1 executes instructions 4->5->1->2 all in one "cpu burst" then
+Thread#2 gets starved from execution.
+
+Solution : sched_yield() after unlocking.
+
+A lock convoy occurs when multiple threads of equal priority contend repeatedly
+for the same lock. Unlike deadlock and livelock situations, the threads in a
+lock convoy do progress; however, each time a thread attempts to acquire the
+lock and fails, it relinquishes the remainder of its scheduling quantum and
+forces a context switch. The overhead of repeated context switches and
+underutilization of scheduling quanta degrades overall performance.
+
+
+* semaphore is for signaling (synchronization).
+P() or sem_wait() or down()
+Atomic action:
+Wait for semaphore value to become > 0, then decrement it
+
+V() or sem_post() or up()
+Atomic action:
+Increments semaphore value by 1.
+
+Binary semaphore similar to lock - with a count of 1
+
+mutex can't be replaced with binary semaphore since, if, one process waits for
+semaphore while other process releases semaphore. In case of mutex, both
+acquisition and release is handled by same.
+
+Counting semaphore, count N - restricts access to N threads.
+Can sem_post() from an interrupt, can not do sem_wait() from ISR. 
+
+Think about if you had a soda vending machine. There's only one soda machine
+and it's a shared resource. You have one thread that's a vendor (producer) who
+is responsible for keeping the machine stocked and N threads that are buyers
+(consumers) who want to get sodas out of the machine. The number of sodas in
+the machine is the integer value that will drive our semaphore.
+
+Every buyer (consumer) thread that comes to the soda machine calls the
+semaphore down() method to take a soda. This will grab a soda from the machine
+and decrement the count of available sodas by 1. If there are sodas available,
+the code will just keep running past the down() statement without a problem. If
+no sodas are available, the thread will sleep here waiting to be notified of
+when soda is made available again (when there are more sodas in the machine).
+
+The vendor (producer) thread would essentially be waiting for the soda machine
+to be empty. The vendor gets notified when the last soda is taken from the
+machine (and one or more consumers are potentially waiting to get sodas
+out). The vendor would restock the soda machine with the semaphore up() method,
+the available number of sodas would be incremented each time and thereby the
+waiting consumer threads would get notified that more soda is available.
+
+The wait() and signal() methods of a synchronization variable tend to be hidden
+within the down() and up() operations of the semaphore.
+
+
+Issues with Semaphores
+======================
+Much of the power of semaphores derives from calls to
+P() and V() that are unmatched
+
+Unlike locks, acquire() and release() are not always paired.
+
+This means it is a lot easier to get into trouble with semaphores.
+
+* Priority inversion occurs when a mutex, critical section, or semaphore
+  resource held by a lower-priority thread delays the execution of a
+  higher-priority thread when both are contending for the same resource.
+
+For mutexes and critical sections, to correct this situation and free the
+higher-priority thread, with priority inheritance, Windows CE enables the
+lower-priority thread to inherit the more critical thread?s priority and run at
+the higher priority until it releases its use of the resource. This mechanism
+does not work for semaphores, which do not have a specific owner associated
+with them. Therefore, priority inversion may occur when using semaphores.
+
+Because an unbounded amount of time is needed to relinquish the inverted thread
+and it is out of the control of the kernel, the OEM loses control of the
+scheduling process. To guarantee real-time performance, OEMs should ensure that
+a priority inversion condition does not occur.
+
+
+* Conditional variables also allows you to let all threads waiting on a
+  conditional variable to proceed via pthread_cond_broadcast. Additionally it
+  also allows you to perform a timed wait so you don't end up waiting forever.
+
+* General synchronization Problems :
+
+Race conditions: therac-25
+
+Priority Inversion : mars Pathfinder
+Less severe than a deadlock as eventually medium priority task finishes (unless
+watchdog kicks in).
+
+Solution : Priority inheritance : increase priority of low priority thread with
+lock to priority of blocked high priority thread temporarily.
+
+Deadlock - more serious issue as system can not fix itself at runtime. 
+Re-design solution, enforce lock ordering into CS entry. forgetting to unlock.
+
+Livelock - e.g. mutex_trylock
+both all trying trylock and giving up
+
+original issue :
+
+pthread_mutex_lock(&m1); 
+pthread_mutex_lock(&m2); // deadlock if thread2 takes locks out of order 
+/* processing */ 
+pthread_mutex_unlock(&m2);
+pthread_mutex_unlock(&m1);
+
+for (; ;) { 
+    pthread_mutex_lock(&m2); // out of order locking - trylock()
+    if (pthread_mutex_trylock(&m1) == 0) {
+        /* got it! */
+        break;
+    } 
+    /* didn't get it */ 
+    pthread_mutex_unlock(&m2);
+}
+pthread_mutex_unlock(&m1);
+pthread_mutex_unlock(&m2);
+
+Other Solutions:
+* Lockless data structures / lock-free algorithms
+* Test and Set
+* Compare and Set (CAS) / Double CAS (DCAS)
+
+* Read-copy-update (RCU) with a single writer and any number of readers. (The
+  readers are wait-free; the writer is usually lock-free, until it needs to
+  reclaim memory).
+
+* Coarse-grained/fine-grained locking.
+
+* Use spinlocks when context switch is undesirable. Example device driver
+  reading status bit in a loop.
+
+Using spinlocks on a single-core/single-CPU system makes usually no sense,
+since as long as the spinlock polling is blocking the only available CPU core,
+no other thread can run and since no other thread can run, the lock won't be
+unlocked either. IOW, a spinlock wastes only CPU time on those systems for no
+real benefit. If the thread was put to sleep instead, another thread could have
+ran at once, possibly unlocking the lock and then allowing the first thread to
+continue processing, once it woke up again.
+
+On a multi-core/multi-CPU systems, with plenty of locks that are held for a
+very short amount of time only, the time wasted for constantly putting threads
+to sleep and waking them up again might decrease runtime performance
+noticeably. When using spinlocks instead, threads get the chance to take
+advantage of their full runtime quantum (always only blocking for a very short
+time period, but then immediately continue their work), leading to much higher
+processing throughput.
+
+
+* Fine- Versus Coarse-Grained Locking
+
+The first Linux kernel that supported multiprocessor systems was 2.0; it
+contained exactly one spinlock. The big kernel lock turned the entire kernel
+into one large critical section; only one CPU could be executing kernel code at
+any given time. This lock solved the concurrency problem well enough to allow
+the kernel developers to address all of the other issues involved in supporting
+SMP. But it did not scale very well. Even a two-processor system could spend a
+significant amount of time simply waiting for the big kernel lock. The
+performance of a four-processor system was not even close to that of four
+independent machines.
+
+So, subsequent kernel releases have included finer-grained locking. In 2.2, one
+spinlock controlled access to the block I/O subsystem; another worked for
+networking, and so on. A modern kernel can contain thousands of locks, each
+protecting one small resource. This sort of fine-grained locking can be good
+for scalability; it allows each processor to work on its specific task without
+contending for locks used by other processors. Very few people miss the big
+kernel lock.[3]
+
+Fine-grained locking comes at a cost, however. In a kernel with thousands of
+locks, it can be very hard to know which locks you need?and in which order you
+should acquire them?to perform a specific operation. Remember that locking bugs
+can be very difficult to find; more locks provide more opportunities for truly
+nasty locking bugs to creep into the kernel. Fine-grained locking can bring a
+level of complexity that, over the long term, can have a large, adverse effect
+on the maintainability of the kernel.
+
+Locking in a device driver is usually relatively straightforward; you can have
+a single lock that covers everything you do, or you can create one lock for
+every device you manage. As a general rule, you should start with relatively
+coarse locking unless you have a real reason to believe that contention could
+be a problem. Resist the urge to optimize prematurely; the real performance
+constraints often show up in unexpected places.
+
+If you do suspect that lock contention is hurting performance, you may find the
+lockmeter tool useful. This patch (available at
+http://oss.sgi.com/projects/lockmeter/) instruments the kernel to measure time
+spent waiting in locks. By looking at the report, you are able to determine
+quickly whether lock contention is truly the problem or not.
+
+
+* Linux Chapter 5. Cheat Sheet For Locking
+
+http://www.kernel.org/pub/linux/kernel/people/rusty/kernel-locking/c214.html
+
+
+Disabling pre-emption/interrupts works on uni-processor only.
+For multi-processor, use load-link/store-conditional.
+
+Load-link/store-conditional :
+
+Load-link returns the current value of a memory location, while a subsequent
+store-conditional to the same memory location will store a new value only if no
+updates have occurred to that location since the load-link. Together, this
+implements a *lock-free* atomic read-modify-write operation.
+
+Real implementations of LL/SC do not always succeed if there are no concurrent
+updates to the memory location in question. Any exceptional events between the
+two operations, such as a context switch, another load-link, or even (on many
+platforms) another load or store operation to same cache-line, will cause the
+store-conditional to spuriously fail.  This is called weak ll-sc.  gdb
+breakpoints inside ll-sc do not work for such reason.
+
+
+CAS (compare-and-swap):
+
+* will not detect updates if the old value has been restored (see wiki ABA
+  problem).
+
+So do not use pure CAS. Use Double CAS or other variants.
+or ll/sc better.
+
+A common case of the ABA problem is encountered when implementing a lock-free
+data structure. If an item is removed from the list, deleted, and then a new
+item is allocated and added to the list, it is common for the allocated object
+to be at the same location as the deleted object due to optimization. A pointer
+to the new item is thus sometimes equal to a pointer to the old item which is
+an ABA problem.
+ 
+
+* lock-free synchronization
+benefits
+1) efficiency wrt lock based
+2) locks not available from interrupt context. lock-free can do it. ****
+3) avoidance of priority inversion in real-time systems.
+
+most of the lock-free implementations use multi-word cas/ll-sc for atomic
+instructions alongwith correct use of memory barriers (rmb/wmb)
+
+no dcas, without ll/sc : use RCU
+
+* Read-copy-update (RCU) :
+
+RCU is a synchronization mechanism implementing a kind of mutual exclusion
+which can sometimes be used as an alternative to a readers-writer lock. It
+allows extremely low overhead, wait-free reads. However, RCU updates can be
+expensive, as they must leave the old versions of the data structure in place
+to accommodate pre-existing readers. These old versions are reclaimed after all
+pre-existing readers finish their accesses.
+
+
+The name comes from the way that RCU is used to update a linked structure in
+place. A thread wishing to do this uses the following steps:
+
+* create a new structure,
+* copy the data from the old structure into the new one, 
+  and save a pointer to the old structure,
+* modify the new, copied, structure
+* update the global pointer to refer to the new structure, 
+
+* and then sleep until the operating system kernel determines that there are no
+  readers left using the old structure, for example, in the Linux kernel, by
+  using synchronize_rcu().
+
+* When the thread which made the copy is awakened by the kernel, it can safely
+  deallocate the old structure.
+
+So the structure is read concurrently with a thread copying in order to do an
+update, hence the name "read-copy update".
+
+https://lwn.net/Articles/262464/
+Publish-Subscribe Mechanism (for insertion)
+Wait For Pre-Existing RCU Readers to Complete (for deletion)
+Maintain Multiple Versions of Recently Updated Objects (for readers)
+
+
+RCU is alternative to RWlock
+In RWLock readers locked out when write lock is acquired.
+In RCU readers can continue reading when a writer is making progress.
+
+Just that writer can not delete original copy until all readers are done
+reading.
+
+One potential problem with a conventional RW lock is that it can lead to
+write-starvation if contention is high enough, meaning that as long as at least
+one reading thread holds the lock, no writer thread will be able to acquire
+it. Since multiple reader threads may hold the lock at once, this means that a
+writer thread may continue waiting for the lock while new reader threads are
+able to acquire the lock, even to the point where the writer may still be
+waiting after all of the readers which were holding the lock when it first
+attempted to acquire it have released the lock. To avoid writer starvation, a
+variant on a readers-writer lock can be constructed which prevents any new
+readers from acquiring the lock if there is a writer queued and waiting for the
+lock, so that the writer will acquire the lock as soon as the readers which
+were already holding the lock are finished with it.[3] The downside is that
+it's less performant because each operation, taking or releasing the lock for
+either read or write, is more complex, internally requiring taking and
+releasing two mutexes instead of one.[3][4] This variation is sometimes known
+as a "write-preferring" or "write-biased" readers-writer lock.[5][6]
+
+Lock-free :
+
+allows individual threads to starve but guarantees system-wide throughput. An
+algorithm is lock-free if it satisfies that when the program threads are run
+sufficiently long at least one of the threads makes progress (for some sensible
+definition of progress). All wait-free algorithms are lock-free.
+
+In general, a lock-free algorithm can run in four phases: completing one's own
+operation, assisting an obstructing operation, aborting an obstructing
+operation, and waiting. Completing one's own operation is complicated by the
+possibility of concurrent assistance and abortion, but is invariably the
+fastest path to completion.
+
+Wait-free :
+
+is the strongest non-blocking guarantee of progress, combining guaranteed
+system-wide throughput with starvation-freedom. An algorithm is wait-free if
+every operation has a bound on the number of steps the algorithm will take
+before the operation completes. This property is critical for real-time systems
+and is always nice to have as long as the performance cost is not too high.
+
+
+
+Definition of Blocking
+=======================
+
+A function is said to be blocking if it calls an operating system function that
+waits for an event to occur or a time period to elapse. Whilst a blocking call
+is waiting the operating system can often remove that thread from the
+scheduler, so it takes no CPU time until the event has occurred or the time has
+elapsed. Once the event has occurred then the thread is placed back in the
+scheduler and can run when allocated a time slice. A thread that is running a
+blocking call is said to be blocked.
+
+Definition of Non-blocking
+==========================
+
+Non-blocking functions are just those that aren't blocking. Non-blocking data
+structures are those on which all operations are non-blocking. All lock-free
+data structures are inherently non-blocking.
+
+Spin-locks are an example of non-blocking synchronization: if one thread has a
+lock then waiting threads are not suspended, but must instead loop until the
+thread that holds the lock has released it. Spin locks and other algorithms
+with busy-wait loops are not lock-free, because if one thread (the one holding
+the lock) is suspended then no thread can make progress.
+
+Defintion of lock-free
+=======================
+
+A lock-free data structure is one that doesn't use any mutex locks. The
+implication is that multiple threads can access the data structure concurrently
+without race conditions or data corruption, even though there are no locks.
+
+Just because more than one thread can safely access a lock-free data structure
+concurrently doesn't mean that there are no restrictions on such accesses. For
+example, a lock-free queue might allow one thread to add values to the back
+whilst another removes them from the front, whereas multiple threads adding new
+values concurrently would potentially corrupt the data structure. The data
+structure description will identify which combinations of operations can safely
+be called concurrently.
+
+For a data structure to qualify as lock-free, if any thread performing an
+operation on the data structure is suspended at any point during that operation
+then the other threads accessing the data structure must still be able to
+complete their tasks. This is the fundamental restriction which distinguishes
+it from non-blocking data structures that use spin-locks or other busy-wait
+mechanisms.
+
+Just because a data structure is lock-free it doesn't mean that threads don't
+have to wait for each other. If an operation takes more than one step then a
+thread may be pre-empted by the OS part-way through an operation. When it
+resumes the state may have changed, and the thread may have to restart the
+operation.
+
+In some cases, a the partially-completed operation would prevent other threads
+performing their desired operations on the data structure until the operation
+is complete. In order for the algorithm to be lock-free, these threads must
+then either abort or complete the partially-completed operation of the
+suspended thread. When the suspended thread is woken by the scheduler it can
+then either retry or accept the completion of its operation as appropriate. In
+lock-free algorithms, a thread may find that it has to retry its operation an
+unbounded number of times when there is high contention.
+
+If you use a lock-free data structure where multiple threads modify the same
+pieces of data and thus cause each other to retry then high rates of access
+from multiple threads can seriously cripple the performance, as the threads
+hinder each other's progress. This is why wait-free data structures are so
+important: they don't suffer from the same set-backs.
+
+Definition of wait-free
+=======================
+
+A wait-free data structure is a lock-free data structure with the additional
+property that every thread accessing the data structure can make complete its
+operation within a bounded number of steps, regardless of the behaviour of
+other threads. Algorithms that can involve an unbounded number of retries due
+to clashes with other threads are thus not wait-free.
+
+This property means that high-priority threads accessing the data structure
+never have to wait for low-priority threads to complete their operations on the
+data structure, and every thread will always be able to make progress when it
+is scheduled to run by the OS. For real-time or semi-real-time systems this can
+be an essential property, as the indefinite wait-periods of blocking or
+non-wait-free lock-free data structures do not allow their use within
+time-limited operations.
+
+The downside of wait-free data structures is that they are more complex than
+their non-wait-free counterparts. This imposes an overhead on each operation,
+potentially making the average time taken to perform an operation considerably
+longer than the same operation on an equivalent non-wait-free data structure.
+
+Choices
+
+When choosing a data structure for a given task you need to think about the
+costs and benefits of each of the options.
+
+A lock-based data structure is probably the easiest to use, reason about and
+write, but has the potential for limited concurrency. They may also be the
+fastest in low-load scenarios.
+
+A lock-free (but not wait-free) data structure has the potential to allow more
+concurrent accesses, but with the possibility of busy-waits under high
+loads. Lock-free data structures are considerably harder to write, and the
+additional concurrency can make reasoning about the program behaviour
+harder. They may be faster than lock-based data structures, but not
+necessarily.
+
+Finally, a wait-free data structure has the maximum potential for true
+concurrent access, without the possibility of busy waits. However, these are
+very much harder to write than other lock-free data structures, and typically
+impose an additional performance cost on every access.
+

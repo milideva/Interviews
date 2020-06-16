@@ -1,0 +1,131 @@
+
+* AWS global infra
+https://aws.amazon.com/about-aws/global-infrastructure/
+
+https://www.youtube.com/watch?v=Z3SYDTMP3ME
+https://www.youtube.com/watch?v=MmsoIcYrXJU
+
+AWD VPC : https://www.youtube.com/watch?v=LX5lHYGFcnA&t=7324s
+
+* AWS global infra
+
+- Regions (22 as of Jan 2020) each with multiple availability zones.
+- Availability zones (69) data centers isolated for HA and failure isolation.
+- Edge Locations are where CloudFront, Amazon’s CDN (Content Delivery Network)
+  caches content for geo-distribution. 
+  216 Points of Presence : 205 Edge Locations and 11 Regional Edge Caches
+
+* AWS Compute Services
+- EC2(Elastic Compute Cloud)
+EC2 is VMs in the cloud on which you have OS level control. 
+Can also be bare metal.
+
+- Elastic Beanstalk
+ automated deployment and provisioning of resources like a highly scalable production website.
+
+- EKS (Elastic Container Service for Kubernetes) 
+The tool allows you to Kubernetes on Amazon cloud environment without installation.
+ECS (Elastic Container Service)
+
+- AWS Lambda 
+FaaS This AWS service allows you to run functions in the cloud. The tool is a big
+cost saver for you as you to pay only when your functions execute.
+
+- Lightsail
+Amazon’s Website Hosting Service (Virtual Private Service). Get ssh access and a DB access with a static (fixed) IP.
+
+- Batch 
+Used for Batch Computing where Batch Jobs are defined as docker containers
+
+* Storage
+- S3 (Simple Storage Service) - Object based storage service
+- EFS (Elastic File System) - Network Attached Storage or NAS that can be mounted to multiple EC2s.
+- Glacier - Data archival, cold storage. High cost (and time) to retrieve, low cost to store.
+- Snowball - To import large amount (petabytes) of data into AWS. Looks like a suitcase.
+- Storage Gateway - Virtual appliances that are hosted on-prem that transfer (replicate) data to AWS
+
+* Networking and Content Delivery
+- VPC (Virtual Private Cloud) - A virtual datacenter
+- CloudFront - Amazon’s CDN
+- Route53 - Amazon’s DNS Service
+- API Gateway - Enables exposing services as APIs
+- Direct Connect - A dedicated line from on-prem to AWS VPC
+
+* Databases
+
+- RDS (Relational Database Service) for MySQL, MSSQL, Oracle, Postgres, Aurora, MariaDB
+- DynamoDB - Non-relational, NoSQL database service
+- Elasticache - Cache Service supporting Memcached and Redis
+- Redshift - Data Warehouse/OLAP
+
+* Migration
+- AWS Migration Hub
+- Application Discovery Service
+- Database Migration Service (DMS)- On prem database to RDS migration
+- Server Migration Service - VM/Physical to EC2 for Lift and Shift type of migrations
+- Snowball - Migrate large amount of data into AWS (petabyte scale)
+
+
+* Developer Tools
+CodeStar - Project Managing/Collaborating the code toolchain
+CodeCommit - Version Controlled Code Repository (like github)
+CodeBuild - Code Builder (like Jenkins)
+Code Deploy - Deployment Service to deploy artifacts
+Code Pipeline - Continuous Delivery Service to model, visualize, and automate the release steps
+XRay - To debug, trace and troubleshoot performance bottlenecks, etc.
+Cloud9 - in-browser IDE, mostly used to code lambda functions in-line
+
+* Management Tools
+Cloudwatch - Monitoring (and alerting) Service
+CloudFormation - IaaC, Infrastructure as Code. The artifacts are called Templates.
+CloudTrail - Audit logging changes to AWS Environment, by default only stores API calls for a week
+Config - Monitors the configuration and gives a visual representation of the changes, and can go back in time. Like Time-machine for your AWS.
+OpsWorks - Managed Chef and Puppet Service (Configuration Management)
+Service Catalog - Manage a catalog of approved services for the AWS account. Used by enterprises
+Systems Manager - Interface for managing AWS resources like patch management for EC2s, categorize AWS resources
+Trusted Advisor - Advice around security, and saving $$$
+Managed Services
+
+* Media Services
+Elastic Transcoder - Think of it as Managed ffmpeg
+MediaConvert - File based media converter, used for VODs
+MediaLive - Broadcast live video streams
+MediaPackage - Prepares and protects video
+MediaStore - Storage Service optimized for VOD and Live Video
+MediaTailor - Targeted advertising into video streams
+
+* Machine Learning
+SageMaker - Deep learning algorithms
+Comprehend - Sentiment Analysis of data
+DeepLens - A camera that runs deep learning algorithms on the device
+Lex - AI based interaction service
+Machine Learning - Intelligence out of data, recommendation systems
+Polly - Text to Speech, highly customizable
+Rekognition - Analyze video and/or images
+Translate - Translate languages from one to another
+Transcribe - Subtitles from video, speech to text (Opposite of Polly)
+
+* Analytics
+Athena - Run SQL on S3 bucket data like CSV or spreadsheets, serverless
+EMR (Elastic Map Reduce) - Big data service
+CloudSearch
+ElasticSearch - Managed ElasticSearch Cluster
+Kinesis - To ingest and process streaming data
+Kinesis Video Streams - To ingest and process streaming video for analytics
+QuickSight - BI Tool to analyze and visualize data
+Data Pipeline - Move data between different AWS services
+Glue - ETL
+
+* Security, Identity and Compliance
+IAM (Identity and Access Management)
+Cognito - Managed Authentication Service, also supports federated logins, gives temporary access to AWS
+GuardDuty - Monitors for malicious activity in the AWS account
+Inspector - An agent installed on the EC2s and generates a vulnerability report
+Macie - Scans S3 buckets for PII and secrets
+Certificate Manager - Manage SSL certificates
+CloudHSM - Hardware Security Module as a Service, $1.20 an hour
+Directory Service - Integrate Microsoft ActiveDirectory with AWS
+WAF - Layer 7 (Application Layer) firewall
+Shield - DDoS mitigation, free for CloudFront, ALBs, R53. Advanced Shield gives you a dedicated team (3K a month) 24x7 to help out.
+Artifact - Audit and Compliance, allows to download security and compliance reports from AWS
+

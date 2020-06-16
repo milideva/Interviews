@@ -1,0 +1,1085 @@
+
+Containers : is a group of processes with certain limits.
+e.g. starting top in a container 
+- outside container, top can have pid 12345
+- inside container, the same top may have pid 25
+A container process can have two PIDs and can do anything a normal process can do 
+but you can set some rules about what they can do
+- access only 100MB RAM
+- no disk access
+- only these 100 syscalls
+
+e.g. ; Docker / Rocket / OpenVz 
+
+Based on 2 fundamental constructs :
+on top of Linux cgroups and namespaces and jail (chroot)
+- cgroup : for grouping : kernel construct that enforces limits on the resources consumed by a
+collection of processes such as memory, block io, net_cls net_prio, cpu, devices cgroup
+
+- namespaces : provides isolation
+Older example of fs ns : jail : chroot changes root of a process (and its children) to a new dir.
+Those programs can not see/access files outside the new root.
+
+Per container, one cgroup is created and one namespace is created.
+Developers have no control over tweaking the limits.
+Base machine manages those limits.
+
+NOTE : This is Linux (kernel > 3.10) only construct.
+Windows does not have native containers.
+MacOS and Windows docker desktop use a Linux VM for docker support.
+Windows Server 2016 and 2019 support docker containers (non-natively)
+Unix, HP-UX, bsd etc do not have containers.
+Solaris had containers (2004) but docker made it really easy to use.
+
+Basically the host OS kernel where docker engine is installed, is shared with
+the containers.
+Container Dockerfile for image build, may specify a distro and pull in
+depenencies as per the distro.
+The kernel for all linux distros is the same. That's how Host OS kernel gets
+shared with containers.
+Each container brings its own bin, lib etc (not shared).
+Some dockerfiles just bring in the app (Hello world) which is not dependent on other libs
+
+Containers evolution :
+1979 : chroot in Unix
+2000 : freeBSD jails
+2004 : Solaris containers
+2006 : google : added cgroups to linux
+2008 : LXC : linux container mgr using cgroups + namespaces
+2011 : cloudfoundry started warden using LXC
+2013 : docker, like warden, initially used lxc, later used libcontainer
+[...]
+
+Advantage :
+- light weight, takes fraction of disk/memory
+- bootup faster than VM
+- isolation
+
+Namespaces provide the isolation. Following namespaces are provided :
+https://lwn.net/Articles/531114/
+1. cgroup : /proc/pid/cgroups CLONE_NEWCGROUP
+2. mount : /proc/pid/mountinfo CLONE_NEWNS
+3. IPC : posix message queue, shared mem, semaphores etc CLONE_NEWIPC
+4. Network : Virtualizes all the networking resources, such as interfaces,
+sockets, routing table, mac table etc CLONE_NEWNET
+5. PID : Virtualizes the process ID space. This is also useful as a technique to prevent pro‐
+cesses from discovering that they’re containerized. Every container has a process
+with a PID of 1 (the init process) just like on a bare-metal server. CLONE_NEWPID
+6. User : Virtualizes the users and the user and group IDs. Every isolated group of pro‐
+cesses has a root user that acts as root only within that virtual instance. CLONE_NEWUSER
+7. UTS (unix timeshare system):
+Virtualizes the hostname and domain name such that each isolated unit can set
+its own hostname and domain name without affecting the others or the parent.
+CLONE_NEWUTS
+
+
+* Creating Docker Images : Three ways to do this 
+
+1. Using Dockerfile
+Dockerfile is like a Makefile (recipe)
+FROM : base layer (specifies a distro)
+Add new layers on top of the base starting image
+RUN : Executes a command and save the result as a new layer
+ENTRYPOINT : Allows to configure container that will run as a executable
+
+docker image build : builds from Dockerfile
+
+
+2. Docker commit
+
+Create a new image from a running container, after making changes to running container
+for example add a new user to a running container and then save image changes.
+
+3. Import a tarball into docker 
+
+
+Mostly for microservices (not for monolith)
+
+Container Communication
+1) with other containers on same host : Veth and bridges
+2) with non-containers : NAT
+3) other containers on other hosts : VxLAN, routing on host etc
+
+A device can only be in one netns.
+A device in one netns can not talk with device in another netns.
+
+Eth0 is in default ns
+A new container can not access it.
+
+VEth is a virtual cable with 2 ends =  a pair of devices.
+You can take each end (which is a device) and put it in different netns.
+This is how netns talk to each other.
+Fundamental building block for container communication.
+
+For many to one :
+Use a bridge.
+Bridge is a device in linux kernel running in ‘default ns’.
+Stick VEth of each ns into a bridge.
+Docker bridge is called docker0 by default.
+
+One container - one netns in docker. You can share netns.
+
+Vlan unaware bridge. 802.1D bridge.
+Does not understand 802.1q (does not understand Vlan tagging)
+
+When a container is spin up:
+- create a new netns
+- create a VEth pair
+- assign one end of the VEth in the new netns and name it eth0
+- assign the other end to the default bridge
+- create a loopback device for the container
+- enable NAT to communicate with external world
+
+
+Docker networking options
+Single host
+- bridged (default)
+- host mode
+- none
+- mtacvlan
+- ipVlan
+
+Multi Host
+- overlay
+- Mtacvlan
+- IpVlan
+- bridged
+
+
+Docker
+======
+
+* lightweight :
+just enough OS - so high density (1000s of containers on a host)
+VM = app + libs + guest OS
+container = app + bins/libs/dependencies. (does not include OS as it shares OS)
+10/100 containers in typical laptop
+100/1000 containers in typical server
+
+- Completely isolated environment
+- Containers have their own processes, networking interfaces, mount points.
+- Can NOT run windows app on docker on ubuntu.
+
+Issue it is trying to solve :
+-  Example App :
+Web server using node.js + Database MongoDB +  Messaging (Redis) + Orchestration using Ansible
+Compatibility with OS/libraries/dependencies 
+every time something changes : Compatibility Matrix from Hell
+100s of commands to set this up for each developer
+Worked fine in DEV in Fedora but Ops team says does not work on CentOS
+(different Dev/Test/Prod env)
+Regardless of versions/distros/packages/dependencies - should work.
+
+For example :
+a) Web Server Node.js + b) DB MongoDB + c) Messaging + d) Ansible Orchestration
+Each of the above may need different library, different OS, different dependencies etc
+upgrade components
+each time check compatibility : "The matrix from hell"!!! 
+
+
+Jerome Petazzoni (youtube video)
+
+* Deploy anything (Webapps, DB, Big Data) that can run on linux 
+(any distro, any vm or bare metal or kernel 3.8+)
+* Deploy anything reliably and consistently.
+(regardless of versions, or distros or dependencies)
+* Deploy Laptop 10-100 containers, servers 100-1000 containers.
+
+Note : Not new - cgroups and linux containers
+
+Comparison to VM
+* faster - nearly bare metal. 
+VM operations boot/reboot/start/stop - minutes to seconds and some to mS
+openstack on KVM versus in docker - much faster
+
+* lightweight :
+just enough OS - so high density (1000s of containers on a host)
+VM = app + libs + guest OS
+container = app + bins/libs & its dependencies. (does not include OS as it shares OS)
+
+* Union filesystem
+CoW layered FS using UnionFS
+If you modify a file, original files are read-only. 
+Copy on write is used to create another RW layer of changed files is created.
+CoW : The Union File System (UFS) specialises in not storing duplicate data.
+
+docker image 10MB
+10 docker containers (runtime) do not need 100MB.
+Why? because it uses Union Filesystem
+Bottom layers RO, only top RW, modification? make it RO and add new layer RW on top.
+
+
+* libcontainer
+docker engine combines namespace, cgroup, and unionFS into a wrapper called libcontainer format
+
+* Security
+AppArmor
+Seccomp : filter syscalls 
+Capabilities : perform permission checks
+
+Docker client : docker build/pull/run : cli.s
+Docker client talks to (1 or more) Docker Daemon using REST apis
+
+docker daemon = docker server = docker host = docker engine 
+manages 
+1. docker image <CMD>
+2. docker container <CMD>
+3. docker network <CMD>  
+4. docker volume <CMD>
+
+
+Docker desktop for Mac = client, will have a linux vm inside.
+
+
+* processes are isolated, run straight on host. cpu perf = native perf.
+memory perf  almost same (few % shaved off due to accounting)
+network and disk performance = small overhead
+
+* agile
+move between VM to bare metals easily
+
+* open source - inexpensive
+
+* vibrant community 
+ecosystem, docker hub - public SaaS , also private registries.
+
+* Container is an instance of an image.
+You can run many containers off the same image.
+
+
+
+Docker =
+Engine  (open source)
++
+Hub (collection of services)
+
+own process space (not a strong isolation like in VM though)
+own network interface
+can run as root
+can have its own /sbin/init  (different from host)
+chroot on steroids : isolated set of processes (they do not see other procs)
+share kernel with host
+
+100 test cases - each test needs clean SQL DB
+Plan A
+spin up 1 db, clean after each use (expensive).
+
+Plan B
+Spin up 100 db
+need resources/time
+
+Plan C
+spin up 100 db in containers
+fast efficient (copy on write)
+easy to implement without virtualization black belt
+
+Separation of concerns DevOps
+Dave the developer
+Inside container:
+my code/lib/package mgr/app/data
+
+Outside container
+Oscar ops guy
+- logging
+remote access
+n/w config
+monitoring
+security
+
+Docker Engine :
+~ hypervisor for VM is what docker engine is for containers.
+
+Written in Go.
+uses copy-on-write
+everything in REST apis
+build images using recipes
+share images through registries
+stack of layers for containers
+
+* Docker Hub:
+
+files -- folder -- google drive
+images -- repositories -- docker hub
+
+collection of services (think of an App engine)
+* Public Registry (push/pull for free)
+* Private registry (push/pull secret images for $)
+* Automated builds (link github/bitbucket repository, trigger build on commit)
+
+
+Docker inc (Blue Whale)
+60 engineers.
+led by GlusterFS Ben Golub
+Revenue : SAAS through docker hub + support/training 
+
+
+One time setup
+* on dev env
+- boot2docker 25MB VM 
+or
+- natively if you run linux
+
+* on servers (linux)
+- package mgr 
+or
+- single binary install
+- public clouds (azure, rackspace, etc)
+
+Download .. Signed images with Cisco IT
+
+Build containers
+Recipe with dockerfile
+RUN apt-get …
+ADD
+RUN python setup.py install
+…
+
+Orchestration
+many containers on many hosts
+many ways to do it.
+- describe stack in files (fig/ansible etc)
+- openstack (solum/nova/heat)
+etc
+
+- PAAS ? yes => cloud foundry, Deis, Dokku, Flynn, Tsuru, OpenShift etc
+- Only one host :www.fig.sh fig.yml
+
+- Few hosts : Maestro-NG
+  or Ansible/Salt/Chef/Puppet
+- 100s of hosts : Helios
+- 1000s of hosts : Mesos
+
+Google runs 2 billion containers per week.
+- How to create and manage such large scale containers?
+- How do these containers connect and communicate?
+- How to scale them as per traffic?
+=> Container Orchestration engine.
+- Clustering aand fault tolerance
+- Scheduling
+- Laod Balaancing between worker nodes
+
+Links
+- Multiple containers in one host to talk to each other. like ZooKeeper.
+- Ambassador 
+
+Networking stack
+private addresses for container, plus NAT
+SDN : Weave
+
+docker pull <image-name> # Explicitly gets it from repository  
+docker create <image-name> # create a container, do not run it yet
+docker start <image-name> # run an existing container
+docker run <image-name> # docker create, docker start (automatically pulls if needed).
+docker run foo : creates a new container and starts foo
+
+run modes
+foreground blocked
+foreground interactive
+background (-d daemon or detached)
+
+docker pause foo
+docker unpause foo
+docker kill
+docker stop
+
+docker run -ti debian bash 
+^p^q to detach
+
+docker run -ti ubuntu bash
+docker run -ti fedora bash
+docker run -ti centos bash
+
+How does it work?
+- namespaces
+- cgroups
+
+
+@jpetazzo
+@docker
+
+Quay.io = Docker Hub == github repository
+
+
+Container file systems are isolated by default
+Separated by process namespaces
+Resource isolation CPU/memory/IO quotas via groups
+network separation
+
+Unlike VMs
+* Share the same host kernel
+* sophisticated packaging and distribution
+
+Docker for Mac : uses xhyve
+Docker for Windows : uses hyper-v
+
+
+DEVDATTA-M-H057:~ devdatta$ docker run -i -t debian bash
+Unable to find image 'debian:latest' locally
+latest: Pulling from library/debian
+357ea8c3d80b: Pull complete
+Digest: sha256:ffb60fdbc401b2a692eef8d04616fca15905dce259d1499d96521970ed0bec36
+Status: Downloaded newer image for debian:latest
+root@3dece50c6f26:/#
+root@3dece50c6f26:/#
+root@3dece50c6f26:/#
+root@3dece50c6f26:/# uname -a
+Linux 3dece50c6f26 4.4.15-moby #1 SMP Thu Jul 28 22:03:07 UTC 2016 x86_64 GNU/Linux
+root@3dece50c6f26:/# DEVDATTA-M-H057:~ devdatta$
+DEVDATTA-M-H057:~ devdatta$
+DEVDATTA-M-H057:~ devdatta$ docker ps -a
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                     PORTS               NAMES
+3dece50c6f26        debian              "bash"              15 seconds ago      Up 15 seconds                                  sharp_allen
+29c1f37f219d        ubuntu              "/bin/bash"         4 minutes ago       Up 4 minutes                                   furious_meitner
+2669a4cd45e5        ubuntu              "/bin/bash"         7 minutes ago       Exited (0) 7 minutes ago                       zen_payne
+d606839418ae        ubuntu              "/bin/bash"         8 minutes ago       Exited (0) 8 minutes ago                       nauseous_hypatia
+DEVDATTA-M-H057:~ devdatta$ docker attach --sig-proxy=false sharp_allen
+root@3dece50c6f26:/#
+root@3dece50c6f26:/#
+
+
+docker-compose.yml
+docker-compose pull
+This  will pull files as specified by docker-compose.yml
+docker-compose -d
+
+
+docker pull golang
+
+
+Docker Orchestration
+====================
+Done using Docker Compose (Fig)
+
+- Multiple containers as a unit
+
+Container OS
+============
+Ships with minimal linux with container runtime such as docker or rkt (rocket) or LXD
+may ship with container management (kubernetes)
+
+e.g CoreOS, Snappy (Ubuntu), PhotonOS (vmware), rancherOS
+
+RancherOS
+system-docker runs services
+user docker 
+
+Container management
+====================
+
+Scheduling
+LB
+auto-scaling
+multi host networking
+storage
+monitoring
+
+Mesos : Apache
+K8s : google
+Docker SWarm
+Rancher from Rancher OS (runs in a container)
+
+Auth0
+======
+provides single sign-on services, abstracting various login and identity
+services into a single API including public APIs like Facebook Connect and
+public or private instances of Active Directory and LDAP
+
+Serverless computing
+====================
+
+
+Owning servers comes with responsibilities -
+
+1. You own how your primitives (functions in the case of applications, or
+objects when it comes to storage) map to server primitives (CPU, memory, disk
+etc.)
+2. You own how your capacity scales to handle your application scale
+3. You own provisioning (and therefore paying) for the capacity to handle your
+application’s projected traffic, independent of whether there’s actual traffic
+or not
+4. You own managing reliability and availability constructs like redundancy,
+failover, retries etc.
+
+Serverless means activities/responsibilities related to servers are no longer
+on your radar. A serverless solution for doing something you would have
+previously used servers for would check (at least) these four boxes - simple
+but relevant primitives, scaling just happens, you never pay for idle, and
+reliability/availability is built in.
+
+There’s are many application classes where these responsibilities are required
+and/or core to your business. For others, serverless computing offerings like
+Lambda allow you to build applications without having to worry about these
+things. In the case of Lambda, the fact that its triggered of events/requests
+is a facet that enables this approach, rather than a core requirement for being
+“serverless”. As others have described below, with Lambda your application
+consists of one or more functions, triggered through requests or events, where
+you pay for how long your function(s) run. Everything underneath the covers
+required to make this happen (including the list above) is handled by Lambda.
+
+
+
+Let's take for example AWS Lambda. "Lambda allows you to NOT think about
+servers. Which means you no longer have to deal with over/under capacity,
+deployments, scaling and fault tolerance, OS or language updates, metrics, and
+logging."
+
+
+Serverless computing is when you use functionality without having to run or
+administer your own server whether it is “bare-metal” or virtual.
+
+So running a virtual server on rackspace or Amazon Webservices (AWS) isn’t
+serverless computing. But using AWS Relational Database Service (RDS) is. With
+RDS you have a a database which you can connect to but you don’t have to patch
+it, update it, nor can you log on the operation system itself running this
+database.
+
+AWS Lambda
+==========
+
+AWS Lambda is a compute service where you can upload your code to AWS Lambda
+and the service can run the code on your behalf using AWS infrastructure. After
+you upload your code and create what we call a Lambda function, AWS Lambda
+takes care of provisioning and managing the servers that you use to run the
+code. 
+
+AWS Lambda runs your code on a high-availability compute infrastructure and
+performs all of the administration of the compute resources, including server
+and operating system maintenance, capacity provisioning and automatic scaling,
+code monitoring and logging. All you need to do is supply your code in one of
+the languages that AWS Lambda supports (currently Node.js, Java, and Python). 
+
+AWS Lambda runs your code on a high-availability compute infrastructure and
+performs all of the administration of the compute resources, including server
+and operating system maintenance, capacity provisioning and automatic scaling,
+code monitoring and logging. All you need to do is supply your code in one of
+the languages that AWS Lambda supports (currently Node.js, Java, and Python). 
+
+SOA
+===
+
+
+SOA is nothing but a way of design, in which the modules comunicates with each
+others through "services". It is just that, and now the next question is: what
+is exactly a "service" and what is its difference with a regular "method"??
+
+A service is an operation that performs a single, atomic business operation.
+This atomicity make it highly reusable from many modules. Then a complex
+business operation is just the orchestation of the invokation of many of these
+services in a specific order.
+
+SOA has nothing to do with specific technology, is just an specific way of designing.
+
+http://stackoverflow.com/questions/1093204/what-is-soa-service-oriented-architecture?rq=1
+
+
+Microservices
+=============
+versus SOA (Service Oriented Architecture)
+http://stackoverflow.com/questions/25501098/difference-between-microservices-architecture-and-soa
+
+
+ContainerX
+==========
+vSphere for Containers.
+On Cloud (AWS EC2) clusters or bare metal cluster or Azure cluster or vSphere cluster
+
+Container pools
+CPU/mem limit
+
+
+GlusterFS
+==========
+open src distributed FS
+routes requests within a namespace
+supports geo-aware replication
+petabyte scale
+red hat support
+works with rancher convoy
+deployable with containers
+
+AUFS AnotherUnionFS
+====
+manage local layers
+CoW (copy on write)
+
+
+CGroups (runtime constraints)
+=======
+
+* Memory Cgroup
+- hard limit (process killed when limit reached
+- Soft limit (kill only if contention and limit reached)
+
+* CPU Cgroup
+- shares == weights not limits (both can consume 100% but when contention, the one with higher weight gets it)
+-  dedicate cpu to a container
+
+* Block I/O
+- device relative weights
+- group relative weights
+- IOPS/bps limits
+
+* Freezing
+- docker pause
+
+Alpine linux 5MB
+Ubuntu > 150 MB
+
+Top 3 COE (Container Orchastration engines)
+- Marathon by Apache Mesos
+- Docker Swarm
+- Kubernetes
+
+
+* Mesos
+========
+- Open source cluster manager
+- Phys servers + VMs : abstracts cpu/mem/storage etc
+- Form clusters
+- Submit jobs : cron, hadoop, spark, jenkins 
+- Job for orchastrating containers is called Marathon.
+
+Kubernetes
+===========
+Distributed process manager
+Open source, started by Google.
+Cluster management systems
+Scheduler for docker containers for machines - could be running on laptop or Data center or cloud
+
+Everything at google runs in containers (gmail, search, maps, map reduce, GFS, even GCE itself. VMs run in containers).
+
+Part1 Setup a cluster
+- choose a cloud (GCE, AWS, Azure, Backspace, on-premises etc)
+- choose a node OS : CoreOS, RHEL, CentOS etc
+- provision machines: boot VMs, run Kube
+- configure networking : ip range, services, SDN etc
+- start cluster services : DNS, logging, monitoring
+- manage nodes : kernel upgrades, hw / disk failures etc
+
+Google Container Engine (GKE) helps here
+
+Part 2 Using a cluster
+- run pods & containers
+- replication controllers
+- services
+- volumes etc
+
+
+* Pods
+Group of containers which are tightly coupled
+(interact with each other or could be on same host - work together closely).
+Atom of Scheduling.
+Settings in a template —> repeatable, manageable 
+share namespace (IP, IPC)
+
+Pod IPs are routable
+(docker default is private IP - needs NAT)
+Pods can reach each other without NAT
+
+* Labels
+Labels are (key, value) pairs.
+Membership identifier.
+Baked into API.s
+Label your pods.
+
+e.g. How many in ‘production’ label?
+Shutdown and update and restart all production.
+Do not think at machine level. wherever it’s scheduled.
+Allows for intent
+
+* Replication controllers 
+Declarative
+#replicas = 5, label selector = testPods
+Always run 5 copies of this Pod, if one fails, starts a new one. etc
+
+* Service
+An automatically configured load balancer = distributed load balancer
+Runs inside cluster
+Group of pods that work together, grouped by a Selector.
+Gets a stable virtual IP (VIP) and port
+VIP is captured by kube-proxy 
+
+
+* Volumes
+Pod scoped storage (per pod)
+supports many types of volume plugin
+- git repo
+- AWS Elastic Block Store
+- Ceph
+- GlusterFS
+- Ceph
+- NFS
+
+* Persistent Volume
+Higher level abstraction, user just asks for storage.
+Dynamically scheduled and managed like nodes and pods
+Admin provisions (GCE, AWS ELB, iSCSCI, NFS)
+
+* Kubernetes : on docker originally. now on rocket, LXC.
+
+* Multi Zone clusters
+Multiple availability zones
+
+
+* Secrets
+Do not put secrets in container image.
+If secret changes, need to rebuild/retest image.
+12-factor says keep config in environment.
+Kubernetes is the env.
+manage secrets via API?
+
+
+* Microservices
+- Language independent
+- fast iterations
+- small teams
+- fault isolation
+- scalable
+
+* Redis
+- Open source, BSD license advanced key value store.
+- In memory key-value store with persistence.
+- NOSQL (non-relational structured data storage) DB written in C
+- "Data structure server" Keys can be hashes, strings, sets, lists, data structures.
+
+Remote Dictionary Server.
+
+- redis client cli
+
+Usecases
+- as a cache
+- analytics 
+- leaderboard 
+- pub/sub
+- messaging
+- high IO workloads
+- many other use cases
+
+
+* Scaling
+
+Horizontal scaling
+- H1 H2 H3 H4 H5 ...
+- load balancing required.
+- resilient
+- network calls : slower
+- data inconsistent
+- scales well
+
+Vertical scaling
+- bigger box (more powerful cpu, more memory etc)
+- no load balancing required.
+- single point of failure
+- IPC : faster
+- consistent
+- hw limit
+
+
+* Consistent hashing
+
+Load balancing
+
+Hash(request id) = x % num_servers 
+array
+issue : When we add/remove servers, entire system changes and all useful cache on servers needs to be dumped.
+What we want is tiny change to each server when add/remove is done.
+
+
+Use a ring.  
+hash server ids also, and put in same ring.
+clockwise or anti clock wise.
+
+Issue - load is not served equally after one is added or removed.
+Solution - generate multiple replica id for a given server.
+Upto k replicas (k = log ring size), virtual servers per server, distribute more.
+
+
+* Messaging queues
+
+orders - Servers - Database
+
+notifier - checks heartbeat from a server.
+if dead, queries database, picks up orders of dead server, load balance and distribute.
+
+persistence + notifier + heartbeat + load balance =  message/task queue
+
+example Rabbit MQ, Zero MQ, 
+
+Message queue pushes the messages to destination.
+
+Strong consistency
+- reads always see latest writes.
+
+Eventual consistency
+- reads will eventually see the latest write.
+
+
+* The CAP theorem 
+
+states that a distributed computer system cannot guarantee all of the following three properties at the same time:
+
+1.Consistency
+2.Availability
+3.Partition tolerance (can not avoid as we drop packets)
+
+It states that it is impossible for a distributed data store to simultaneously
+provide more than two out of the following three guarantees:
+
+- Consistency: 
+Every read receives the most recent write or an error
+=> All nodes see the same data at the same time.
+
+- Availability: 
+Every request receives a (non-error) response – without the guarantee that it contains the most recent write
+
+Node failures do not prevent other survivors from continuing to operate (a
+guarantee that every request receives a response about whether it succeeded or
+failed)
+
+- Partition tolerance: 
+The system continues to operate despite an arbitrary number of messages being
+dropped (or delayed) by the network between nodes
+
+In particular, the CAP theorem implies that in the presence of a network
+partition, one has to choose between consistency and availability. Note that
+consistency as defined in the CAP theorem is quite different from the
+consistency guaranteed in ACID database transactions.
+
+* ACID (Atomicity, Consistency, Isolation, Durability) 
+Used for traditional db
+
+is a set of properties of database transactions intended to guarantee validity
+even in the event of errors, power failures, etc. In the context of databases,
+a sequence of database operations that satisfies the ACID properties (and these
+can be perceived as a single logical operation on the data) is called a
+transaction. For example, a transfer of funds from one bank account to another,
+even involving multiple changes such as debiting one account and crediting
+another, is a single transaction.
+
+Transfer 10 from A to B : transaction. 1 transaction but 2 operations.
+A = A-10
+B = B+10
+
+- Atomicity
+
+Transactions are often composed of multiple statements. Atomicity guarantees
+that each transaction is treated as a single "unit", which either succeeds
+completely, or fails completely: if any of the statements constituting a
+transaction fails to complete, the entire transaction fails and the database is
+left unchanged. An atomic system must guarantee atomicity in each and every
+situation, including power failures, errors and crashes.
+
+
+
+- Consistency
+
+Consistency ensures that a transaction can only bring the database from one
+valid state to another, maintaining database invariants: any data written to
+the database must be valid according to all defined rules, including
+constraints, cascades, triggers, and any combination thereof. This prevents
+database corruption by an illegal transaction, but does not guarantee that a
+transaction is correct.
+
+- Isolation
+
+Transactions are often executed concurrently (e.g., reading and writing to
+multiple tables at the same time). Isolation ensures that concurrent execution
+of transactions leaves the database in the same state that would have been
+obtained if the transactions were executed sequentially. Isolation is the main
+goal of concurrency control; depending on the method used, the effects of an
+incomplete transaction might not even be visible to other transactions.
+
+e.g. reservation of a seat.
+
+- Durability
+
+Durability guarantees that once a transaction has been committed, it will
+remain committed even in the case of a system failure (e.g., power outage or
+crash). This usually means that completed transactions (or their effects) are
+recorded in non-volatile memory.
+
+Disk buffer caches. Must be flushed or written to a log for replay in case of power failure.
+
+
+
+* SQL databases:
+Structured query language for
+- Traditional relational databases (unique keys, single valued, no update/insertion/deletion anomalies)
+- Well structured data
+- ACID properties should hold
+
+* NoSQL (Not only SQL) databases:
+triggered by the storage needs of Web 2.0 companies such as Facebook, Google and Amazon.com
+- Not necessarily well structured – e.g., pictures, documents, web page description, video clips, etc.
+Lately of increasing importance due to big data
+- ACID properties may not hold -> no properties at all then???
+- focuses on availability of data even in the presence of multiple failures
+spread data across many storage systems with a high degree of replication.
+
+
+
+* BASE
+Used for NoSQL db - for unstructured data
+
+Basically Available 
+fulfill request, even in partial consistency. 
+
+Soft state 
+abandon the consistency requirements of the ACID model pretty much completely
+
+Eventual consistency 
+indicates that the system will become consistent over time, given that the system doesn't receive input during that time.
+purely a liveness guarantee.
+
+Rationale behind BASE
+- it's ok to use stale data
+- Use resource versioning -> say what the data really is about. value of X is 5 at time T date D.
+
+* Twitter : availability is more important than consistency.
+
+* Sharding
+Technique: Consistent hashing
+
+* Strong consistency - reads always see latest write.
+
+* Eventual 
+Reads will see some write and eventually will see latest write.
+
+
+
+Zookeeper
+---------
+
+Keeps track of info that must be sync.ed across cluster.
+- who is master, what tasks are assigned to which workers, which workers are available etc
+master crashes/worker crashes/network trouble - part of cluster can't see the rest of it.
+
+
+Database versus streaming
+-------- ------ ---------
+
+Old way
+rows processed in batch fashion
+
+Apps -> DBs -> Data WareHousing <- reporting, analytics etc
+
+monolithic
+
+* New way
+
+monolith -> microservices
+batch -> real time
+
+Kafka
+-----
+
+Open source. Originally from Linkedin.
+
+Distributed message queue : Pub/Sub messaging system.
+
+"Distributed"
+- replication
+- fault tolerance
+- partition
+- elastic scaling
+
+Real time streaming.
+
+Log is first class citizen. O(1) - append
+Immutability.
+
+Producer or Publisher (client of cluster) - rx data and then push data to Kafka. Apps
+kafka cluster = Brokers rx msg./store in msg log and then publish to a stream called Topic.
+Consumers (client of cluster) - read from Brokers. Apps
+
+
+Stream processors : transform data as it comes in.
+Producers produce unstructured log lines, 
+Stream processors process in real time and extract the data you care about and then republish in a new topic
+which could go to a database connector to store.
+
+many sources/ many destinations.
+data pipeline difficult.
+
+
+Kafka cluster : brokers.
+
+Connectors : import/export data from/to DB.
+
+Stream : constant stream of messages.
+
+
+New Log entries from web servers.
+New Sensor data from IoT. Cars, thermostat etc
+New stock trades.
+Essentially events.
+
+Process data as it comes in real time, instead of storing and processing later.
+
+
+
+Kubernetes
+-----------
+
+Google started it in 2014. Based on over 10 yrs experience (Borg project).
+open source, written in Go.
+
+Container orchestration technology.
+
+Platform
+
+- deployment
+- scale
+- monitoring
+
+* Pod
+A pod is where an Application is deployed. Contains file storage.
+smallest deployable unit
+small group of tightly coupled containers 
+All applications in a Pod share an IP address and data volumes
+routable IP, new IP when restarted
+
+* Node
+VM or phy machine. running one or more pod.
+
+* Clusters : collection of nodes.
+Master node to maintains .
+
+
+* ReplicaSets
+run x replicas of a pod
+start/kill pods
+health checks
+
+* Deployment
+creates ReplicaSets which in turn creates Pods
+which img/volume/etc
+specify ram, file storage, cpu etc
+
+* Services
+
+* Namespaces : group kb resources (pods, replicasets, etc)
+
+* Container networking  (CNI)
+1 create nw namespace
+2 create bridge
+3 create vEth pairs
+4 attach vEth to namespace
+5 attach vEth to bridge
+6 assign IP
+7 bring the i/f up
+8 enable NAT / IP masquerade
+
+Same steps for docker/rkt/mesos/k8s
+=> program called bridge to take care of these things
+bridge add 123456 /var/run/netns/123456
+bridge add <cid> <namespace>
+
+=> standard called CNI (container network interface)
+Programs called as plugins.
+example bridge, vlan, ipvlan, macvlan, dhcp, host local
+
+weaveworks, flannel, cilium, vmware nsx : implement CNI std
+docker does not implement CNI and has its own CNM
+
+

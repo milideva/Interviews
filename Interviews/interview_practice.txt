@@ -1,0 +1,6 @@
+leetcode.com // practice writing code, compiling, run against test code
+hackerrank.com
+careercup.com // Read Amazon and google interview questions daily
+stackoverflow.com  // Informal discussions, example P==NP ?
+geeksforgeeks.com  // Coding practice
+

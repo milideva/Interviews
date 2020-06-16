@@ -1,0 +1,89 @@
+
+
+Polynomial time and exponential time:
+
+O(n^2) is quadratic category, which is a type of polynomial (the special case
+of the exponent being equal to 2).  On the other hand, O(2^n) is exponential
+time, where the exponential function implied is f(n) = 2^n. The difference is
+whether the function of n places n in the base of an exponentiation, or in the
+exponent itself.
+
+A polynomial is a linear combination of terms that look like Constant * n^k On
+the opposite, exponential means something like k^n, where in both case k is a
+constant and n is a variable.
+
+Exponential algorithms execution time grows much faster than that of polynomial
+ones.
+
+
+n! >> 2^n >>  n^3 >> n^2 >> n log n >> n >> log n >> 1
+
+
+
+
+What's P=NP ?, and why is it such a famous question?
+
+http://stackoverflow.com/questions/111307/whats-p-np-and-why-is-it-such-a-famous-question
+
+
+Turing machine
+
+There is an abstract computational model, an imaginary computer called a Turing
+machine (TM). This machine has a finite number of states, and an infinite tape,
+which has discrete cells into which a finite set of symbols can be written and
+read. At any given time, the TM is in one of its states, and it is looking at a
+particular cell on the tape. Depending on what it reads from that cell, it can
+write a new symbol into that cell, move the tape one cell forward or backward,
+and go into a different state. This is called a state transition. Amazingly
+enough, by carefully constructing states and transitions, you can design a TM,
+which is equivalent to any computer program that can be written. This is why it
+is used as a theoretical model for proving things about what computers can and
+cannot do.
+
+It has been proven that any problem that can be solved by a non-deterministic
+TM can be solved by a deterministic TM. However, it is not clear how much time
+it will take. The statement P=NP means that if a problem takes polynomial time
+on a non-deterministic TM, then one can build a deterministic TM which would
+solve the same problem also in polynomial time. So far nobody have been able to
+show that it can be done, but nobody has been able to prove that it cannot be
+done, either.
+
+P
+Can be solved and verified in Polynomial time
+
+NP
+Easy to verify in P time but not easy to solve in P time.
+
+What is NP?
+
+NP is the set of all decision problems (question with yes-or-no answer) for
+which the 'yes'-answers can be **verified** in polynomial time ( O(n^k) where n
+is the problem size, and k is a constant) by a deterministic Turing
+machine. Polynomial time is sometimes used as the definition of fast or
+quickly.
+
+What is NP-complete problem?
+
+http://stackoverflow.com/questions/210829/what-is-an-np-complete-problem
+
+
+
+
+____________________________________________________________
+| Problem Type| Verifiable in P time| Solvable in P time| Increasing Difficulty
+___________________________________________________________|           |
+| P            |        Yes           |        Yes         |           |
+| NP           |        Yes           |     Yes or No *    |           |
+| NP-Complete  |        Yes           |      Unknown       |           |
+| NP-Hard      |     Yes or No **     |      Unknown ***   |           |
+____________________________________________________________           V
+
+Notes on 'Yes or No' entries:
+
+    * An NP problem that is also P is solvable in P time.
+    ** An NP-Hard problem that is also NP-Complete is verifiable in P time.
+    *** NP-Complete problems (all of which form a subset of NP-hard) might be. 
+	The rest of NP hard is not.
+
+
+http://stackoverflow.com/questions/1857244/np-vs-np-complete-vs-np-hard-what-does-it-all-mean?rq=1

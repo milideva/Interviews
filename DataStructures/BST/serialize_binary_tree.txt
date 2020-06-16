@@ -1,0 +1,29 @@
+http://www.geeksforgeeks.org/serialize-deserialize-binary-tree/
+
+How to store a general Binary Tree?
+A simple solution is to store both Inorder and Preorder traversals. This 
+solution requires requires space twice the size of Binary Tree.
+We can save space by storing Preorder traversal and a marker for NULL 
+pointers. 
+
+BST :
+If the given Binary Tree is Binary Search Tree, we can store it by either 
+storing preorder or postorder traversal. In case of Binary Search Trees, 
+only preorder or postorder traversal is sufficient to store structure 
+information. 
+
+Complete Binary Tree :
+A Binary Tree is complete if all levels are completely filled except 
+possibly the last level and all nodes of last level are as left as 
+possible (Binary Heaps are complete Binary Tree). For a complete Binary 
+Tree, level order traversal is sufficient to store the tree. We know that 
+the first node is root, next two nodes are nodes of next level, next four 
+nodes are nodes of 2nd level and so on. 
+
+Can we optimize it further?
+The above solution can be optimized in many ways. If we take a closer look 
+at above serialized trees, we can observe that all leaf nodes require two 
+markers. One simple optimization is to store a separate bit with every 
+node to indicate that the node is internal or external. This way we don?t 
+have to store two markers with every leaf node as leaves can be identified 
+by extra bit. We still need marker for internal nodes with one child.

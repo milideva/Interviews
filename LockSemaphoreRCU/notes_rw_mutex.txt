@@ -1,0 +1,69 @@
+Pseudo code
+https://en.wikipedia.org/wiki/Readers%E2%80%93writer_lock#Using_a_condition_variable_and_a_mutex
+
+Alternatively an RW lock can be implemented in terms of a condition variable,
+cond, an ordinary (mutex) lock, g, and various counters and flags describing
+the threads that are currently active or waiting.
+
+For a write-preferring RW lock one can use two integer counters and one boolean
+flag:
+num_readers_active: the number of readers that have acquired the lock (integer)
+num_writers_waiting: the number of writers waiting for access (integer)
+writer_active: whether a writer has acquired the lock (boolean).
+
+Initially num_readers_active and num_writers_waiting are zero and writer_active is false.
+
+The lock and release operations can be implemented as
+
+
+struct rwlock_ {
+    pthread_mutex_lock g;
+    pthread_cond_var cond;
+    
+    int num_readers_active;
+
+    int num_writers_waiting;
+    bool writer_active;
+    pthread_t writer_tid;
+};
+
+
+pthread_rwlock_rd()
+Begin Read :
+Lock g
+While num_writers_waiting > 0 or writer_active:
+    wait cond, g
+Increment num_readers_active
+Unlock g.
+
+
+pthread_rwunlock()
+End Read :
+Lock g
+Decrement num_readers_active
+If num_readers_active = 0:
+Notify cond (broadcast)
+Unlock g.
+
+pthread_rwlock_wr()
+Begin Write :
+
+Lock g
+Increment num_writers_waiting
+While num_readers_active > 0 or writer_active is true:
+    wait cond, g
+Decrement num_writers_waiting
+Set writer_active to true
+Unlock g.
+
+// this api to unlock is the same for reader and a writer
+// so while writing may be save thread id and compare it here
+// to know whether writer is unlocking or not (compare with writer_tid)
+pthread_rwunlock()
+End Write :
+Lock g
+Set writer_active to false
+Notify cond (broadcast)
+Unlock g.
+
+

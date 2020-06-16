@@ -1,0 +1,302 @@
+
+
+DevOps
+=======
+
+developer : new feature, bug fixes —> takes long time to deploy
+
+dev env != production env
+
+IT ops :
+deployment schedule
+diagnose issues caused by new code
+
+developer and operations teams collaborate by automating infra, workflows and continuously measure application performance.
+
+1. change mindset + new tools
+tools for 
+- source control track : github
+- build and test : Jenkins
+- configuration management and deployment: chef, puppet, saltstack
+- measure performance continuously
+- analysis of system and application log.
+
+2. automate 
+3. write sw in small chunks, test and deploy
+4. same dev env as production env
+5. faster response to customer requirements
+ttm is improved.
+
+
+Business Requirements =>  Dev Software ===> Operations Service to customer
+(deploy) ==> customer feedback ===> Business Requirements (back to circular
+flow)
+
+QA, release, 
+
+
+TED talk by Simon Sinek 
+Golden circle
+Why - most important - emotional.
+How 
+What - logical - rational
+
+Law of diffusion of innovation.
+
+LEAN
+Based on Toyota production system (TPS) Deming Drucker, Toyoda.
+
+Lean concepts
+Kaizen : continuous improvement
+Kanban : Just in time pull signaling system
+Jidoka : Autonomation: automation with human touch
+Polka-Yoke : Mistake proofing
+5S : sorting, simplifying, sweeping, standardizing, sustaining
+5Why : root cause analysis
+Muda (waste): removal of non-value add
+
+Gene Kim, several books, videos dockercon2014
+
+1. System thinking (left to right) 
+* Understand flow of work.
+* Always seek to increase flow
+* never pass defects downstream
+* never allow local optimization to cause global degradation
+
+2. Ops to Dev (right to left)
+* Understand and respond the needs
+* shorten and amplify feedback loop.
+
+3. Continuous experimentation and learning
+
+4. Inject failures often
+Netflix : has Chaos monkey. only one who survived AWS zone failures.
+
+
+Deployment time
+Lead time: from concept to deployment
+
+DevOps tools :
+any tool that aids convergence of process and collaboration of people.
+
+Andon cord at the Toyota factory. Pull cord if anything is wrong, to stop entire line.
+Gets pulled 3500 times a day : 2000 cars per day, 55 seconds/vehicle.
+
+
+waterfall -> agile -> lean -> continuous integration -> continuous delivery ->
+continuous deployment -> continuous operations
+
+continuous integration : multiple products' images integrated
+every push on master results in build
+it's only for test
+
+continuous delivery : 
+delivery of solution (release)
+
+continuous deployment : actual deployment for internal
+
+continuous operations : on customer
+
+The meaning of the above terms varies from company to company.
+
+Ad Hoc (hackathon, rapid prototype POC)
+waterfall -> cycle and is serial
+Agile : smaller feedback loop, working sw more imp than documentation
+
+
+What Is Agile?
+At its most basic, agile development is development that adheres to the
+principles stated in The Agile Manifesto. More broadly, agile is the word for
+an environment in which the priorities, according to the authors of the
+manifesto, are:
+
+Individuals and interactions over processes and tools;
+Working software over comprehensive documentation;
+Customer collaboration over contract negotiation; and
+Responding to change over following a plan.
+Agile software development can be implemented in a number of ways, including
+scrum, kanban, scrumban, extreme programming, and many more.
+
+
+* LEAN : principles from Toyota Production System (TPS)
+Muda
+Jidoka
+Kaizen
+etc
+
+
+DevOps versus Agile
+===================
+
+* Methodology Vs. Deployment
+Agile software development is a methodology for developing software. Once the
+software is developed and released, the agile team doesn't formally care what
+happens to it. They're on to the next sprint and the next revision of the user
+story.
+
+DevOps, on the other hand, is all about taking software which is ready for
+release and deploying it in the safest, most reliable manner possible. DevOps
+doesn't depend on the software being developed by the agile discipline. It's
+entirely possible to have waterfall development feeding DevOps.
+
+
+* Cross-Functional Vs. Siloed
+One of the key factors in many agile processes is the idea that scrum members
+can each do every job on the team. The idea is you don't want team members
+sitting around waiting for a specialist to become available for the next step
+in the process. Any available team member should be able to do what's required
+for progress. In addition, when each team member is capable of doing every job,
+it increases understanding and makes close communication much easier.
+
+DevOps, on the other hand, assumes there will be development teams and
+operational teams, the two will be separate, and employees will not hop
+willy-nilly between the two teams. What the teams will do is communicate
+between themselves on a frequent and regular basis.
+
+* How To Communicate
+Scrum is one of the most common methods of implementing agile software
+development. Everyone who's been around scrum teams knows the daily scrum
+meeting. Often a standup meeting, the daily scrum is a short meeting in which
+team members update one another on their progress, tell of their plan for the
+day, and let the scrum leader know where help is needed. What scrum meetings
+are not are formal encounters during which thick specification documents are
+reviewed with an eye on milestones and metrics.
+
+DevOps communications, on the other hand, often involve specs and design
+documents. It's critical for the operational team to fully understand the
+software release and its implications so they can properly run the deployment
+process. The operational team will often involve user representatives, so that
+users can be ready for the update, and so that the operational team understands
+the impact a deployment will have business operations. Such communications
+don't need to happen on a daily, stand-up basis. But they certainly need to
+happen.
+
+* A Team, Or A Team Of Teams?
+The nature of scrum communications requires agile teams to be relatively small.
+I don't think I've ever heard of a 1,000-person agile development team. The
+scrum happens in and among the team, though the team may well be contributing
+to a larger software effort.
+
+DevOps, by its nature, will have multiple teams working together. Some teams
+can be practicing agile scrum; some can be practicing agile kanban; some can be
+practicing waterfall. All can come together at the point of software release to
+communicate with the operational team for deployment. It's good to reiterate
+the point: DevOps doesn't depend on any one development discipline to be
+effective.
+
+* Scheduling
+Agile sprints choose a time in the near future (generally one month or less),
+and set a number of features to be created within the sprint. Teams know there
+will be another sprint coming up, and more features can be covered then. They
+expect to listen to users and to end up revising current features in an
+upcoming sprint.
+
+DevOps chooses a schedule for deployment to minimize the business disruption.
+For example, DevOps might roll out the work of each sprint at the sprint's end
+-- or it might wait until several sprints have released software so there can
+be a consolidated deployment with less disruption. DevOps doesn't prioritize
+speed and rapid development. Rather, it prioritizes minimal disruption and
+maximum reliability.
+
+* Documentation
+One of the principles of agile development is to prioritize working software
+over complete documentation. This is fine when you're being flexible and
+responsive, but it can turn around to bite you when you're trying to turn
+things over to another team for deployment.
+
+DevOps needs the documentation because it will turn the software over to a
+separate operational team for deployment. Automation helps minimize the impact
+of skimpy documentation, but, when you're turning complex software over to
+another team, you can't assume one a long meeting will transfer all the
+knowledge required. DevOps tends to consider good documentation as part of its
+definition of working software.
+
+
+* Agile Doesn't Spawn DevOps
+Agile is all about development. Sometimes, it takes over the entire company.
+Even when it does, agile discipline doesn't inevitably lead to DevOps. The
+practice of DevOps involves a separate discipline and methodology from those of
+agile. When the two are treated as separate disciplines that can work together,
+decisions become much more rational than when the two terms are used as
+synonymous.
+
+
+* Automation
+DevOps absolutely depends on automated deployment to make everything happen
+smoothly and reliably. Certain tools are an integral part of DevOps.
+
+Agile development teams, on the other hand, may choose to use certain tools.
+But there are no specific tools required for an agile team. It's entirely
+possible for an agile team to communicate via email and sticky notes placed
+around a conference room.
+
+
+SoA (Service Oriented Architecture)
+====================================
+
+
+Microservices
+=============
+
+https://www.youtube.com/watch?v=2yko4TbC8cI&feature=youtu.be
+
+https://martinfowler.com/articles/microservices.html
+
+1. Componentization via services
+Replace independently
+Upgrade independently
+
+2. Conway’s law.
+
+"organizations which design systems ... are constrained to produce designs
+which are copies of the communication structures of these organizations."
+
+
+
+3.
+
+
+
+
+Git
+===
+
+* Git was designed from the ground up as a distributed version control system.
+Being a distributed version control system means that multiple redundant
+ repositories and branching are first class concepts of the tool.
+
+* extremely fast as most operations are local (except push and fetch) and there is no network latency
+
+* allows full functionality when disconnected from network.
+
+* Having a complete, cryptographically verifiable integrity chain through the
+ repository helps build trust in the underlying systems, or detect when they
+ fail.
+
+
+Jenkins
+=======
+
+Jenkins is a Continuous Integration server written in Java (so portable and has many plugins).
+
+It allows code to be built deployed and tested automatically. 
+You can hook it up with most code repo's and there are loads of plugins that
+you can integrate with various software tools for better technical governance. 
+Code quality checks (like sonar and find bugs) as well as adding test coverage
+with tools like cucumber/selenium and TestNG.
+
+REST
+====
+
+REST allows easy evolution of an API design. And that's the key with REST - you're creating an API.
+
+The point to REST is that each "resource" has a resource identifier, a URI. Each URI potentially has GET POST, PUT, DELETE.
+
+GET is get
+POST is update
+PUT is create
+DELETE is delete.
+
+https://stackoverflow.com/questions/5320003/why-we-should-use-rest
+
+

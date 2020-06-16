@@ -1,0 +1,117 @@
+Traditional router (Closed box)
+1. control plane - CPU running routing protocols RIB - in chassis based it’s the Supervisor
+2. data path - I/O module FIB downloaded from CPU.
+3. Fabric - interconnects data path in backplane
+
+Now :
+1. vManage - controller (policy plane) in cloud
+2. vSmart - control plane in cloud, sw on x86
+3. vEdge :  any branch : data center or enterprise/campus or remote office
+4. fabric = MPLS (expensive) or Broadband internet (no QoS, no security, but
+cheap) or 4G/LTE/5G in future.
+
+
+Remote site or branch site connecting to central site over WAN.
+WAN is expensive since it’s private link.
+Currently without SD-WAN : uses MPLS . very expensive. 
+Sites increase : 100 .. 200 … 300 …
+can not guarantee voice call / video over WAN as scale increases.
+DMVPN, iWAN (adv QoS) etc
+
+
+Problem :
+hundreds of sites going to central office for all the traffic.
+Now no longer true because lot of traffic now goes to cloud!
+e.g. cloud services : office365/dropbox/ google drive etc
+then why  should this traffic go through WAN to central site and then to cloud?
+Might as well send this traffic directly  from branch to cloud via internet or 4G/LTE etc
+WAN is expensive since it’s private link (T1 or ethernet over MPLS)
+Alternatives to WAN : Broadband/ Fiber / 4G/LTE
+
+
+extends intent based networking to wan.
+
+https://www.youtube.com/watch?v=5l230PvOhSA
+
+Advantages :
+1. Rather than managing 1000s of routing tables, just mange 4-5 vSmart
+2. Can use any transport : MPLS or 4G / LTE or internet
+3. Application traffic manipulation / path intelligence to switch app to better performing link
+4. move scavenger traffic via internet rather than WAN (application visibility and control : AVC)
+5. Secure connectivity 
+
+4 pieces :
+
+* Data Plane (ISR/ASR)  routers (vEdge)
+
+* Control plane (vSmart) : rip it OUT of router,  into the cloud.
+
+* Management (vManage)
+
+* vBond (orchestrator) : Since closed box is opened, how do I/O modules know where CPU is?
+Solution is orchestrator called vBond . Must be in public space. The only piece of SDWAN in public space.
+ORCH  == discovery of vSmart and vEdge.
+
+vSmart calls home into ORCH
+vEdge also calls home into ORCH.
+now controller knows edges via ORCH and  controller sets up a tunnel with vEdge.
+each vEdge connects to controller.
+now controller let’s vEdge set up a tunnel with other vEdge.
+this is how secure channel is formed between edge devices.
+
+
+* Many cpu intensive tasks decoupled from router => gives scalability.
+
+OMP : Overlay Management Protocol.
+Proprietary protocol. 
+But it’s in control plane between Viptela CPU and Viptela I/O ports - so does not need to be standard.
+Overlay : 1. between controller and I/O 2. between I/O modules (edges)
+I/O module  = data center or enterprise/campus or remote office
+
+Public keys reside on controller.
+
+
+Routers talk to vSmart.
+But no routing updates between routers.
+
+Scale : A couple of thousand sites, routing can become complex.
+
+Not any more. Since only vSmart has it all.
+
+Scale out : 100 more sites added? : spin up new VMs for vSmart controllers.
+
+
+What is smart exactly? 
+* AppAware routing policies.
+* monitors voice latency, if > 150mS switch over to secondary connection. constantly monitors.
+* skype/office365 : vSmart pretends as a user, measures performance over
+ primary, secondary, tertiary connections, and chooses best path
+automatically.
+
+Security :
+URL filtering
+DNS layer enforcement with umbrella (openDNS)
+App aware enterprise firewall
+
+
+* vEdge routers
+vEdge are edge routers that are located at the perimeters of the sites in your
+overlay network, such as remote office, branches, campuses, and data centers.
+They route the data traffic to and from their site, across the overlay network.
+
+vEdge routers are either physical hardware routers or software vEdge Cloud
+routers, which run as virtual machines on a hypervisor or an AWS server.
+
+An overlay network can consist of a few or a large number of vEdge routers. A
+single vManage NMS, which provides management and configuration services to the
+vEdge routers, can support up to about 2,000 routers, and a vManage cluster can
+support up to about 6,000 routers.
+
+For software vEdge Cloud routers, create a VM instance, either on an AWS
+server, or on an ESXi or a KVM hypervisor.
+
+For hardware vEdge routers, config them for automatic provisioning, which is
+done using the Viptela zero-touch provisioning (ZTP) tool. The ZTP process
+allows hardware routers to join the overlay network automatically.
+
+

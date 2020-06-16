@@ -1,0 +1,76 @@
+
+
+
+Internet of Things
+==================
+Cisco changed name to involve humans (Which are not things).
+Internet of everything (Cisco), Smarter planet (IBM) Industrial Internet (GE)
+New protocols
+* IEEE 1901
+* IEEE 1905
+* MQTT (MQ telemetry transport), 
+6LowPAN (ipv6 over low power wireless Personal area nw), 
+RPL (routing protocol for low power and lossy network)
+* Power line communication (PLC)
+From 1990, X10, LonWorks, HomePlug
+* Broadband over power line (BPL) like DSL.  IEEE1901 BPL standard.
+Did not succeed in US (too many transformers, HF can not pass through transformers).
+Not cost effective in US.
+* HomePlug (1.0, AV, AV2, GP).
+(distributing internet INSIDE house over electricity). Very cheap.
+Does not work across certain circuits/transformer.
+Everything is connected via electric wires anyway (fridge, tv, heater etc).
+90% devices use HomePlug.
+
+HomePLug V2 : 500Mhz! Multiple HD video streams possible.
+Bigger spectrum.
+
+HomePlug GP (GreenPHY): for HAN (home area network).
+Monitoring and control of energy consuming/controlling EV charging.
+Low Cost, low power, low data rate version of HomePlug.
+HomePlug GP is a profile of IEEE 1901 (just like AV and AV2).
+75% less power than AV.
+
+Machine to machine (M2M), no human involved.
+* smart phone, smart meters, tablets, medical devies, temp control etc
+* Supervisory control and data acquisition (SCADA)
+
+Convergent Digital Home : IEEE 1905.1
+* Abstraction layer between IP and L2 such as 802.3 or 802.11 or PLC 1901 or MoCA.
+
+Outside home : Netricity.
+Long range outside-the-home PLC for Smart Grid (low freq, narrowband).
+IEEE 1901.2
+
+Industrial ethernet:
+Same as regular eth. Rugged connectors (Withstand rain/high low temp).
+Full duplex (NO CSMA/CD).
+Optical fiber (to avoid electrical interference with industrial).
+Min frame size 64B too big. 64B for propagation delay.
+Needs only 1B-4B to be sent from device, too much padding to 64B. 
+
+Fieldbus : old way of industrial eth.
+
+IEEE 1451
+To query devices … set of smart transducer i/f for sensors/actuators.
+XML based.
+
+Smart Cards
+* have a processor on it.
+* May or may not have battery.
+  Send wireless power, wakeup cpu. Does not really need battery. 
+* RFID is a subset.
+* Retail loss prevention, toll collection, bus/rail pass, passport.
+* Active RFID : with battery: car key.
+* Passive RFID : no battery. Tag on goods : shirts in Target.
+* Semi-passive : cheap battery
+* Get power from reader by inductive or capacitive coupling
+
+Body Area Network
+—————————————————
+Smart card security issues.
+
+IEEE 802.15.4
+* WPAN (wireless personal area network).
+* allows mesh (centralized) but is not ad-hoc.
+Ad-hoc : peer-to-peer, computers talk to each other without access point.

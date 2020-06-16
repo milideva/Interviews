@@ -1,0 +1,133 @@
+* Threads :
+Single threaded : PCB + process address space + user stack + kernel stack
+
+Multi threaded : PCB + Process address space (shared in all threads)
+per thread : TCB, user stack, kernel stack
+
+* Thread specific data :
+thread_key_t my_key;
+
+* Thread priority :
+
+struct sched_param param;
+int priority;
+sched_param.sched_priority = priority;
+
+policy = SCHED_OTHER;
+/* scheduling parameters of target thread */
+ret = pthread_setschedparam(tid, policy, &param);
+
+
+* User level threads (ULT):
+OS does not manage threads. A library does. 
++ thread switching does not go through kernel 
++ thread scheduling can be application specific
++ can run on any OS - just need the library
+
+- Most system calls are blocking and the kernel blocks process -- So all
+  threads within the process will be blocked
+  Do not use for heavy I/O as all threads in  a process will block.
+
+- The kernel can only assign processes to processors -- Two threads within the
+  same process cannot run simultaneously on two processors
+
+example : posix threads (pthreads)
+
+* Kernel-Level Threads (KLT):
+All thread management is done by kernel with system calls.
+
++ the kernel can simultaneously schedule many threads of the same process on
+many processors blocking is done on a thread level
+
+- thread switching within the same process involves the kernel, expensive.
+- kernel specific
+
+example : linux kthreads
+
+* Threading models
+Between kernel and user threads, a process might use one of three models:
+
+One to one (1:1)
+– Only use kernel threads without user level threads on top of them.
+
+Many to one (M:1)
+– Use only one kernel thread with many user level threads built on top of them.
+
+Many to Many (N:M)
+– Use many kernel threads with many user level threads.
+
+
+Linux has no explicit concept of a “thread” (or a process) but “tasks”.
+
+* Spinning versus Blocking
+
+● Spinning
+If the lock is not free, repeatedly try to acquire the lock.
+● Blocking
+If the lock is not free, add the thread to the lock's wait queue and context switch.
+● When to use which?
+● Spinning is good for small critical sections.
+● Also good on multiprocessors.
+● If the overhead of the context switch is less than the time spent waiting (spinning),
+then blocking is preferable.
+– But remember the implicit overhead of context switching as well.
+● Spin locks are good for fine-grained work like you might see in your OS.
+● Blocking is good for coarse-grained work like protecting large data structures.
+
+
+* Fiber
+
+Like threads fibers share address space. However, fibers use cooperative
+multitasking while threads use preemptive multitasking.
+
++ thread safety is less of an issue than with preemptively scheduled threads,
+and synchronization constructs including spinlocks and atomic operations are
+unnecessary when writing fibered code, as they are implicitly synchronized.
+
+-  fibers cannot utilize multiprocessor machines without also using preemptive
+   threads; however, an M:N threading model with no more preemptive threads
+than CPU cores can be more efficient than either pure fibers or pure preemptive
+threading.
+
+example : They can be implemented in modern Unix systems using the library
+functions getcontext, setcontext and swapcontext in ucontext.h, as in GNU
+Portable Threads
+
+* Without locks :
+Divide the work between threads, for example, 
+thread1 services requests 1-10
+thread2 services requests 11-20 ...
+
+* False sharing
+Beware of cache line 
+
+Different cores have fully or partly separate caches. While the details vary, a
+modern multi-core machine will have a multi-level cache hierarchy, where the
+faster and smaller caches belong to individual processors.
+When one processor modifies a value in its cache, other processors cannot use
+the old value anymore. That memory location will be invalidated in all of the
+caches. Furthermore, since caches operate on the granularity of cache lines and
+not individual bytes (or variables), the entire cache line will be invalidated
+in all caches!
+
+Example for a cache line of 64B, if thread1 works on 16B and thread2 on next
+16B and if they are on multi core/multi cache, then performance will drop due
+to invalidations and coherency.
+
+* Another weird problem :
+"Persistent unfairness arising from cache residency imbalance"
+
+On a modern multicore system with a shared last-level cache, a set of
+concurrently running identical threads that loop – each accessing the same
+quantity of distinct thread-private data – can suffer significant relative
+progress imbalance. 
+
+If one thread, or a small subset of the threads, manages to transiently enjoy
+higher cache residency than the other threads, that thread will tend to iterate
+faster and keep more of its data resident, thus increasing the odds that it
+will continue to run faster. 
+
+This emergent behavior tends to be stable over surprisingly long period.
+
+
+

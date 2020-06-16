@@ -1,0 +1,179 @@
+What goes inside a.out after you compile.
+sdata/bss/text segment etc
+readelf, nm, objdump
+How does backtrace work (explain in detail)
+Runtime layout of  process.
+TLB, page table, virtual memory, format of an entry in TLB/in Page table
+Worst case execution - iTLB miss, PT miss, Cache miss .... D TLB miss, PT miss, cache miss 
+threads versus process
+Kernel threads versus User space threads
+types of IPC (fastest?why?) 
+semaphores versus mutex
+rd/wr lock
+CAS/ RCU
+ABA problem
+lock-free/wait-free
+producer consumer with mutex, with semaphore
+What are unikernels
+zero packet copy techniques
+virtualization - how does it exactly work?
+
+* DPDK : 
+- user space networking (no context switch to kernel, no data/packet copy from/to kernel)
+- huge page tables (no TLB miss)
+- lockless queue (no spinlock)
+- poll mode drivers (no interrupt context switch)
+- preallocated buffers
+- libraries replace system calls
+- each core works independently (no shared resource, pthread affinity)
+- Cache aligned and NUMA aware allocation (NUMA affinity)
+
+- con : intel based. non portable.
+https://www.dpdk.org/blog/2019/08/21/memory-in-dpdk-part-1-general-concepts/
+
+basically gets rid of these kernel overheads :
+packet copy
+system calls
+context switching on blocking I/O
+interrupt handling
+
+* XDP (eXpress Data Path) and eBPF : 
+https://blogs.igalia.com/dpino/2019/01/07/a-brief-introduction-to-xdp-and-ebpf/
+
+
+XDP is quite opposite of DPDK It moves user-space networking programs (filters,
+mappers, routing, etc) into the kernel. XDP allow us to execute our network
+function as soon as a packet hits the NIC, and before it starts moving upwards
+into the kernel’s networking subsystem, which results into a significant
+increase of packet-processing speed.
+
+XDP_DROP : iptable drops quite late, BPF can save time by dropping early
+XDP_PASS :
+XDP_REDIRECT : redirect early
+XDP_TX :
+
+XDP is hook allowed by eBPF in driver space.
+This allows users to drop, reflect or redirect packets before they have an skb
+
+* BPF 
+Originally for packet filtering.
+This is an in-kernel VM. 
+Now called cBPF (classic BPF), stateless as statefull not possible due to small reg/stack
+ISA : 2 32-b registers: A, X; stack scratch pad of 16, each 32b, load/store from packet
+user prog in C --> llvm/clang --> compile --> bpf asm (cpu independent)
+load in kernel --> verifier in kernel ---> JIT in kernel --> native cpu asm
+maps : shared mem between user app and kernel. accessed using bpf() syscall
+async read in python/lua etc from maps 
+bpf program types : tracepoint, kprobe, cgroup, xdp etc
+
+* eBPF
+64 bit registers (upto 10 now) + SP, stack scratch pad of 512, each 8b, added maps (no sw limit)
+stateful possible now in eBPF
+decoupled from networking - now can be used for many other things such as tracing
+tail-calls allows upto 32 eBPF programs chained (each one 4K size)
+many more features
+
+https://qmonnet.github.io/whirl-offload/2016/09/01/dive-into-bpf/
+
+
+
+User space 
+    |
+    |
+    | kernel space
+A set of table <---> A set of functions to attach <---> hooked to kernel events
+
+
+- limited and specific instruction set in a sandbox.
+- event based, limitd and bounded access to kernel memory
+- no indefinite run time
+- interacts with user space using "Maps" (key-value pairs)
+
+Maps types 
+- hash, array, trie, etc
+- can be shared across XDP programs or user space
+- per cpu as well as shared
+- can be accessed with file descriptors
+
+Use cases
+- Load balancing (Facebook, katran)
+- DDoS
+- vSwitch, vRouter
+- Redirecting
+- Multi port forwarding
+
+eBPF kicks in before kernel buffers are allocated.
+so great for lb, why allocate buffers in sw only to redirect?
+that's the idea. hw lb expensive and hard to scale.
+
+Limitations 
+- instructions are not full networking functionality. 
+only for some basic things.
+
+* ebtables/iptables/contrack :
+https://www.digitalocean.com/community/tutorials/a-deep-dive-into-iptables-and-netfilter-architecture
+
+* tap/tun/bridge in linux : 
+Tun/tap interfaces are software-only interfaces, meaning that they exist only
+in the kernel
+They allow userspace networking, that is, allow userspace programs to see raw network
+traffic (at the ethernet or IP level) and do whatever they like with it.
+
+tap interface outputs (and must be given) full ethernet frames
+tun interface outputs (and must be given) raw IP packets (and no ethernet headers are added by the kernel)
+
+Usecases :
+https://hechao.li/2018/05/21/Tun-Tap-Interface/
+
+
+* gcc v/s clang/LLVM : https://medium.com/@alitech_2017/gcc-vs-clang-llvm-an-in-depth-comparison-of-c-c-compilers-899ede2be378
+ 
+* Unikernels
+
+A unikernel is a specialised, single address space machine image constructed by
+using library operating systems. A developer selects, from a modular
+stack, the minimal set of libraries which correspond to the OS constructs
+required for their application to run. These libraries are then compiled with
+the application and configuration code to build sealed, fixed-purpose images
+(unikernels) which run directly on a hypervisor or hardware without an
+intervening OS such as Linux or Windows.
+
++ very small size
++ very fast boot up
++ By reducing the amount of code deployed, unikernels necessarily reduce the
+likely attack surface and therefore have improved security properties.
+
+example : ClickOS, nanos, 
+
+Unikernels are a lighter alternative that is well suited to microservices. A
+unikernel is a self-contained environment that contains only the low-level
+features that a microservice needs to function. And, that includes kernel
+features.
+
+This is possible because the environment uses a "library operating system". In
+other words, every kernel feature is implemented in a low-level library. When
+the microservice code is compiled, it is packed together with the features it
+needs, and general features the microservice doesn't use are stripped away.
+
+The resulting bundle is much, much smaller than a dedicated VM or container.
+Instead of bundling up Gigabytes of generic code and features, a unikernel can
+ship a complete microservice in a few hundred kilobytes. That means they are
+very fast to boot and run, and more of them can run at the same time on the
+same physical box.
+
+Unikernels also are naturally more secure than containers or VMs. If attackers
+are able to gain access to a container or VM, they have an entire Linux
+installation to exploit. A unikernel, on the other hand, has only a few
+features to exploit, and this seriously restricts the havoc unauthorized users
+can wreak.
+
+
+* Microkernels
+Has basic IPC, virtual memory, process/thread scheduling.
+thread/signal/message passing/timer/process mgmt
+What is outside : filesystem manager, networking TCP/IP, device manager, GUI.
+
++ modular
++ small size
+
+example Neutrino.

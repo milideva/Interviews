@@ -1,0 +1,86 @@
+What is Kubernetes
+- container orchestration system for automating application deployment, scaling, and management
+- originally by Google, now managed by CNCF (Cloud Native Computing foundation)
+
+
+● Scheduling: Decide where my containers should run
+● Lifecycle and health: Keep my containers running despite
+failures
+● Scaling: Make sets of containers bigger or smaller
+● Naming and discovery: Find where my containers are now
+● Load balancing: Distribute traffic across a set of containers
+● Storage volumes: Provide data to containers
+● Logging and monitoring: Track what’s happening with my
+containers
+● Debugging and introspection: Enter or attach to containers
+● Identity and authorization: Control who can do things to
+my containers
+
+
+● Pods
+- Small group of containers & volumes
+- The atom of scheduling & placement
+- Shared namespace
+  share IP address & localhost
+  share IPC, etc.
+- Managed lifecycle
+  bound to a node, restart in place
+  can die, cannot be reborn with same ID
+
+● ReplicaSets
+example
+ReplicaSet
+- name = “my-rc”
+- selector = {“App”: “MyApp”}
+- template = { ... }
+- replicas = 4
+
+Simple control loop
+One job: ensure N copies of a pod
+• grouped by a selector
+• too few? start some
+• too many? kill some
+
+● Service
+- A group of pods that work together
+  grouped by a selector
+- Defines access policy
+  “load balanced” or “headless”
+- Can have a stable virtual IP and port
+  also a DNS name
+- VIP is managed by kube-proxy
+  watches all services
+  updates iptables when backends change
+  default implementation - can be replaced!
+
+
+More TO DO
+
+
+Hybrid cloud : On prem + public
+Use cases
+- scale on demand
+- cloud burst
+- Using public cloud APIs AI/ML, Big data 
+- security, legacy code on prem, regulatory requirements, data should not leave DC
+
+Challenges of Hybrid cloud
+- API compatibility 
+- Costs (operation expenses)
+- SLAs
+- increases complexity
+
+- different hypervisors
+
+Solution : docker in 2013
+Containers existed before for a while, docker made it easy to use
+deply the app anywhere irrespective of the underlying platform
+
+Many orchesttrators
+- Swarm, Nomad, Kubernetes, 
+
+kubectl apply -f xxx.yaml
+
+Stable
+
+

@@ -4,8 +4,6 @@ is to form the sum n using as few coins as possible.
 
 The dynamic programming algorithm is based on a recursive function that goes
 through all possibilities how to form the sum, like a brute force algorithm.
-However, the dynamic programming algorithm is efficient because it uses
-memoization and calculates the answer to each subproblem only once.
 
 */
 

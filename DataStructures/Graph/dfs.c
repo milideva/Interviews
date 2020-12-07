@@ -149,6 +149,7 @@ bool dfs (graph_t *graph, int src_index, int dst_index) {
             return true;
         }
         if (to->visited == false) {
+            // Recursive call to DFS with the new vertex w off edge of v
             return dfs(graph, to->vertex, dst_index);
         }
     }

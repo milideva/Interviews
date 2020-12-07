@@ -218,7 +218,6 @@ bool bfs (graph_t *graph, int src_index, int dst_index) {
             for (int i = 0; i < graph->max_edges; i++) {
                 node_t *to = v->edges[i];
                 if (to && (to == dst)) {
-                    printf("DFS iterative reaached dst:%d \n", dst_index);
                     delete_q(q);
                     return true;
                 }
@@ -269,17 +268,17 @@ void *pop (topo_stack_t **top) {
 // ///////////////////// stack code end //////////////////////////
 
 
-void topological_bfs (graph_t *graph, node_t *src, topo_stack_t **top) {
+void topological_dfs (graph_t *graph, node_t *src, topo_stack_t **top) {
     if (src->visited == true) 
         return;
 
     src->visited = true;
-    //printf("topo_bfs() src: %d\n", src->vertex);
 
+    // For all edges
     for (int i = 0; i < graph->max_edges; i++) {
         node_t *to = src->edges[i];
         if (to && (to->visited == false)) {
-            topological_bfs(graph, to, top);
+            topological_dfs(graph, to, top);
         }
     }
 
@@ -293,12 +292,13 @@ void topological_sort (graph_t *graph) {
     topo_stack_t *topo_stack =  NULL;
 
     int i, max = graph->max_vertices;
+    // For all nodes
     for (i = 0; i < max; i++) {
         node_t *node = graph->vertices[i];
         if (node && node->vertex != 0) {
-            //printf("get_vertex():%d \n", node->vertex);
+            // If unvisited ...
             if (node->visited == false) {
-                topological_bfs(graph, node, &topo_stack);
+                topological_dfs(graph, node, &topo_stack);
             }
         }
     }

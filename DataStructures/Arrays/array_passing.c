@@ -8,11 +8,11 @@
 /* 
    If we want to leave out any dimensions, we can only leave out the first one
 */
-static void func (int array[][COLS]) {
+static void func (int array[][COLS], int nrows, int ncols) {
     int i, j;
     
-    for (i=0; i<ROWS; i++) {
-        for (j=0; j<COLS; j++) {
+    for (i=0; i < nrows; i++) {
+        for (j=0; j< ncols; j++) {
             array[i][j] = i*j;
         }
     }
@@ -64,11 +64,11 @@ int ** allocate_array (int m, int n) {
     int ncols = n;
     int i;
     
-    array = malloc(nrows * sizeof(*array));
+    array = calloc(nrows, sizeof(*array));
     if (!array) return NULL;
     
     for (i= 0; i < nrows; i++) {
-        array[i] = calloc(1, ncols * sizeof(**array));
+        array[i] = calloc(ncols,  sizeof(**array));
         if (array[i] == NULL) {
             for (int j = 0; j < i; j++) {
                 free(array[j]);
@@ -115,7 +115,7 @@ int main() {
     array_pointers();
     return 0;
 
-    func(x);
+    func(x, rows, cols);
     func_vla(rows, cols, x);
 
     int **array, i;

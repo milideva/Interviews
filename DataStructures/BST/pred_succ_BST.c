@@ -18,8 +18,8 @@ typedef struct node_ node_t;
         if (node == null) return
 
    2.   if (key == root->key) {
-            succ is the min elem on right
-            pred is max elem on left
+            succ is the min elem on right or one of the parents
+            pred is max elem on left or one of the parents
             return;
         }
    3. if (key < root->key) succ = root;  recurse on root->left now

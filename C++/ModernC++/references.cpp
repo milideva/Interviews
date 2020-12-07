@@ -9,15 +9,15 @@ struct demo
 void test2 (void) {
     int foo (10);
 
-    std::cout << "foo:" << foo << '\n';
+    cout << "foo:" << foo << '\n';
 
-    auto bar = std::ref(foo);
+    auto bar = ref(foo);
 
     ++bar;
 
-    std::cout << "foo:" << foo << '\n';
+    cout << "foo:" << foo << '\n';
 
-    auto cbar = std::cref(foo);
+    auto cbar = cref(foo);
     // ++cbar; // compiler error 
 
 }

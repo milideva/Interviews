@@ -30,6 +30,7 @@ the staircase ?
    14 377
  */
 int fibonacci (int num) {
+// O(2^n) calls
     if (num < 0)
         return -1;
     if (num < 2) return num;
@@ -50,7 +51,7 @@ using Dynamic programming.
 
 */
 
-/* Memoization based. Dynamic programming.
+/* Memoization based. Dynamic programming. Without recursion
  */
 
 unsigned int fibonacci_lookup (unsigned int n) {
@@ -73,7 +74,23 @@ unsigned int fibonacci_lookup (unsigned int n) {
     return lookup[n];
 }
 
+unsigned int fibonacci_dp_recursion (unsigned int n, unsigned int lookup[]) {
+    // O(2n + 1) solution 
+    if (lookup[n]) return lookup[n];
+    if (n < 2 && n >= 0) {
+        lookup[n] = n;
+        return n;
+    }
+    // following two calls O(2n) + 1 (first call)
+    unsigned int result = fibonacci_dp_recursion(n-1, lookup) + fibonacci_dp_recursion(n-2, lookup);
+    lookup[n] = result;
+
+    return result;
+}
+
+
 /* Without extra space, without recursion */
+// bottom-up approach
 
 unsigned int fibonacci_optimal (unsigned int n) {
     unsigned int back1, back2, i, sum;
@@ -94,7 +111,10 @@ static void test (unsigned int i) {
 
     printf("fibonacci(%d):%d\t", i, fibonacci(i));
     printf("fibonacci_lookup(%d):%d     ", i, fibonacci_lookup(i));
-    printf("fibonacci_optimal(%d):%d\n", i, fibonacci_optimal(i));
+    printf("fibonacci_optimal(%d):%d\t", i, fibonacci_optimal(i));
+    unsigned int lkp[i+1];
+    memset(lkp, 0, sizeof lkp);
+    printf("fibonacci_dp_recursion(%d):%d\n", i, fibonacci_dp_recursion(i, lkp));
 }
 
 int main () {
@@ -102,6 +122,9 @@ int main () {
     test(5);
     test(11);
     test(14);
+
+    unsigned int lkp[11] = {0};
+    fibonacci_dp_recursion(10, lkp);
 
     return 0;
 }

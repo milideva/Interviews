@@ -11,11 +11,13 @@ void swap (char *a, char *b) {
 
 void permute (char *a, int start, int end) {
     int i;
+    // base case
     if (start == end) {
         printf("%s\n", a);
         return;
     }
  
+    // try all permutations
     for (i = start; i <= end; i++) {
         swap(a + start, a + i);
         permute(a, start + 1, end);

@@ -1,6 +1,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+// size of tree = # elements in tree
  
 struct node {
     int data;

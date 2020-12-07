@@ -1140,37 +1140,77 @@ For data that does NOT change frequently:
   Object Metadata decides whether to version or not, or 
   how many replicas and where to store each version
 
-+ Object storage, by contrast, doesn’t split files up into raw blocks of data. Instead, entire clumps of data are stored in, yes, an object that contains the data, metadata, and the unique identifier. There is no limit on the type or amount of metadata, which makes object storage powerful and customizable. Metadata can include anything from the security classification of the file within the object to the importance of the application associated with the information.
++ Object storage, by contrast, doesn’t split files up into raw blocks of data.
+Instead, entire clumps of data are stored in, yes, an object that contains the
+data, metadata, and the unique identifier. There is no limit on the type or
+amount of metadata, which makes object storage powerful and customizable.
+Metadata can include anything from the security classification of the file
+within the object to the importance of the application associated with the
+information.
 
 - 
-However, object storage generally doesn’t provide you with the ability to incrementally edit one part of a file (as block storage does). Objects have to be manipulated as a whole unit, requiring the entire object to be accessed, updated, then re-written in their entirety. That can have performance implications.
+However, object storage generally doesn’t provide you with the ability to
+incrementally edit one part of a file (as block storage does). Objects have to
+be manipulated as a whole unit, requiring the entire object to be accessed,
+updated, then re-written in their entirety. That can have performance
+implications.
 
-+ Object storage works very well for unstructured data sets where data is generally read but not written-to. Static Web content, data backups and archival images, and multimedia (videos, pictures, or music) files are best stored as objects. Databases in an object storage environment ideally have data sets that are unstructured, where the use cases suggests the data will not require a large number of writes or incremental updates.
++ Object storage works very well for unstructured data sets where data is
+generally read but not written-to. Static Web content, data backups and
+archival images, and multimedia (videos, pictures, or music) files are best
+stored as objects. Databases in an object storage environment ideally have data
+sets that are unstructured, where the use cases suggests the data will not
+require a large number of writes or incremental updates.
 
 
 
-Object storage systems are eventually consistent while block storage systems are strongly consistent.
+Object storage systems are eventually consistent while block storage systems
+are strongly consistent.
 
-Eventual consistency can provide virtually unlimited scalability. It ensures high availability for data that needs to be durably stored but is relatively static and will not change much, if at all. This is why storing photos, video, and other unstructured data is an ideal use case for object storage systems; it does not need to be constantly altered. The downside to eventual consistency is that there is no guarantee that a read request returns the most recent version of the data.
+Eventual consistency can provide virtually unlimited scalability. It ensures
+high availability for data that needs to be durably stored but is relatively
+static and will not change much, if at all. This is why storing photos, video,
+and other unstructured data is an ideal use case for object storage systems; it
+does not need to be constantly altered. The downside to eventual consistency is
+that there is no guarantee that a read request returns the most recent version
+of the data.
 
-Strong consistency is needed for real-time systems such as transactional databases that are constantly being written to, but provide limited scalability and reduced availability as a result of hardware failures. Scalability becomes even more difficult within a geographically distributed system. Strong consistency is a requirement, however, whenever a read request must return the most updated version of the data.
+Strong consistency is needed for real-time systems such as transactional
+databases that are constantly being written to, but provide limited scalability
+and reduced availability as a result of hardware failures. Scalability becomes
+even more difficult within a geographically distributed system. Strong
+consistency is a requirement, however, whenever a read request must return the
+most updated version of the data.
 
 
 Traditional file system designed for smaller group of files for read and write.
 So it needs to manage permissions, locking for concurrency.
 Today millions of data files get generated (pics for example).
 They are not modified. Many times not accessed again. 
-Difficult to gather context and content of Unstructured data such as images to make storage decision.
+Difficult to gather context and content of Unstructured data such as images to
+make storage decision.
 
-When an MRI scan is stored as a file the typical metadata attached to it is basic and may include only information such as file name, creation data, creator, and file type. 
+When an MRI scan is stored as a file the typical metadata attached to it is
+basic and may include only information such as file name, creation data,
+creator, and file type. 
 
-When the MRI scan is stored as an  Object, on the other hand, the generating application can include all the file metadata plus additional  metadata information that might summarize the content contained within the file and include the patient name, the patient’s ID, the procedure date, the attending physician’s name, the physician’s notes, as well as any other metadata that can help add context to the MRI scan.
+When the MRI scan is stored as an  Object, on the other hand, the generating
+application can include all the file metadata plus additional  metadata
+information that might summarize the content contained within the file and
+include the patient name, the patient’s ID, the procedure date, the attending
+physician’s name, the physician’s notes, as well as any other metadata that can
+help add context to the MRI scan.
 
-The custom metadata present in Object Storage gives users the context and content information they need to properly manage and access unstructured data.
+The custom metadata present in Object Storage gives users the context and
+content information they need to properly manage and access unstructured data.
 
 Object Storage and Traditional NAS Coexist.
-Object Storage is ideal for archiving when the data is  relatively static and not frequently accessed. This isn’t a restrictive criterion for Object Storage use 
-cases. By some estimates, 70% of data that is generated is never accessed after its initial creation and remains static, while 20% is semi-active. However, 10% of all data is actively used, and it is for this data that traditional file systems, such as NAS, are best suited.
+Object Storage is ideal for archiving when the data is  relatively static and
+not frequently accessed. This isn’t a restrictive criterion for Object Storage
+use cases. By some estimates, 70% of data that is generated is never accessed
+after its initial creation and remains static, while 20% is semi-active.
+However, 10% of all data is actively used, and it is for this data that
+traditional file systems, such as NAS, are best suited.
 
 http://www.dell.com/downloads/global/products/pvaul/en/object-storage-overview.pdf
 
@@ -1335,9 +1375,23 @@ Sharding
 
 Sharding is just another name for "horizontal partitioning" of a database. 
 
-    Horizontal partitioning is a design principle whereby rows of a database table are held separately, rather than splitting by columns (as for normalization). Each partition forms part of a shard, which may in turn be located on a separate database server or physical location. The advantage is the number of rows in each table is reduced (this reduces index size, thus improves search performance). If the sharding is based on some real-world aspect of the data (e.g. European customers vs. American customers) then it may be possible to infer the appropriate shard membership easily and automatically, and query only the relevant shard.
+    Horizontal partitioning is a design principle whereby rows of a database
+table are held separately, rather than splitting by columns (as for
+normalization). Each partition forms part of a shard, which may in turn be
+located on a separate database server or physical location. The advantage is
+the number of rows in each table is reduced (this reduces index size, thus
+improves search performance). If the sharding is based on some real-world
+aspect of the data (e.g. European customers vs. American customers) then it may
+be possible to infer the appropriate shard membership easily and automatically,
+and query only the relevant shard.
 
-Firstly, each database server is identical, having the same table structure. Secondly, the data records are logically split up in a sharded database. Unlike the partitioned database, each complete data record exists in only one shard (unless there's mirroring for backup/redundancy) with all CRUD operations performed just in that database. You may not like the terminology used, but this does represent a different way of organizing a logical database into smaller parts.
+Firstly, each database server is identical, having the same table structure.
+Secondly, the data records are logically split up in a sharded database. Unlike
+the partitioned database, each complete data record exists in only one shard
+(unless there's mirroring for backup/redundancy) with all CRUD operations
+performed just in that database. You may not like the terminology used, but
+this does represent a different way of organizing a logical database into
+smaller parts.
 
 
 Data center traffic patterns:
@@ -1349,7 +1403,10 @@ Traffic in the Data Center generally flows in three directions.
 * “East-West” traffic, on the other hand, flows between DC devices and applications and never leaves the DC. 
 * Finally, there is “Inter-DC” traffic, which flows between multiple DCs, and between DCs and the private/public cloud.
 
-Unlike in campus networks, the dominant volume of traffic in the DC traverses in an “East-West” direction  (76%), followed by “North-South” traffic  (17%), and finally, inter-DC traffic, which is currently comprises only at 7%, but is gradually growing. 
+Unlike in campus networks, the dominant volume of traffic in the DC traverses
+in an “East-West” direction  (76%), followed by “North-South” traffic  (17%),
+and finally, inter-DC traffic, which is currently comprises only at 7%, but is
+gradually growing. 
 In campus networks, traffic is primarily (90+%) “North-South”traffic.
 
 
@@ -1365,7 +1422,11 @@ Data in distributed storage, partitions transferred to compute nodes, results jo
 Traffic may shift on small timescales (e.g., minutes)
 
 
-Modern applications such as “big data analytics" : the algorithms involved (map-reduce) entail tremendous amounts of machine to machine communication to assemble a response.  Something like Facebook has 1000x more bandwidth between machines (east-west) vs to the customer (north south), based on published data from FB engineering teams.
+Modern applications such as “big data analytics" : the algorithms involved
+(map-reduce) entail tremendous amounts of machine to machine communication to
+assemble a response.  Something like Facebook has 1000x more bandwidth between
+machines (east-west) vs to the customer (north south), based on published data
+from FB engineering teams.
 
 Newer arch: from silo.ed (north) web-app-db (south) to server virtualization web 2.0 mashups etc
 Server virtualization : several VMs per physical server. VM-to-VM traffic.

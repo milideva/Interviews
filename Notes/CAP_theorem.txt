@@ -37,12 +37,10 @@ at all other times, no trade-off has to be made.
 Example
 Database systems designed with traditional ACID guarantees in mind such as
 RDBMS choose consistency over availability, whereas systems designed around the
-BASE philosophy, common in the NoSQL movement for example, choose availability
-over consistency.
 
+BASE philosophy, common in the NoSQL for example, chooses availability
+over consistency. (Basically Available, Soft state, Eventually consistent)
 
-
-
-
-
+A social networking site : Choose availability over consistency
+A financial transaction : choose consistency over availability
 

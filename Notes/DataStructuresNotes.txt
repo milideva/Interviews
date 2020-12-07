@@ -1,3 +1,5 @@
+https://www.bigocheatsheet.com/
+
 
 Basically for algorithm related questions :
 1. determine which data structures to use
@@ -46,10 +48,12 @@ single array of sufficient size had been allocated in advance!
 insert, delete, lookup based on a key
 Can not find min/max/sort etc - use tree/list etc for those.
 great for fast index/search.
-also good to find duplicates.
++ easy to find duplicates.
++ O(1) lookup on average (worst case still O(n))
 + Great cache hit since it's an array.
+- Not sorted, sorting not possible, so no min/max etc
 
-Dictionary
+* Dictionary
 
 Application :
 - De-duplication
@@ -70,6 +74,8 @@ dynamic sizing easy
 sorted (ordered)
 variation : stack/fifo
 
+- Bad locality
+
 * Skip list
 maintain a skip list of size square root of n
 search through linked list much smaller now.
@@ -83,7 +89,9 @@ with O(√n) extra space, we are able to reduce the time complexity to O(√n).
 
 - Min/Max Heap (highest (or lowest) is always stored at the root). not a sorted
  structure. (partially ordered). no particular relationship among nodes on any
- given level, even among the siblings.
+ given (same) level, even among the siblings.
+
+Bad locality in trees
 
 - Trie
 
@@ -100,14 +108,16 @@ Practical Algorithm to Retrieve Information Coded in Alphanumeric
 
 * Binary tree 
 Every node has upto 2 children : a left and right child (no
-particular relationship among left and right)
+particular relationship among left and right and root)
+May not be balanced.
 e.g. of Binary tree
   1
  / \
 2   3
 
 - Binary tree versus BST :
-BST : Binary search tree: Used for searching. Has strict ordering.
+BST : Binary Search Tree. It's NOT a balanced tree 
+Used for searching. Has strict ordering.
 All left subtree must be < parent
 All right subtree must be > parent
 No duplicates
@@ -377,7 +387,7 @@ Insert/delete O(log n)
 Max heap : key(node) >= key(both children) at each level
 Min heap : key(node) <= key(both children) at each level
 
-insert in max heap (always inserts at the end or last leaf and then rebalance)
+insert in max heap (always insert at the end or last leaf and then rebalance)
 Step 1 − Create a new node at the end of heap.
 Step 2 − Assign new value to the node.
 Step 3 − Compare the value of this child node with its parent.
@@ -411,7 +421,7 @@ can represent a network
 2. determine the algorithm
 - search
 
-* sort
+* Sort
 Divide and Conquer
 - 1. divide in subproblem 
   2. solve subproblems recursively 
@@ -532,19 +542,45 @@ blacklisting URLs
 Array of n bits
 k hash functions
 
-Greedy algorithms
+* Greedy algorithms
 - sequence of decisions myopic/shortsighted
-example Dijkstra’s shortest path
+makes the optimal choice at each step 
+hence it may not produce globally optimal solution
+(e.g. taking left/right turn at a traffic light when entry to highway is congested)
+example In Dijkstra shortest path, always choose shorted path vertex
+example In min spanning tree, always choose min cost edge
+
+Go from A to B 
+More than 1 solutions exist, choose an optimum solution
+Constraints exist => satisfying constraints => "feasible solution"
+Minimize or maximize something => optimal solution only one => "Optimal solution"
+
+Buying a car or selecting a candidate from interviews
+    - can not look at all the cars/candidates in the city, filter basd on certain criteria.
+
+
+3 methods for solving optimization problems
+1. Greedy
+2. Dynamic programming
+3. Branch and bound
+
+
+Greedy example
+* Knapsack problem
+carry n items each with weight w and profit p, maximize the profit 
+profits/weight, fractions okay, sort and pick starting max profit/weight
+
+* 0/1 Knapsack method using DP
 
 easy to come up with one (heuristic)
 hard to establish correctness - sometimes incorrect also (Dijkstra’s assumes no
 negative edges, with -ve, it fails).
 
 
-* Graphs :
+* Graphs - they represent a network of some kind of nodes :
 G(V,E) n=|V| and m = |E|
-adjacency matrix : space O(n*n)
-adjacency list : space O(n+m)
+adjacency matrix : space O(V*V)
+adjacency list : space O(V) + O(2E)
 
 * DFS and BFS
 
@@ -579,10 +615,14 @@ Maze solving
 
 - DFS is more space-efficient than BFS, but may go to unnecessary depths.
 
-If you had an infinite sized graph then DFS would never find an element if it
+If you had an infinite sized graph then DFS may never find an element if it
 exists outside of the first path it chooses. It would essentially keep going
-down the first path and would never find the element. The BFS would eventually
-find the element
+down the first path and may never find the element. 
+
+For trees, we've unique paths between nodes to find shortest path.
+For a graph, we can have exponential number of unique paths between 2 nodes in a graph.
+ 
+**** Hence for graphs use BFS and for trees, you can try DFS
 
 DFS (graph G, start vertex s)
 	- mark S explored
@@ -646,7 +686,7 @@ extract-min pick smaller of child as root and bubble-down.
 2nlog(n)
 
 * Priority queue
-Synonym for heap
+Synonym for a heap
 
 Application :
 Median maintenance : input - 1 million numbers. Find median.
@@ -669,27 +709,27 @@ lowHeap. 12 in lowHeap, 10 in highHeap.  extract from lowHeap and insert in
 highHeap.
 
 
-Quicksort
+* Quicksort
 pivot element needs to be chosen
 rearrange such that left of pivot : less than pivot.
 right of pivot : > pivot
 note that left or right partitions, not sorted yet.
 
-Dynamic programming
+* Dynamic programming
 
 - break down into overlapping subproblems. 
 - solve each subproblem only once.
 - compute once and store result (memoization)
 
 
-Graphs
+* Graphs
 G(V,E) n=|V| and m = |E|
 undirected : networks, phone network
 directed : web (head points to a link), 
 road (1-way, highway, with different #lanes each dir, uphill/downhill)
 
-If we add distance X to all edges of the graph, will shortest path still be
-same?  
+Will the shortest path still be the same if :
+If we add distance X to all edges of the graph? No
 
 - It may change (#edges times X,#edges can be different for diff paths).
 
@@ -699,13 +739,64 @@ If we multiple all edges of the graph by X, will shortest path be same?
 * Edit distance : how dissimilar two strings are. 
 Application : Spelling correction.
 
-Levenshtein distance : 
+* Levenshtein distance : 
 
 The edit distance d(a, b) is the minimum-weight series of edit operations that
 transforms a into b. Allowed operations : insertion, deletion, substitution.
 
-
 Longest common subsequence (LCS) distance is edit distance with insertion and
 deletion as the only two edit operations, both at unit cost.
 
+
+* Backtracking
+Brute force approach but not for optimization problem and uses DFS
+Multiple solutions exist - but apply a given constraint to reduce possibilities.
+Try every possible paths, and try each one only once.
+
+Backtracking is a form of recursion.
+Any recursive algorithm can be rewritten as a stack algorithm. 
+In fact, that is how your recursive algorithms are translated into machine or assembly language.
+Non-recursive backtracking, using a stack
+
+
+- N-Queens problem : N queens, NxN matrix, 
+Bounding function : under attack if same row or same column or same diagonal
+
+- Knight touring problem : Knight visits each square only once.
+
+- Sum of subsets 
+
+- Graph coloring
+Mark regions on map as a vertex. Mark each vertex's neighbors as a graph.
+No two vertices should have the same color
+Given 3 colors, can the graph be colored? mColoring decision problem
+Given 3 colors, how many ways can it be colored?
+How many min colors needed ? mColoring optimization problem
+
+
+For 3 colors, and n nodes : 3^n possibilities
+Apply backtracking to cut down the possibilities
+
+- Hamiltonian cycle
+Visit all vertices exactly once and come back to the same vertex - is it possible or not?
+How many cycles possible.
+Starting point may be different but the cycle may be the same.
+
+Similar to Travelling salesman problem - but there it's a minimization problem.
+
+With pendant vertex, HC not possible.
+With articulation point, HC not possible
+
+NP hard problem
+exponential problem
+
+
+- Sudoku
+
+- Rat in a maze
+
+- Permutations of something say String
+
+* Branch and bound
+Brute force approach but with BFS
 

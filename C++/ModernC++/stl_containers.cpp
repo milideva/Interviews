@@ -14,14 +14,14 @@ using namespace std;
 
 // C++ : data struct aka container.
 
-// g++ -std=c++11 stl_containers.cpp
-// g++ -std=c++14 stl_containers.cpp
+// g++ -std=c++17 stl_containers.cpp
+// g++ -std=c++2a stl_containers.cpp
 
 // https://en.cppreference.com/w/cpp/container
 
 // 1. 
 // Sequence containers : 
-// array, vector , dequeue, 
+// array, vector, dequeue, 
 // list (doubly-linked list), forward list (sinlgy-linked list in forward direction onlu).
 // Sequence containers implement data structures which can be accessed sequentially.
 
@@ -31,14 +31,30 @@ using namespace std;
 
 
 // 2.
-// Associative containers : binary tree - always ordered
-// always sorted. 
-// - set, multiset, 
-// - map, multimap
+// Associative containers : like a binary search tree - always ordered (actually implemented as RB tree)
+// always sorted.  takes O(logn) time for insertion/deletion/search.
+// - set, multiset  = can store single item, use multi for allowing duplicate items
+        // Primary application of set is trees, such as BST
+// - map, multimap = key, value store : can map itemA (key) to itemB (value), use multi for allowing duplicate items
 
+// find is faster than array but slower than unordered_set or unordered_map which are Hash Tables
+// Modifying an element, would invalidate ordering. Hence it must be erased first and then reinserted with new value.
+
+/*
+The primary reason to use a set or a multiset is when you need to keep your
+data in sorted order. The underlying data structure for sets and multisets is
+the balanced binary tree, which means that keeping the data in order is very
+efficient. However, using binary trees also creates a problem because you can’t
+change the value of an element in place because doing so would invalidate the
+ordering. So, making changes involves removing an element from the container
+and then inserting a new element. This is more inefficient than doing so in
+another container so you will want to choose a different container if you need
+to make lots of changes to the data in your application.
+*/
 
 // 3.
-// Unordered containers (hash table)
+// Unordered containers (implemented as a hash table - hence O(1) to access)
+// Hash table entries are 'unordered'
 // Unordered set, multiset, 
 // Unordered map, multimap
 
@@ -77,7 +93,7 @@ void show_list (list <int> ls) {
 }
 
 // Properties of list
-// fast insert/remove at ANY  : O(1)
+// fast insert/remove at ANY point using iterator : O(1)
 // slow insert/remove at the beginning or in the middle : O(n)
 // slow search : O(n)
 // NO random access => no [] operator
@@ -111,6 +127,13 @@ void test_list (void) {
    	show_list(lst);
 }
 
+// Pass by reference
+void increment_dq (deque <int> & dq) {
+  
+    cout << "Incementing a deque" << endl;
+    for (auto &i : dq)  // Note reference i.e. &i for modifying value
+        i++;
+}
 
 /*
 	***************************
@@ -129,7 +152,7 @@ void show_deque (deque <int> dq) {
 	cout << endl;
 
 	deque <int>::iterator ditr1 = dq.begin();
-	deque <int>::iterator ditr2 = dq.end();
+	auto ditr2 = dq.end();
 
 	sort(ditr1, ditr2);
 
@@ -138,6 +161,12 @@ void show_deque (deque <int> dq) {
 	for (auto i : dq) { // C++11 way
 		cout << i << " ";
 	}
+
+    increment_dq(dq);
+
+    for (auto i : dq) { // C++11 way
+        cout << i << " ";
+    }
 
     cout << "\nsize() : " << dq.size(); 
     cout << "\nmax_size() : " << dq.max_size(); 
@@ -245,6 +274,8 @@ void test_vector (void) {
 
 	//vec.push_front(100); // can push only at the end. not in the beginning.
 	// dequeue can do front as well as back.
+    vec[1] = 1; // however, you can do random access like an array.
+
 
     show_vector(vec);
 
@@ -264,6 +295,37 @@ void test_vector (void) {
 
 
 }
+
+// Using a vector as a heap 
+// make_heap() -> heapify current array/vector
+// pop_heap() (moves it to end) must be used with pop_back()
+// push_back() must be used with push_heap()
+
+void test_heap (void) {
+  int myints[] = {10,20,30,5,15};
+  std::vector<int> v(myints,myints+5); // array to vector
+
+  std::make_heap (v.begin(),v.end()); // vector to heap
+  std::cout << "initial max heap   : " << v.front() << endl; // max heap root is at front()
+
+  std::pop_heap (v.begin(),v.end()); // remove top of heap - it moves it to the end
+  v.pop_back(); // remove it from end as well
+  std::cout << "max heap after pop : " << v.front() << endl; // new top is at the front
+
+  v.push_back(99); // adds to the end of the vector 
+  std::push_heap (v.begin(),v.end()); // push to the heap and heapify
+  std::cout << "max heap after push: " << v.front() << '\n'; // new top
+
+  std::sort_heap (v.begin(),v.end());
+
+  std::cout << "final sorted range :";
+  for (unsigned i=0; i<v.size(); i++)
+    std::cout << ' ' << v[i];
+
+  std::cout << '\n';
+
+}
+
 
 void test_array () {
 	// Limitation 1 => constant size
@@ -286,19 +348,57 @@ void test_array () {
 void show_set (set <int> st) 
 {
 
-	cout << endl << "\n\n ********** \n\n Show Set: " ;
+	cout << "\n\n ********** Show Set: " << endl ;
 
 	for (auto i:st) { // C++11 way
 		cout << i << "\t ";
 	}
 
-    cout << "\nsize() : " << st.size(); 
+    cout << "\nsize() : " << st.size() << endl; 
 	
 }
+
+void erase_from_set (set <int> &numbers, int remove_me) {
+  int count = numbers.erase(remove_me);
+  cout << count << " element was removed." << endl << endl;
+  for (const int n : numbers) {
+    cout << n << " ";
+  }
+
+  // 2nd method to remove, in which we've a position
+  // Iterator tells the position to remove
+  numbers.insert(remove_me);
+
+  auto iter = numbers.begin();
+  while (*iter != remove_me) {
+    iter++;
+  }
+  numbers.erase(iter);
+  cout << endl << "element was removed " << remove_me << endl;
+  show_set(numbers);
+
+}
+
+void print_set (const set<int, greater<int>> st) {
+  cout << "Greater than walah set " << endl; 
+  for (const int n : st) {
+    cout << n << " ";
+  }
+}
+
+void build_set (set<int, greater<int>> &st) {
+  srand(time(0));
+  for (int i = 1; i <= 25; i++) {
+    st.insert(rand() % 100 + 1);
+  }
+}
+
+
 /* Set
+    Like a binary search tree 
+    Always ordered
 	No duplicates
-	Always sorted
-	traversing is slow (cache locality issue)
+	Traversing is slow (cache locality issue)
 	no random access, no [] operator
 	*/
 void test_set ()
@@ -306,6 +406,8 @@ void test_set ()
 
 	set<int> myset;
 
+
+    // Note always check return value of insert - it can fail for duplicates
 	myset.insert(77); 
 	myset.insert(67); // myset = {67, 77}
 	myset.insert(57); // myset = {57, 67, 77}
@@ -321,11 +423,20 @@ void test_set ()
 
 	it = myset.find(57); // Olog(n)
 
-	// insert actually can return a bool
+    erase_from_set(myset, 77);
+
+/*
+    return value is a pair structure where the first field is the insertion
+    position and the second field is a boolean value showing the success or failure
+    of the insertion.
+*/
 	pair<set<int>::iterator, bool> ret_pair;
 	ret_pair = myset.insert(67);
 	if (ret_pair.second == false)
 		it = ret_pair.first;
+
+    ret_pair = myset.insert(59);
+    cout << endl << *ret_pair.first << " set==> " << ret_pair.second << endl;
 
 	// *it = 999999; // not allowed. it's read-only, element can not be modified with iterator.
 	// otherwise it can get out of order, hence not allowed.
@@ -337,6 +448,11 @@ void test_set ()
 	myset.erase(it); // it points to 67 - will be deleted, used as hint to insert or delete.
 
 	show_set(myset);
+
+
+    set<int, greater<int>> numbers;
+    build_set(numbers);
+    print_set(numbers);
 }
 
 
@@ -378,9 +494,13 @@ void show_map (map <char, int> mymap) {
 
 	cout << endl << "\n\n ********** " << endl << "Show Map: " << endl;
 
-	for (auto p:mymap) {  // C++11
-		cout << p.first << " ==> " << p.second << endl;
+	for (auto p:mymap) {  // C++11 pair that holds key and value
+		cout << p.first << " $$==> " << p.second << endl;
 	}
+
+    for (auto [key, val] : mymap) { // C++17 onwards
+        cout << key  << " ==> " << val << endl;
+    }
 
 }
 
@@ -393,6 +513,8 @@ void test_map () {
 	map <char, int> mymap;
 	mymap.insert(pair<char, int> ('a', 100));
 	mymap.insert(make_pair('z', 2600)); // make_pair : infers typing,
+
+    mymap['c'] = 27;
 
 	map <char, int>::iterator it = mymap.begin();
 	mymap.insert(it, make_pair('c', 300)); // it is a hint
@@ -448,13 +570,14 @@ void show_unordered_map (unordered_map<char, string> umap) {
 
 	cout << endl << "\n\n ********** " << endl << "Show unordered_map: " << endl;
 
+    // {key, value} pair accessed as {first, second} in a map
 	for (auto itr:umap)
 		cout << itr.first  << " ==> " << itr.second << endl;
 
 }
 
-// Associative array
-// search time unordered_map : O(1), map: O(log(n))
+// Associative array - it's a store of {key, value} pair 
+// Each element is a {key, value} pair accessed as {first, second} in a map
 // unordered_map may degrade to O(n)
 // can't use multimap and unordered_multimap as they dont have unique key and no []
 void test_unordered_map (void) {
@@ -482,6 +605,11 @@ void test_unordered_map (void) {
 
 	cout << "\n\nAgain inserting black" << endl;
 
+        // search for a key in map 
+        if (umap.find('Z') == umap.end()) {
+          cout << 'Z' << " Not found ... inserting " << endl;
+          umap['Z'] = "zebra";
+        }
 	umap['B'] = "black"; // succeed to modify
 	show_unordered_map(umap);
 

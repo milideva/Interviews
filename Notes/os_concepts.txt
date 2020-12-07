@@ -143,7 +143,7 @@ intervening OS such as Linux or Windows.
 + By reducing the amount of code deployed, unikernels necessarily reduce the
 likely attack surface and therefore have improved security properties.
 
-example : ClickOS, nanos, 
+example : ClickOS, nanos 
 
 Unikernels are a lighter alternative that is well suited to microservices. A
 unikernel is a self-contained environment that contains only the low-level

@@ -11,6 +11,11 @@
   must be no duplicate nodes.  A unique path exists from the root to every
   other node.
 */
+
+// Validate BST : two solutions exist
+// 1. min max technique
+// 2. in-order traversal technique
+
 struct node_ {
     int key;
     struct node_ *left;
@@ -52,6 +57,7 @@ int min (node *node) {
     return min;
 }
 
+// This is grossly inefficient
 bool isBST (node *node) {
     if (!node) 
         return true;
@@ -85,7 +91,9 @@ node *createNode (int key) {
 
 
 /* 
-   Optimized version.
+    Optimized version.
+    Compares with INT_MIN and INT_MAX
+    But those could be a valid node key.
 */
 bool isBST_2 (node *node, int min, int max) {
     /* Empty tree is a BST */
@@ -97,23 +105,43 @@ bool isBST_2 (node *node, int min, int max) {
         isBST_2(node->right, node->key, max);
 }
 
-bool isBST_efficient (node *node) {
-    return isBST_2(node, INT_MIN, INT_MAX);
+/* To avoid INT_MIN INT_MAX, this is better solution */
+bool isBST_3 (node *node, int *min, int *max) {
+    if (!node) return true;
+    
+    if (min && node->key < *min) return false;
+    if (max && node->key > *max) return false;
+
+    return isBST_3(node->left, min, &node->key) && isBST_3(node->right, &node->key, max);
 }
 
+bool isBST_efficient (node *node) {
+    //return isBST_2(node, INT_MIN, INT_MAX);
+    return isBST_3(node, NULL, NULL);
+}
+
+
+// 2. in-order traversal technique
+// One way is to copy BST into an array as inorder traversal and then compare array for inorder or not
+// Array will add O(n) space and is just used to check prev value with current
+// Below code uses a global to track prev and avoids using array. O(1) space solution
+
+struct node_ *prev;
+
 bool isBST_inorder (node *node) {
-    static struct node_ *prev = NULL;
-    /* Need to debug this FIXME */
-    if (node) {
-        if (!isBST_inorder(node->left)) return false;
-        if (prev && node->key < prev->key) {
-            printf("node:%d prev:%d \n",node->key, prev->key); 
+
+    if (!node) return true;
+
+    // printf("DEBUG node:%d prev:%d left:%d right:%d\n",node->key, prev ? prev->key : -1, node->left ? node->left->key : -1, node->right? node->right->key : -1);
+
+    if (!isBST_inorder(node->left)) return false;
+
+    if (prev && node->key < prev->key) {
+            printf("inorder fails here node:%d < prev:%d \n",node->key, prev->key); 
             return false;
-        }
-        prev = node;
-        return isBST_inorder(node->right);
     }
-    return true;
+    prev = node;
+    return isBST_inorder(node->right);
 }
 
 /* 
@@ -139,7 +167,7 @@ int main () {
     node->left->right->left =  createNode(55);
     node->left->right->right = createNode(75);
 
-    printf("\nisBST() : %d\n", isBST(node));
+    printf("\nShould fail \nisBST() : %d\n", isBST(node));
     printf("isBST_efficient : %d\n",isBST_efficient(node));
     printf("isBST_inorder() : %d\n", isBST_inorder(node));
 
@@ -147,10 +175,14 @@ int main () {
     node->left->left->right = createNode(40); // back to 40 should pass.
     printf("\nisBST() : %d\n", isBST(node));
     printf("isBST_efficient : %d\n",isBST_efficient(node));
+
+    prev = NULL; // must reset this global var before calling isBST_inorder()
     printf("isBST_inorder() : %d\n", isBST_inorder(node));
 
     node->left->right->left =  createNode(45); // 55 made to 45 should fail
-    printf("\nisBST() : %d\n", isBST(node));
+    printf("\nshould fail \nisBST() : %d\n", isBST(node));
     printf("isBST_efficient : %d\n",isBST_efficient(node));
+
+    prev = NULL; // must reset this global var before calling isBST_inorder()
     printf("isBST_inorder() : %d\n", isBST_inorder(node));
 }

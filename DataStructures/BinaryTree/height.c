@@ -25,6 +25,7 @@ void inOrder (struct node *node) {
     inOrder(node->right);
 }
 
+/* Height is the longest path from root to a leaf */
 int height (struct node *node) {
     if (!node) return 0;
     int lHeight = height(node->left);

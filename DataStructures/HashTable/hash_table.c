@@ -44,7 +44,8 @@ static void *lookup (node *table[], const char *key) {
     return NULL;
 }
 
-bool insert (node *table[], char *key) {
+// Returns false if collision - not supporting next chain for duplicate keys yet
+bool insert (node *table[], char *key, void *value) {
     if (!lookup(table, key)) {
         // Find the desired linked list
         unsigned index = hash(key, MAX_HT_BUCKETS);
@@ -61,6 +62,7 @@ bool insert (node *table[], char *key) {
 
         // Add the new key and link to the front of the list
         strcpy(new_node->key, key);
+        new_node->value = value;
         new_node->next = table[index];
         table[index] = new_node;
 
@@ -84,7 +86,7 @@ int populate_hash (node *table[], FILE *file) {
             word[ln] = '\0';
 
         printf("inserting %s\n", word);
-        insert(table, word);
+        insert(table, word, NULL);
     } while (c != EOF);
 
     return 1;

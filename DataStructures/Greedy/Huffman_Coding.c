@@ -35,7 +35,7 @@ struct MinHeap* createMinHeap(unsigned capacity)  {
     struct MinHeap* minHeap = malloc(sizeof(struct MinHeap)); 
     minHeap->size = 0; 
     minHeap->capacity = capacity; 
-    minHeap->array = malloc(minHeap->capacity * sizeof(struct MinHeapNode*)); 
+    minHeap->array = malloc(capacity * sizeof(struct MinHeapNode *)); 
     return minHeap; 
 } 
   
@@ -96,7 +96,7 @@ void insertMinHeap(struct MinHeap* minHeap,
     minHeap->array[i] = minHeapNode; 
 } 
   
-void buildMinHeap(struct MinHeap* minHeap) { 
+void buildMinHeap (struct MinHeap* minHeap) { 
   
     int n = minHeap->size - 1; 
     int i; 

@@ -1,0 +1,13 @@
+Permutation (AB != BA):
+nPk = n!/(n − k)!
+
+n Permute k ( AB != BA)
+5P2 = 5!/3! = 5*4 = 20
+
+Combination (AB = BA  hence must remove duplicates) :
+
+n Choose k (no ordering AB = BA)
+nCk = n! / (k! * (n − k)!) 
+5C2 = 5!/(2! * 3!) = 10
+
+

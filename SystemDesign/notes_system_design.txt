@@ -1,0 +1,52 @@
+* Requirements gatherings
+
+- Functional requirements 
+- Non-functional requirements 
+
+- Use cases
+- Constraints
+
+- Capacity estimates
+
+- Consistency across different product lines / platforms
+- Backward compatibility with previous release
+
+- Data protection GDPR (General Data protection Regulation)
+
+- Cost 
+  Hardware - consider cloud ?
+  Software - consider open source?
+
+- Timeline 
+- Risks
+
+* Design
+
+- high level blocks (architecture design)
+- interaction between blocks
+- Design patterns ? If yes, reuse.
+- UI / UX design
+- API design
+
+
+PaaS
+
+- Dataabase Sql/NOsql
+
+ Sql
+- structured and fixed in tables
+- ACID requirements (atomicitt, consistency, isolation, durability)
+e.g. e-commerce, finance.
+- columns hard to change, but can be changed with downtime
+- not massive growth
+- vertical scale (more mem/higher cpu etc), expensive
+- possible to scale horizontal, but challenging and time consuming
+
+NoSQL
+- unstructured and/or changing schema, key-value/document/graph/columnar
+  for rapid development with rapid changes and no downtime
+- sacrifices ACID compliance for performance and scale
+- scale - easy to scale horizontal, with cheap commoddity hw or cloud
+  lot of NoSQL tech distributes data automatically
+
+

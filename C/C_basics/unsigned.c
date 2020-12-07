@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 int main() {
-        int i = -5;
+    int i = -5;
 
 	printf("unsigned %u\n",i);
 	return 0;

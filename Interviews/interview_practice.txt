@@ -4,3 +4,15 @@ careercup.com // Read Amazon and google interview questions daily
 stackoverflow.com  // Informal discussions, example P==NP ?
 geeksforgeeks.com  // Coding practice
 
+
+Coding question steps :
+
+1. Listen, get clarity
+2. Create big Examples, no special cases
+3. Brute force solution
+4. Optimize
+5. Walk through
+6. Test
+7. Implement
+
+

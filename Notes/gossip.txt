@@ -1,0 +1,76 @@
+* Gossip
+* Multicast is an important problem for group membership
+    * IP multicast may not be enabled in switches and routers. => Application level multicast
+* Tree based multicast protocols O(log (n)) rather than centralized O(n)
+    * set up and maintain tree (middle nodes fail) - nodes fail all the time
+    * build a spanning tree
+    * SRM and RMTP
+    * ACK and NACKs O(n) not scalable
+* For scale and fault tolerance - Gossip is an attractive solution
+* Fast, reliable, fault tolerant, scalable, topology aware
+    * Takes O(log(n)) time to propagate Gossip
+* Gossip Aka Epidemic Multicast 
+    * No Master/  No Leader / Follower  etc => P2P
+* No external store
+* Examples -
+    *  Akka Actor cluster 
+    * cassandra key-value store
+    * hashicorp consul
+    * Usenet NNTP etc
+* Requirements
+    * Group membership
+    * Failure detection (decentralized)
+    * Information dissemination
+* Cluster size : 1000s, spread across DC
+* Requirements 
+2.3 Gossip Analysis UIUC
+
+Log n is a very slow growing number
+
+    * Low latency
+    * lightweight - send limited info
+    * reliability 
+        * fault tolerance : almost same reliability even with 50% packet loss or 50% nodes fail - see lecture.
+* Epidemiology
+* Every process picks up another random process and interacts
+* Push pull Gossip protocol (Cassandra version)
+* Heartbeat is part of message
+* Eventual consistency
+* Gossip protocol, hash map of ip address and port, . key’s have version. heartbeat every few moments.
+* Periodically send Gossip to b random targets. b is a small number < 10 
+* Those nodes (infected) then send the Gossip message to another b random targets.
+* Once you’ve a multicast message you start Gossip.ing about it => Push Gossip 
+* Pull Gossip : periodically poll a few randomly selected processes
+* Pull Gossip O(log(log(n))) - Faster than Push
+* Topology aware Gossip ! ⭐️ 
+
+* Failures are the norm in data center. How?
+    * Say failure rate of a machine (hard disk/OS/motherboard/network etc) is once in 10 years = 120 months.
+    * 120 servers in DC, MTTF is 1 month. And for 12,000 servers, it’s 7.2 hrs!!!
+    * => Must build a failure detector!
+* Group membership service. e.g. Gossip/Overlays/DHT
+* Join/Leave/Fail stop (no byzantine)
+* Failure detection + membership Dissemination (inform others, at least one process finds out failure and then informs about it to others)
+
+* Distributed failure detectors
+    * Completeness : each failure is detected, 
+    * Accuracy : there is no mistaken detection,
+    * In lossy networks Completeness + Accuracy is impossible
+    * speed : time to detect first failure
+    * scale : equal load on each member
+* Gossip style failure detection 
+    * nodes periodically advertise their membership table to random set of neighbors
+    * upon receipt, update local membership table (node address -> HB counter, local timestamp)
+    * Do not delete the member in Tfail seconds, wait for another Tcleanup seconds so that it’s purges at other nodes as well.
+* Heartbeat and membership dissemination should be kept separate
+* Heartbeat O(n) load, O(n) detection time. Better mechanisms exist.
+* SWIM Failure detector.
+    * SWIM full name is Scalable, Weakly-Consistent, Infection-Style, Processes Group Membership
+    * Separates failure detection from membership dissemination 
+    * Randomly sends “PING” to one peer, if no ACK rx.ed in timeout, sends “Indirect ping” to k random peers.
+                     Only if no info received, assumes that the original peer is dead.
+    * Piggyback recently detected failures on Failure Detection message (PING/ACK/INDIRECT ping/INDIRECT ACK)
+    * Suspicion mechanism 
+        * ping failed => mark as “Suspected" fail => second chance another timeout => Failed
+        * Uses incarnation number. Similar to DSDV routing protocol
+

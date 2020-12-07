@@ -5,7 +5,11 @@ https://aws.amazon.com/about-aws/global-infrastructure/
 https://www.youtube.com/watch?v=Z3SYDTMP3ME
 https://www.youtube.com/watch?v=MmsoIcYrXJU
 
-AWD VPC : https://www.youtube.com/watch?v=LX5lHYGFcnA&t=7324s
+AWS VPC : https://www.youtube.com/watch?v=LX5lHYGFcnA&t=7324s
+
+AWS re:Invent 2017: Another Day, Another Billion Flows (NET405)
+VPC : https://www.youtube.com/watch?v=8gc2DgBqo9U
+
 
 * AWS global infra
 

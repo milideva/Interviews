@@ -1,0 +1,64 @@
+Napster
+* peer to peer, files are stored by client
+* napster servers store : filename <==> Host IP address : port, keywords, server does not store the file
+    * Query goes to napster server - searches file list and pings hosts
+    * Finds hosts’ transfer rate
+    * client fetches file directly from best (one or more) peer host
+* Joining a P2P system. Use DNS, to find a set of well known servers which keeps dynamic peer neighbor list.
+* Issues - centralized server, single point of failure. No security, plain text. 
+* Brought down : indirect infringement 
+
+Gnutella by AOL
+* Eliminates servers. Clients also servers called Servents.
+* Each servant (peer) maintains an overlay graph of peers.
+* 5 main types of messages 
+    * Query
+    * QueryHit
+    * Ping for immediate neighbors very few hops away
+    * Pong (reply to ping, contains addresses of other peers)
+    * Ping/Pong needed as peers come online and go offline frequently
+    * Push (initiate file transfer)
+* Query : flooded, TTL based. Incoming Query ID (contains sender IP/port) used to find duplicates
+* Range field in http GET to get a partial file transfer
+* Firewall - allows outgoing but blocks incoming.
+    * Remember overlay has already set up a tCP connection.
+    * When the http connection to the peer fails, it sends a push message to peer
+    * Peer now has all the info to initiate a outgoing tcp connection
+* Cache ping/pong, cache search queries.
+* Freeloaders : only download, never upload. 70% of the users (in 2000)
+* Flooding causing excessive traffic. Structured peer to peer systems = Chord.
+
+Fasttrack
+* hybrid between Gnutella and Napster, Used in Kazaa. 
+* takes adv of healthier peers, some peers marked super nodes who store dir listing subset of near by <file, peer ptr>
+* Any peer can become Supernode when it builds its reputation (uptime/uploads etc)
+* Supernodes avoid flooding
+
+Bittorrent
+* tracker per file, A tracker receives heartbeats/joins/leaves from peers.
+* A seed has full file
+* A leech has part of file (blocks)
+* A file is split into blocks. A block is 32KB-256KB
+* Download local rarest first policy (rare = less replicated block)
+* Tit for tat bandwidth usage, choking for concurrent uploads, optimistic unchoke random peers
+    
+Distributed Hash Table (DHT)
+* stores objects (=files) in buckets based on key (filename)
+* store in nodes in cluster (distributed anywhere)
+* Napster, Gnutella, FastTrack are all DHTs
+* Performance
+    * Load balancing
+    * Fault tolerance
+    * efficiency of lookup and insert
+    * locality
+
+
+Chord
+* Intelligent choice of neighbors to reduce latency and message
+* Consistent hashing : SHA1 (ip, port)  => 160 bits truncated to m bit peer id = i
+* m = 7 => 2^m logical points on circle = 127 points.
+* hash (IP, port) % 128 = i say Node16 (i = 16), N23, N42 etc
+* peer pointer = clockwise immediate successor. Also knows predecessor.
+* finger table used to route query. table from 0 to (m-1) (say 0 to 6)
+    * For a node n, table entry at index j is first peer with id >= n + 2^j 
+

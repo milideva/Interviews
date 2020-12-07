@@ -12,6 +12,7 @@ static int max (int a, int b) {
   return (a >= b)? a: b;
 }  
 
+// This is height counting up from the leaf
 int height (struct node* node) {
    if (node == NULL)
        return 0;

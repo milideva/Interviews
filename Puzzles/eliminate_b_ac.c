@@ -4,31 +4,38 @@
 Examples:
 abc -> ac
 ac->''
-react->rt
+react->ret
 
 */
+#include <stdio.h>
 
-char *eliminate_b_ac (char *str) {
-    if (!str) return str;
-    char *start, *ret_str = str;
-    
-    while (str) {
-        if (*str == 'b') {
-            int i, j, cnt; i = j = 0;
-            while (str[i] && str[i]=='b') {
-                i++;
-            }
-            cnt = i;
-            while (cnt) {
-                str[j] = str[i+j];
-                if (str[j] == '\0') break;
-                cnt--;
-            }
-        } else {
+void eliminate_b_ac (char *str) {
+    char *rd, *wr;
+    if (!str) return;
 
+    rd = wr = str;
+    while (*rd != '\0') {
+        if (*rd == 'b') {
+            rd++; continue;
         }
-        str++;
+        if (*rd == 'c' && *(wr-1) == 'a' && wr!=str) {
+            rd++;
+            wr--;
+            continue;
+        } 
+        *wr++ = *rd++;
     }
+    *wr = '\0';
+}
 
-    return ret_str;
+int main() {
+    char str[] = "abc";
+    eliminate_b_ac(str);
+    printf("%s\n", str);
+
+
+    char str2[] = "react";
+    eliminate_b_ac(str2);
+    printf("%s\n", str2);
+    return 0; 
 }

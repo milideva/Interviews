@@ -8,6 +8,7 @@ but you can set some rules about what they can do
 - access only 100MB RAM
 - no disk access
 - only these 100 syscalls
+etc
 
 e.g. ; Docker / Rocket / OpenVz 
 
@@ -25,11 +26,11 @@ Developers have no control over tweaking the limits.
 Base machine manages those limits.
 
 NOTE : This is Linux (kernel > 3.10) only construct.
-Windows does not have native containers.
+Windows does not have native containers. (yet)
 MacOS and Windows docker desktop use a Linux VM for docker support.
 Windows Server 2016 and 2019 support docker containers (non-natively)
 Unix, HP-UX, bsd etc do not have containers.
-Solaris had containers (2004) but docker made it really easy to use.
+Solaris had containers in 2004 but docker made it really easy to use.
 
 Basically the host OS kernel where docker engine is installed, is shared with
 the containers.
@@ -38,12 +39,13 @@ depenencies as per the distro.
 The kernel for all linux distros is the same. That's how Host OS kernel gets
 shared with containers.
 Each container brings its own bin, lib etc (not shared).
+(Note dependent on storage driver, it's possible to share same lib/bin between two containers)
 Some dockerfiles just bring in the app (Hello world) which is not dependent on other libs
 
 Containers evolution :
 1979 : chroot in Unix
 2000 : freeBSD jails
-2004 : Solaris containers
+2004 : Solaris containers (zones)
 2006 : google : added cgroups to linux
 2008 : LXC : linux container mgr using cgroups + namespaces
 2011 : cloudfoundry started warden using LXC

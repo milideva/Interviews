@@ -1,11 +1,22 @@
 
 * DFS :
-Can not use for social network to find a path between two people.
+
+For web crawling, graph may be too large to visit in its entirety or infinite
+(DFS may suffer from non-termination).
+Can not be used for social network to find a path between two people.
 As it can go arbitrarily deep and dest may be just another friend's friend.
+
+
+A unique path exists between nodes of a tree.
+Hence BFS can be used for shortest path on TREE problems.
+
+However for Graph, # paths may become exponential and hence DFS is unrealistic.
+
+Above line is not 100% true : Can be used with limited depth in DFS.
+Also BFS needs a queue, and thus more space => use DFS instead if space is a constraint.
 
 Used when you need to search the entire tree. 
 It's easier to implement (using recursion) than BFS, and requires less state
-
 
 Depth-first searches are often used in simulations of games (and game-like
 situations in the real world). For example in games like Chess, tic-tac-toe when
@@ -19,11 +30,47 @@ previous node and try a different path. In this way you explore the tree until
 you find a path with a successful conclusion. Then you make the first move along
 this path.
 
-Another advantage of DFS is that it needs lesser memory than BFS.
++ Another advantage of DFS is that it needs lesser memory than BFS.
 BFS needs a queue and  requires you store the entire 'frontier'.
 
+Ordering
+- preorder polish notation
+- post order : reverse polish notation
+- reverse preorder
+- reverse postorder - topological sort
+- inorder 
 
-* BFS : Use it for finding smallest number steps
+
+basic structure of a DFS
+
+void DFS_recur(int curr) {        
+	V[curr] = true; //visited
+	
+	for(int i : G[curr]) // for all edgs from curr node
+		if(!V[i]) 
+            DFS_recur(i);
+}
+
+void DFS(Graph g) {        
+     // for each node in Graph g
+     	for(int i=0;i<n;++i) 
+		if(!V[i]) 
+            DFS_recur(i);
+}
+
+// For topological sort 
+void DFS_recur(int curr) {
+	V[curr] = true;
+
+	for(int i : G[curr])
+		if(!V[i]) 
+            DFS_recur(i);
+
+	S.push(curr); // Push curr in stack
+}
+
+
+* BFS : Use it for finding SHORTEST path (regular DFS may not give you shortest path, iterative dfs does).
 Note - it's NOT recursive. It's iterative and uses a queue.
 
 The breadth-first search has an interesting property: It first finds all the
@@ -34,10 +81,34 @@ when you find the specified vertex, you know the path you’ve traced so far is
 the shortest path to the node. If there were a shorter path, the BFS would have
 found it already.
 
-Breadth-first search can be used for finding the neighbour nodes in peer to peer
-networks like BitTorrent, GPS systems to find nearby locations, social
-networking sites to find people in the specified distance and things like that.
+Breadth-first search can be used for 
+- finding the neighbour nodes in peer to peer networks like BitTorrent, 
+- GPS systems to find nearby locations, 
+- social networking sites to find people in the specified distance
 
+void BFS (Graph g, root) {
+
+     queue q;
+     q.push(root);
+     visited[root] = true;
+
+     level = 0;
+     while (!q.empty()) {
+           n = q.front(); q.pop();
+
+           // terminating condition
+           if (n == goal) return 
+           
+           // for all edges of node n
+           for (m : G[curr]) {
+               if (visited[m] == false {
+                  visited[m] = true;
+                  q.push( {m, n.level+1}); // distance keep track
+               }
+           }
+              
+     }    
+}
 
 * General notes :
 

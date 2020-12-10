@@ -36,8 +36,8 @@ Follow up:
 */
 
 class MedianFinder {
-  priority_queue<int> lo;                              // max heap
-  priority_queue<int, vector<int>, greater<int>> hi;   // min heap
+  priority_queue<int> lo;                              // max heap - holds low elements
+  priority_queue<int, vector<int>, greater<int>> hi;   // min heap - holds high elements
   
 public:
   void addNum (int num) {

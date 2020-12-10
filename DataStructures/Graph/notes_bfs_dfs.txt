@@ -6,9 +6,9 @@ For web crawling, graph may be too large to visit in its entirety or infinite
 Can not be used for social network to find a path between two people.
 As it can go arbitrarily deep and dest may be just another friend's friend.
 
-
 A unique path exists between nodes of a tree.
 Hence BFS can be used for shortest path on TREE problems.
+However, if you need a unique path touches all nodes, then you need a DFS.
 
 However for Graph, # paths may become exponential and hence DFS is unrealistic.
 

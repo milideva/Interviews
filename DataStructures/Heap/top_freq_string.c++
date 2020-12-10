@@ -42,6 +42,7 @@ struct comp {
   }
 };
     
+// Using a minHeap, & a custom comparator
 vector<string> topKFrequent(vector<string>& words, int k) {
   map <string, int> mywords;
   
@@ -68,17 +69,52 @@ vector<string> topKFrequent(vector<string>& words, int k) {
   return res;
 }
 
+vector<string> topKFrequent2 (vector<string>& words, int k) {
+  map <string, int> mywords;
+  
+  for (auto w : words)
+    mywords[w]++;
+  
+  // default is a maxHeap,  pair of {count, string}, automatic sorting based on first element count
+  priority_queue < pair<int, string> >  pq;
+  
+  for (auto [w, c] : mywords) {
+    pq.push({c, w});
+  }
+    
+  vector <string> res;
+  while (!pq.empty()) {
+    auto [n, w] = pq.top();
+    pq.pop();
+    res.push_back(w);
+  }
+
+  return res;
+}
+
 
 int main () {
   
   vector <string> s = { "the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"};
 
-  vector <string> ans = topKFrequent(s, 4);
-  
-  for (auto v : ans) {
-    cout << " " << v ;
-  }
-  cout << endl;
+   vector <string> ans;
+
+   ans = topKFrequent(s, 4);
+   
+   for (auto v : ans) {
+     cout << " " << v ;
+   }
+   cout << endl;
+
+   ans.clear();
+   ans = topKFrequent2(s, 4);
+   
+   for (auto v : ans) {
+     cout << " " << v ;
+   }
+   cout << endl;
+
+
   return 0;
 }
 

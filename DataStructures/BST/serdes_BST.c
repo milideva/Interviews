@@ -58,8 +58,8 @@ static void inorder (node *root, int curr_depth, int dest_depth)  {
 }
 
 #define MARKER -1
-// serialize using either pre-order or post-order alongwith MARKERS for
-// non-existing node when the tree is not full
+// pre-order with marker or post-order with marker is sufficient for a BST
+// MARKERS for non-existing node when the tree is not full
 void serialize (node *root, FILE *fp) {
     if (root == NULL) {
         fprintf(fp, "%d ", MARKER);

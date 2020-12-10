@@ -1,7 +1,8 @@
 
 /*
 
-We have a list of points on the plane.  Find the K closest points to the origin (0, 0).
+We have a list of points on the plane.  
+Find the K closest points to the origin (0, 0).
 
 (Here, the distance between two points on a plane is the Euclidean distance.)
 
@@ -9,6 +10,7 @@ Example 1:
 
 Input: points = [[1,3],[-2,2]], K = 1
 Output: [[-2,2]]
+
 Explanation: 
 The distance between (1, 3) and the origin is sqrt(10).
 The distance between (-2, 2) and the origin is sqrt(8).
@@ -27,6 +29,9 @@ Output: [[3,3],[-2,4]]
 #include <vector>
 
 using namespace std;
+
+// Supply a "greater" function that returns true for 'greater'
+// This is to build a "minHeap" - top K elements of minHeap are closest
 
 struct pt_compare {
   bool operator() (vector<int>& p1, vector<int>& p2) {
@@ -47,20 +52,17 @@ vector <vector<int>> kClosest (vector<vector<int>>& points, int K) {
   // default is max heap, supply your own func to compare
   // pt_compare must be supplied for every 'heap' operation on the heap
 
-  // Supply a "greater" function that returns true for 'greater'
-  // This is to build a "minHeap" - top K elements of minHeap are closest
-
   make_heap(points.begin(), points.end(), pt_compare());
   
   while (K) {
 
+    // Pop_heap only moves top to the end of vector and heapifies.
     pop_heap(points.begin(), points.end(), pt_compare() );
 
-    // Pop_heap only moves it to the end of vector
-    // the old top of heap is at the back of vector, copy it
+    // the old top of heap is now at the back of vector, copy it
     ans.push_back(points.back());
 
-    // remove old top of heap, back of vector
+    // remove old top of heap from the back of vector
     points.pop_back();
 
     K--;

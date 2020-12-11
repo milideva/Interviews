@@ -38,19 +38,22 @@ class LFUCache {
     unordered_map <int, int> key2freq;
     unordered_map <int, int> key2time;
     unordered_map <int, int> key2val;
-    
-    map <pair<int, int>, int> freqTime2Key; //map is ordered, lowest {f, t} at front to highest at the back, for evict, erase the front()
+
+    //map is ordered, lowest {f, t} at front to highest at the back, for evict, erase the front()
+    map <pair<int, int>, int> freqTime2Key; 
 
     void tick (void) {
         timestamp++;
     }
+
 public:
-    LFUCache(int capacity) {
+
+    LFUCache (int capacity) {
         cap = capacity;
         timestamp = 0;
     }
     
-    int get(int key) {
+    int get (int key) {
         tick();
         
         if (key2val.find(key) == key2val.end()) {
@@ -63,32 +66,32 @@ public:
         key2time[key] = timestamp;
         key2freq[key]++;
         
-        // Re-insert in freqTime2Key with new time and new freq
+        // Re-insert in freqTime2Key with new time and new freq : new { f, t } => key
         freqTime2Key[{key2freq[key], key2time[key]}] = key;
         
         return key2val[key];
     }
     
-    void put(int key, int value) {
+    void put (int key, int value) {
         tick();
         
         if (cap == 0) return;
         
-        if (key2val.find(key) != key2val.end()) {
-            // Found it
+        if (key2val.count(key)) {
+          // Found it
             
-            // first erase from freqTime2Key since time and freq needs to be updated
-            freqTime2Key.erase({key2freq[key], key2time[key]});
-        
-            // update timestamp, freq in the cache
-            key2time[key] = timestamp;
-            key2freq[key]++;
-        
-            // Re-insert in freqTime2Key with new time and new freq
-            freqTime2Key[{key2freq[key], key2time[key]}] = key;
-        
-            key2val[key] = value;
-            return;
+          // first erase from freqTime2Key since time and freq needs to be updated
+          freqTime2Key.erase({key2freq[key], key2time[key]});
+          
+          // update timestamp, freq in the cache
+          key2time[key] = timestamp;
+          key2freq[key]++;
+          
+          // Re-insert in freqTime2Key with new time and new freq
+          freqTime2Key[{key2freq[key], key2time[key]}] = key;
+          
+          key2val[key] = value;
+          return;
         }
 
         // Not found, need to add to cache, check if there is space
@@ -98,7 +101,7 @@ public:
             key2time[key] = timestamp;
             key2freq[key] = 1;
         
-            // Re-insert in freqTime2Key with new time and new freq
+            // Insert in freqTime2Key with new time and new freq
             freqTime2Key[{key2freq[key], key2time[key]}] = key;
         
             key2val[key] = value;

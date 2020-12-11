@@ -66,7 +66,6 @@ static int count;
 void permute (int arr[], int start, int end) {
 
     if (start == end) {
-
         int num = array2num(arr, end);
         printf("%s: num%d: %d\n", __FUNCTION__, ++count, num);
         return;

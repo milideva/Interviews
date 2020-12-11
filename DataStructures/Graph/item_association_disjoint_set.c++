@@ -5,6 +5,18 @@
 
 using namespace std;
 
+/*
+Customer orders :
+i/p
+[ item1, item2 ]
+[ item3, item4 ]
+[ item4, item5 ]
+
+o/p 
+[ item3, item4, item5]
+
+
+*/
 struct PairString {
   string first;
   string second;
@@ -42,7 +54,7 @@ class Solution {
   int find (int i) {
     if (parent[i] == -1) return i;
     int p = find(parent[i]);
-    int ap = p;
+    int ap = p; // ap is absolute parent
     while (-1 != parent[p]) {
       ap = p;
       p = find(parent[p]);
@@ -88,6 +100,8 @@ public:
 
    vector<string> largestItemAssociation(vector<PairString>& itemAssociation) {
      int counter = 0;
+
+    // assign a number/id for each unique string item - it's derived from var counter 
      for (auto pair: itemAssociation) {
        if (str2idMap.find(pair.first) == str2idMap.end()) {
          str2idMap[pair.first] = counter;

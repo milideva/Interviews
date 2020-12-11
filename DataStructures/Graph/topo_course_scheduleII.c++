@@ -93,17 +93,17 @@ public:
   // Using InDegree approach 
   vector<int> findOrder (int numCourses, vector<vector<int>>& prerequisites) {
     vector<vector<int>> adj(numCourses);
-    vector<int> inDegree(numCourses, 0); // track the incoming edges 
-    queue<int> zeroDegree; // starting queue - with all 0 degree nodes 
-    vector<int> topoOrder; // topological sorted result o/p
+    vector<int> inDegree(numCourses, 0); // track the incoming edges  - array indexed by course#
 
     // Build adj graph and build inDegree counter
     for (int i = 0; i < prerequisites.size(); i++){
-      int dst = prerequisites[i][1], src = prerequisites[i][0];  // src --> dst (dst is pre-requisite for src
-      adj[dst].push_back(src);
-      inDegree[src]++; // incoming dependencies on src node
+      int dst = prerequisites[i][1], src = prerequisites[i][0];  // src --> dst (dst is pre-requisite for src)
+      adj[dst].push_back(src);   // src <------ dst (dst can be taken without issue, src can not be)
+      inDegree[src]++; // incoming dependencies on src node    [src]++
     }
 
+    queue<int> zeroDegree; // starting queue - with all 0 degree nodes
+    vector<int> topoOrder; // topological sorted result o/p
     // Push 0 incoming nodes onto queue 
     for (int i = 0; i < inDegree.size(); i++){
       if (inDegree[i] == 0){

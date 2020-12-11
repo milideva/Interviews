@@ -42,7 +42,7 @@ using namespace std;
 
 class Solution {
 
-  vector <bool> visited;
+  vector <bool> visited; // 1-D is enough, one bool per student
   
   void dfs (vector<vector<int>>& M, int i) {
     // Mark node as visited

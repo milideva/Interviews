@@ -66,7 +66,6 @@ int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
   
   int len = begL;
   int level = 0;
-  int changes = 0;
   
   queue <string> q;
   q.push(beginWord);
@@ -78,10 +77,10 @@ int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
     while (szQ--) {
       string word = q.front();
       q.pop();
-      for (int i = 0; i < len; i++) {
-        // brute force, try all chars
-        string temp = word;
         
+      // brute force, try all chars
+      for (int i = 0; i < len; i++) {
+        string temp = word;
         for (char ch = 'a'; ch <= 'z'; ch++) {    
           // skip the same char
           temp[i] = ch;
@@ -94,8 +93,7 @@ int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
           if (dict.find(temp) == dict.end()) {
             continue;
           }
-          changes++;
-          
+          // matched a transient word !!
           dict.erase(temp);
           q.push(temp);
         }

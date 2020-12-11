@@ -69,7 +69,7 @@ class Solution {
       // reached destination
       if (!empty) 
         return 1; // covered all cells!
-      return 0; // we reached shortest path -not covering all empty cells, return 0
+      return 0; // we reached shorter path - not covering all empty cells, return 0
     }
     int ret = 0;
     

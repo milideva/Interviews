@@ -46,14 +46,11 @@ node *create_BST_from_array (int array[], int start, int end) {
     return n;
 }
 
-// Question -
-// List all the nodes in a given BST at a given depth
-// if curr_depth == dest_depth , then enqueue the node
-static void inorder (node *root, int curr_depth, int dest_depth)  { 
+static void inorder (node *root)  { 
     if (root) { 
-        inorder(root->left, curr_depth+1, dest_depth); 
-        printf("%d curr_depth:%d dest_depth:%d\n", root->data, curr_depth, dest_depth); 
-        inorder(root->right, curr_depth+1, dest_depth); 
+        inorder(root->left); 
+        printf("%d \n", root->data); 
+        inorder(root->right); 
     } 
 }
 
@@ -86,8 +83,7 @@ void deserialize (node **n, FILE *fp) {
 
 void print_inorder (node *n) {
     printf("print_inorder: ");
-    // inorder(n);
-    inorder(n, 0, 2);
+    inorder(n);
 }
 
 void test_serdeser (node *root) {

@@ -1,0 +1,75 @@
+API design
+
+* Understand requirements first. Performance? Can use design patterns?
+
+* Over-constrained : can not keep everyone happy. Keep realistic goals.
+* Expect to make mistakes. Extensible. Evolves after few years of usage.
+* Allocation ownership (malloc/free)
+
+
+Goals
+* Simple. 
+* Easy to read and maintain
+* Not implementation dependent. Code for interface not implementation.
+* re-entrant / thread-safe
+* library - PIC
+* binary compatibility
+* Reusability 
+* Handle all exception/error cases.
+* Portable
+
+Characteristics of a Good API
+- Easy to learn
+- Easy to use, even without documentation
+- Hard to misuse
+- Easy to read and maintain code that uses it
+- Sufficiently powerful to satisfy requirements
+- Easy to extend
+
+
+1) Let the caller do all the (outer) memory handling:
+
+myStruct *s = malloc(sizeof(s));
+myStruct_init(s);
+
+myStruct_foo(s);
+
+myStruct_destroy(s);
+free(s);
+The _init and _destroy functions are necessary since some more memory may be allocated inside, and it must be handled somewhere.
+
+This has the disadvantage of being longer, but also the malloc can be eliminated in some cases (e.g., it can be passed a stack-allocated struct:
+
+int bar() {
+    myStruct s;
+    myStruct_init(&s);
+
+    myStruct_foo(&s);
+
+    myStruct_destroy(&s);
+}
+Also, it's necessary for the caller to know the size of the struct.
+
+Adv: Memory from stack can be used.
+
+Disadv
+ you have to leak implementation details to the caller. The caller has to know at least how big the struct is. You can't change the internal implementation of the object without recompiling any code that uses it.
+
+Always use the method below :
+
+2) Hide mallocs in _init and frees in _destroy.
+
+Advantages: Completely opaque structures.
+
+Disadvantages: Can't be passed a struct allocated in a different way.
+
+myStruct *s = myStruct_init();
+
+myStruct_foo(s);
+
+myStruct_destroy(s);
+
+
+can be implemented as a binary compatible interface, with minor version API additions, enhancements etc not breaking client code when shipped in a .so or .dll
+
+

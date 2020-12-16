@@ -1,19 +1,24 @@
 Youtube channels
 
-System Design: 
+* System Design: 
 Gaurav Sen
+"System Design Interview"
 
-Programming:
+* Programming:
 Clément Mihailescu
 Tushar Roy - Coding Made Simple
+Rachit Jain
+TECH DOSE
 Errichto
 TechLead
 
-C++:
+* Data structures lectures
+Abdul Bari
+
+* C++:
 Bo Qian
 
-Competitive programming : 
+* Competitive programming : 
 many channels ...
-
-look at relevant video suggestions
+YouTube does a good job at relevant video suggestions
 

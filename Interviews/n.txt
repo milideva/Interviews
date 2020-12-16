@@ -14,4 +14,4 @@ priority queue implementation (using min-heaps)
 
 System design:
 1. get and put for objects of given structure, 1 million objects.
-2. Singature detection in millions of files
+2. Signature detection in millions of files

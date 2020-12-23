@@ -1,4 +1,7 @@
 #include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+
 /*
 Anagram : rearranging the letters of a word or phrase to produce a new word or phrase, Mary => Army
 */
@@ -11,8 +14,7 @@ bool anagram (char *str1, char *str2) {
 
     if (len1 != len2) return false;
 
-    int count[256];
-    memset(count, 0, sizeof(count));
+    int count[256] = {0};
 
     char *s1, *s2;
     s1 = str1; s2 = str2;
@@ -26,12 +28,16 @@ bool anagram (char *str1, char *str2) {
         str2++;
     }
 
-    int i = 256;
-    while (i) {
-        if (count[i]) return false;
+    printf("%s: str1:%s str2:%s\n", __FUNCTION__, s1, s2);
+    int i = 255;
+    while (i >= 0) {
+        if (count[i]) {
+            printf("false: i:%d\n", i);
+            return false;
+        }
         i--;
     }
-    printf("%s::true: str1:%s str2:%s\n", __FUNCTION__, s1, s2);
+    printf("%s::true\n", __FUNCTION__);
     return true;
 
 }
@@ -41,4 +47,8 @@ int main () {
     char str2[] = "dattaDev";
 
     bool ret = anagram(str1, str2);
+    char str3[] = "listen";
+    char str4[] = "silent";
+    ret = anagram(str3, str4);
+    return 0;
 }

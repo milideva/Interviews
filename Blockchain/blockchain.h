@@ -2,7 +2,7 @@
 #define BLOCKCHAIN_H
 #pragma once
 
-#include <block.h>
+#include "block.h"
 #include "commonHeader.h"
 #include "memPool.h"
 
@@ -20,7 +20,7 @@ private :
   int version;
   coin_t reward;
 
-  unordered_map <chainAddr, Account*> pk2acct;
+  unordered_map <hash_t, Account*> pk2acct; // hash of pkaddr -> Account 
 
   bool debitFromAccount (chainAddr from, uint64_t amount);
   bool creditIntoAccount (chainAddr to, uint64_t amount);

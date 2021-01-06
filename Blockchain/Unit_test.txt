@@ -1,0 +1,725 @@
+Script started on Wed Jan  6 21:03:25 2021
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+bash-3.2$ Creating the Genesis block now 
+calcHashTransactionsRoot:0x1449310910991872227
+
+Miner starting Proof of work for block# 0 nShift:44
+
+Mined a block, hash:0x2500803689846 in 4.08681 seconds
+>>>>>>>>>>> Dynamic difficulty increased. nShift:43
+
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+		"hashTransactionsRoot" : "\u3c04B\u063c\u001c\u0014",
+		"nBits" : 44,
+		"nNonce" : 960671,
+		"nTime" : 1609947212,
+		"nVersion" : 1
+	},
+	"dataPayload" : "This is the Genesis block",
+	"nTransactions" : 0,
+	"vTxn" : null
+}
+BlockChain:toyChain Adding block# 0
+printBlock(): data payload : This is the Genesis block
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+		"hashTransactionsRoot" : "\u3c04B\u063c\u001c\u0014",
+		"nBits" : 44,
+		"nNonce" : 960671,
+		"nTime" : 1609947212,
+		"nVersion" : 1
+	},
+	"dataPayload" : "This is the Genesis block",
+	"nTransactions" : 0,
+	"vTxn" : null
+}
+BlockChain validateBlock() SUCCESS block Hash:0x2464383fd76 calcHash:0x2464383fd76
+Created the Genesis block 
+Account::Account publicAddr:0x7fbba67049b0 isWalletAccount:1 acct:0x7fbba6704f50
+Account::Account publicAddr:0x7fbba67049b0 isWalletAccount:0 acct:0x7fbba6719020
+######## On toyChain : opened account for pubAddr:0x7fbba67049b0 balance:0 acct:0x0x7fbba6719020
+Wallet coinMiner opened account:0x7fbba67049b0 acct:0x7fbba6704f50
+Public Key: 0x04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440
+ balance:0
+Starting restServerStr:http://localhost:62789/restblockchain
+Account::Account publicAddr:0x7fbba6719f40 isWalletAccount:1 acct:0x7fbba6719e70
+Account::Account publicAddr:0x7fbba6719f40 isWalletAccount:0 acct:0x7fbba6719fc0
+######## On toyChain : opened account for pubAddr:0x7fbba6719f40 balance:50000 acct:0x0x7fbba6719fc0
+Wallet Alice opened account:0x7fbba6719f40 acct:0x7fbba6719e70
+Public Key: 0x0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137
+ balance:50000
+Account::Account publicAddr:0x7fbba6719bc0 isWalletAccount:1 acct:0x7fbba70044f0
+Account::Account publicAddr:0x7fbba6719bc0 isWalletAccount:0 acct:0x7fbba70040c0
+######## On toyChain : opened account for pubAddr:0x7fbba6719bc0 balance:30000 acct:0x0x7fbba70040c0
+
+starting to listen
+Wallet Bob opened account:0x7fbba6719bc0 acct:0x7fbba70044f0
+Public Key: 0x048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E
+ balance:30000
+Account::Account publicAddr:0x7fbba6604d10 isWalletAccount:1 acct:0x7fbba6504800
+Account::Account publicAddr:0x7fbba6604d10 isWalletAccount:0 acct:0x7fbba6504840
+######## On toyChain : opened account for pubAddr:0x7fbba6604d10 balance:70000 acct:0x0x7fbba6504840
+Wallet Charlie opened account:0x7fbba6604d10 acct:0x7fbba6504800
+Public Key: 0x04C8D8E4E1A57FF1097F70E70D37C69F89C1BCD11392C3313C2F52EAF65AFCD8D3EAC3E0FC8D86BDC4F040E603A06C8C24F9C4087F9E3C4A357E3498B33A000BF6
+ balance:70000
+
+=========== Creating JSON Test transaction ============
+ Transaction::calcHash: md: 7080431981749343087
+txnHash:7080431981749343087 Sign: 0x7fbba6504900
+Bob sending from account: 0x7fbba6719bc0 to account: 0x7fbba6719f40 amount: 10 nonce:0 context: @@@@@@ JSON TEST @@@@@@
+ Transaction::calcHash: md: 7080431981749343087
+Transaction ECDSA signature verify success
+$$$$$$ Wallet Account addr:0x7fbba6719bc0 balance:29990 nonce:1
+printTransaction: fromaddress:048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E to address:0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137 amt:10 nonce:0 context: @@@@@@ JSON TEST @@@@@@
+{
+	"context" : "@@@@@@ JSON TEST @@@@@@",
+	"fromAddr" : "048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E",
+	"nValue" : 10,
+	"nonce" : 0,
+	"r" : "31987E68CE1F27122DEE9986570DE6620C596A3FA51BBCFCDDC6C32CA27F2EE3",
+	"s" : "A6816B85FAF9D4ACA81CAFE1E36CEFFDDF0090D6AA1984554A31B894F72B78FC",
+	"toAddr" : "0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137",
+	"txnHash" : "o\u0013|\u021f\u07c2b"
+}
+
+Wallet Sending transaction: amount: 1
+ Transaction::calcHash: md: 8972483379242323651
+txnHash:8972483379242323651 Sign: 0x7fbba671a4e0
+Alice sending from account: 0x7fbba6719f40 to account: 0x7fbba6719bc0 amount: 1 nonce:0 context: from Alice to Bob
+ Transaction::calcHash: md: 8972483379242323651
+Transaction ECDSA signature verify success
+$$$$$$ Wallet Account addr:0x7fbba6719f40 balance:49999 nonce:1
+ Transaction::calcHash: md: 8972483379242323651
+Transaction ECDSA signature verify success
+Miner added fromAddr:0x7fbba6719f40 Nonce:0
+Miner coinMiner received transaction -> 
+printTransaction: fromaddress:0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137 to address:048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E amt:1 nonce:0 context: from Alice to Bob
+ Transaction::calcHash: md: 15724050995815861850
+Wallet : CoinBase signing with toAddress
+txnHash:15724050995815861850 Sign: 0x7fbba6504910
+coinMiner sending from account: 0x0 to account: 0x7fbba67049b0 amount: 10000000000 nonce:0 context: coinMiner CoinBase Transaction
+ Transaction::calcHash: md: 15724050995815861850
+Transaction verify : CoinBase transaction, verify with toAddress
+Transaction ECDSA signature verify success
+ to address:04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440 amt:10000000000 nonce:0 context: coinMiner CoinBase Transaction
+calcHashTransactionsRoot: txn:1 adding txnHash:0x15724050995815861850
+calcHashTransactionsRoot: txn:2 adding txnHash:0x8972483379242323651
+calcHashTransactionsRoot:0x261630658951102105
+
+Miner starting Proof of work for block# 1 nShift:43
+
+Wallet Sending transaction: amount: 2
+ Transaction::calcHash: md: 12112916141291593911
+txnHash:12112916141291593911 Sign: 0x7fbba7604400
+Alice sending from account: 0x7fbba6719f40 to account: 0x7fbba6719bc0 amount: 2 nonce:1 context: from Alice to Bob
+ Transaction::calcHash: md: 12112916141291593911
+Transaction ECDSA signature verify success
+$$$$$$ Wallet Account addr:0x7fbba6719f40 balance:49997 nonce:2
+
+Wallet Sending transaction: amount: 3
+ Transaction::calcHash: md: 4297593073314711557
+txnHash:4297593073314711557 Sign: 0x7fbba640c350
+Alice sending from account: 0x7fbba6719f40 to account: 0x7fbba6719bc0 amount: 3 nonce:2 context: from Alice to Bob
+ Transaction::calcHash: md: 4297593073314711557
+Transaction ECDSA signature verify success
+$$$$$$ Wallet Account addr:0x7fbba6719f40 balance:49994 nonce:3
+
+Mined a block, hash:0x621358198248 in 9.35095 seconds
+>>>>>>>>>>> Dynamic difficulty increased. nShift:42
+
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "v\ufffd\u00c3F\u0002\u0000\u0000",
+		"hashTransactionsRoot" : "\u067e!\u0672\ufffd",
+		"nBits" : 43,
+		"nNonce" : 938739,
+		"nTime" : 1609947216,
+		"nVersion" : 1
+	},
+	"dataPayload" : "coinMiner mining this block at UTC: Wed Jan  6 15:33:36 2021\n",
+	"nTransactions" : 2,
+	"vTxn" : 
+	[
+		{
+			"txn" : 
+			{
+				"context" : "coinMiner CoinBase Transaction",
+				"fromAddr" : 0,
+				"nValue" : 10000000000,
+				"nonce" : 0,
+				"r" : "BB59129C847CFE4232B52AE3C9238E48F757A9361B891834AB6A6A429D9A11B6",
+				"s" : "B62C015A2C77DA5B5BC53879B9EFC13205BDAF51AD2BA571FD1B12A439F6A82E",
+				"toAddr" : "04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440",
+				"txnHash" : "ZN\u06f3\u0012\r7\ufffd"
+			}
+		},
+		{
+			"txn" : 
+			{
+				"context" : "from Alice to Bob",
+				"fromAddr" : "0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137",
+				"nValue" : 1,
+				"nonce" : 0,
+				"r" : "9B69A12B96989B44C029B55F70C81EA71E48409FE6A88C812DB75EC958F34CD3",
+				"s" : "80C09E50438E16F4A33A38649546D04C997D724151AC53507AB4D08DEA8A4EC8",
+				"toAddr" : "048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E",
+				"txnHash" : "\u00ce\u055c\u0018\u0284|"
+			}
+		}
+	]
+}
+BlockChain:toyChain Adding block# 1
+printBlock(): data payload : coinMiner mining this block at UTC: Wed Jan  6 15:33:36 2021
+
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "v\ufffd\u00c3F\u0002\u0000\u0000",
+		"hashTransactionsRoot" : "\u067e!\u0672\ufffd",
+		"nBits" : 43,
+		"nNonce" : 938739,
+		"nTime" : 1609947216,
+		"nVersion" : 1
+	},
+	"dataPayload" : "coinMiner mining this block at UTC: Wed Jan  6 15:33:36 2021\n",
+	"nTransactions" : 2,
+	"vTxn" : 
+	[
+		{
+			"txn" : 
+			{
+				"context" : "coinMiner CoinBase Transaction",
+				"fromAddr" : 0,
+				"nValue" : 10000000000,
+				"nonce" : 0,
+				"r" : "BB59129C847CFE4232B52AE3C9238E48F757A9361B891834AB6A6A429D9A11B6",
+				"s" : "B62C015A2C77DA5B5BC53879B9EFC13205BDAF51AD2BA571FD1B12A439F6A82E",
+				"toAddr" : "04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440",
+				"txnHash" : "ZN\u06f3\u0012\r7\ufffd"
+			}
+		},
+		{
+			"txn" : 
+			{
+				"context" : "from Alice to Bob",
+				"fromAddr" : "0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137",
+				"nValue" : 1,
+				"nonce" : 0,
+				"r" : "9B69A12B96989B44C029B55F70C81EA71E48409FE6A88C812DB75EC958F34CD3",
+				"s" : "80C09E50438E16F4A33A38649546D04C997D724151AC53507AB4D08DEA8A4EC8",
+				"toAddr" : "048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E",
+				"txnHash" : "\u00ce\u055c\u0018\u0284|"
+			}
+		}
+	]
+}
+BlockChain validateBlock() SUCCESS block Hash:0x90abd5ade8 calcHash:0x90abd5ade8
+Global account credit COINBASE transaction 10000000000 To:0x7fbba67049b0
+$$$$$$ OnChain Global Account: addr:0x7fbba67049b0 balance:10000000000 nonce:1
+Global account debit 1 from:0x7fbba6719f40
+$$$$$$ OnChain Global Account: addr:0x7fbba6719f40 balance:49999 nonce:1
+Global account credit 1 To:0x7fbba6719bc0
+$$$$$$ OnChain Global Account: addr:0x7fbba6719bc0 balance:30001 nonce:1
+ Transaction::calcHash: md: 12112916141291593911
+Transaction ECDSA signature verify success
+Miner coinMiner received transaction -> 
+printTransaction: fromaddress:0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137 to address:048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E amt:2 nonce:1 context: from Alice to Bob
+ Transaction::calcHash: md: 15724050995815861850
+Wallet : CoinBase signing with toAddress
+txnHash:15724050995815861850 Sign: 0x7fbba7604530
+coinMiner sending from account: 0x0 to account: 0x7fbba67049b0 amount: 10000000000 nonce:0 context: coinMiner CoinBase Transaction
+ Transaction::calcHash: md: 15724050995815861850
+Transaction verify : CoinBase transaction, verify with toAddress
+Transaction ECDSA signature verify success
+ to address:04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440 amt:10000000000 nonce:0 context: coinMiner CoinBase Transaction
+calcHashTransactionsRoot: txn:1 adding txnHash:0x15724050995815861850
+calcHashTransactionsRoot: txn:2 adding txnHash:0x12112916141291593911
+calcHashTransactionsRoot:0x16713482791310109610
+
+Miner starting Proof of work for block# 2 nShift:42
+
+Wallet Sending transaction: amount: 4
+ Transaction::calcHash: md: 1930295858949515574
+txnHash:1930295858949515574 Sign: 0x7fbba6605390
+Alice sending from account: 0x7fbba6719f40 to account: 0x7fbba6719bc0 amount: 4 nonce:3 context: from Alice to Bob
+ Transaction::calcHash: md: 1930295858949515574
+Transaction ECDSA signature verify success
+$$$$$$ Wallet Account addr:0x7fbba6719f40 balance:49990 nonce:4
+
+Mined a block, hash:0x682119548776 in 11.0541 seconds
+>>>>>>>>>>> Dynamic difficulty increased. nShift:41
+
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "\u8b55\u02d0\u0000\u0000\u0000",
+		"hashTransactionsRoot" : "\u02ab\u013f\u000b8\ufffd\ufffd",
+		"nBits" : 42,
+		"nNonce" : 982346,
+		"nTime" : 1609947222,
+		"nVersion" : 1
+	},
+	"dataPayload" : "coinMiner mining this block at UTC: Wed Jan  6 15:33:42 2021\n",
+	"nTransactions" : 2,
+	"vTxn" : 
+	[
+		{
+			"txn" : 
+			{
+				"context" : "coinMiner CoinBase Transaction",
+				"fromAddr" : 0,
+				"nValue" : 10000000000,
+				"nonce" : 0,
+				"r" : "A89630276F6E90AEBD8757D2A36F4644D50E64E969C9D6035D7A3F319E2CD6CA",
+				"s" : "45A7AACB0E7F8FAEA1E347250911E62D7C853FE96480DA1B3B12CDA78E855823",
+				"toAddr" : "04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440",
+				"txnHash" : "ZN\u06f3\u0012\r7\ufffd"
+			}
+		},
+		{
+			"txn" : 
+			{
+				"context" : "from Alice to Bob",
+				"fromAddr" : "0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137",
+				"nValue" : 2,
+				"nonce" : 1,
+				"r" : "2E279938CFA9FFD76DABA8E74D14953673AA88D97C37A1FD732BE9D651B0A2AA",
+				"s" : "29D84936FBF3C0946984AF3549E397AD3481FA9D46B768412E325973102340F9",
+				"toAddr" : "048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E",
+				"txnHash" : "\u05e0\u01f3\r\u0659\ufffd"
+			}
+		}
+	]
+}
+BlockChain:toyChain Adding block# 2
+printBlock(): data payload : coinMiner mining this block at UTC: Wed Jan  6 15:33:42 2021
+
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "\u8b55\u02d0\u0000\u0000\u0000",
+		"hashTransactionsRoot" : "\u02ab\u013f\u000b8\ufffd\ufffd",
+		"nBits" : 42,
+		"nNonce" : 982346,
+		"nTime" : 1609947222,
+		"nVersion" : 1
+	},
+	"dataPayload" : "coinMiner mining this block at UTC: Wed Jan  6 15:33:42 2021\n",
+	"nTransactions" : 2,
+	"vTxn" : 
+	[
+		{
+			"txn" : 
+			{
+				"context" : "coinMiner CoinBase Transaction",
+				"fromAddr" : 0,
+				"nValue" : 10000000000,
+				"nonce" : 0,
+				"r" : "A89630276F6E90AEBD8757D2A36F4644D50E64E969C9D6035D7A3F319E2CD6CA",
+				"s" : "45A7AACB0E7F8FAEA1E347250911E62D7C853FE96480DA1B3B12CDA78E855823",
+				"toAddr" : "04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440",
+				"txnHash" : "ZN\u06f3\u0012\r7\ufffd"
+			}
+		},
+		{
+			"txn" : 
+			{
+				"context" : "from Alice to Bob",
+				"fromAddr" : "0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137",
+				"nValue" : 2,
+				"nonce" : 1,
+				"r" : "2E279938CFA9FFD76DABA8E74D14953673AA88D97C37A1FD732BE9D651B0A2AA",
+				"s" : "29D84936FBF3C0946984AF3549E397AD3481FA9D46B768412E325973102340F9",
+				"toAddr" : "048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E",
+				"txnHash" : "\u05e0\u01f3\r\u0659\ufffd"
+			}
+		}
+	]
+}
+BlockChain validateBlock() SUCCESS block Hash:0x9ed17e4f68 calcHash:0x9ed17e4f68
+Global account credit COINBASE transaction 10000000000 To:0x7fbba67049b0
+$$$$$$ OnChain Global Account: addr:0x7fbba67049b0 balance:20000000000 nonce:2
+Global account debit 2 from:0x7fbba6719f40
+$$$$$$ OnChain Global Account: addr:0x7fbba6719f40 balance:49997 nonce:2
+Global account credit 2 To:0x7fbba6719bc0
+$$$$$$ OnChain Global Account: addr:0x7fbba6719bc0 balance:30003 nonce:2
+ Transaction::calcHash: md: 4297593073314711557
+Transaction ECDSA signature verify success
+Miner coinMiner received transaction -> 
+printTransaction: fromaddress:0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137 to address:048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E amt:3 nonce:2 context: from Alice to Bob
+ Transaction::calcHash: md: 15724050995815861850
+Wallet : CoinBase signing with toAddress
+txnHash:15724050995815861850 Sign: 0x7fbba6605b30
+coinMiner sending from account: 0x0 to account: 0x7fbba67049b0 amount: 10000000000 nonce:0 context: coinMiner CoinBase Transaction
+ Transaction::calcHash: md: 15724050995815861850
+Transaction verify : CoinBase transaction, verify with toAddress
+Transaction ECDSA signature verify success
+ to address:04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440 amt:10000000000 nonce:0 context: coinMiner CoinBase Transaction
+calcHashTransactionsRoot: txn:1 adding txnHash:0x15724050995815861850
+calcHashTransactionsRoot: txn:2 adding txnHash:0x4297593073314711557
+calcHashTransactionsRoot:0x6749479869132977696
+
+Miner starting Proof of work for block# 3 nShift:41
+
+Mined a block, hash:0x492694863993 in 97.019 seconds
+<<<<<<<<<<< Dynamic difficulty decreased. nShift:42
+
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "hO~\u045e\u0000\u0000\u0000",
+		"hashTransactionsRoot" : " 6RB.\ufffd\u029d",
+		"nBits" : 41,
+		"nNonce" : 917592999,
+		"nTime" : 1609947229,
+		"nVersion" : 1
+	},
+	"dataPayload" : "coinMiner mining this block at UTC: Wed Jan  6 15:33:49 2021\n",
+	"nTransactions" : 2,
+	"vTxn" : 
+	[
+		{
+			"txn" : 
+			{
+				"context" : "coinMiner CoinBase Transaction",
+				"fromAddr" : 0,
+				"nValue" : 10000000000,
+				"nonce" : 0,
+				"r" : "8A8B096C53B7C31513D5257A1EA7AD41ED4164DED970D250A476D103436252AF",
+				"s" : "D3CEF02F3ED799B90E14EF4FF9065219960A5D3E44211772508EA1B55A99C418",
+				"toAddr" : "04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440",
+				"txnHash" : "ZN\u06f3\u0012\r7\ufffd"
+			}
+		},
+		{
+			"txn" : 
+			{
+				"context" : "from Alice to Bob",
+				"fromAddr" : "0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137",
+				"nValue" : 3,
+				"nonce" : 2,
+				"r" : "0A51BB1FA7ECA1146B2A72875FE3A6A86AF6F73E6E4C2C27270D039FD7A43806",
+				"s" : "5D9FBDC628ABC8806D207D99C476C35786157FAFCC031104DDF4DCE5110E9636",
+				"toAddr" : "048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E",
+				"txnHash" : "\u0005H\u001al!\u001e\u013b"
+			}
+		}
+	]
+}
+BlockChain:toyChain Adding block# 3
+printBlock(): data payload : coinMiner mining this block at UTC: Wed Jan  6 15:33:49 2021
+
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "hO~\u045e\u0000\u0000\u0000",
+		"hashTransactionsRoot" : " 6RB.\ufffd\u029d",
+		"nBits" : 41,
+		"nNonce" : 917592999,
+		"nTime" : 1609947229,
+		"nVersion" : 1
+	},
+	"dataPayload" : "coinMiner mining this block at UTC: Wed Jan  6 15:33:49 2021\n",
+	"nTransactions" : 2,
+	"vTxn" : 
+	[
+		{
+			"txn" : 
+			{
+				"context" : "coinMiner CoinBase Transaction",
+				"fromAddr" : 0,
+				"nValue" : 10000000000,
+				"nonce" : 0,
+				"r" : "8A8B096C53B7C31513D5257A1EA7AD41ED4164DED970D250A476D103436252AF",
+				"s" : "D3CEF02F3ED799B90E14EF4FF9065219960A5D3E44211772508EA1B55A99C418",
+				"toAddr" : "04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440",
+				"txnHash" : "ZN\u06f3\u0012\r7\ufffd"
+			}
+		},
+		{
+			"txn" : 
+			{
+				"context" : "from Alice to Bob",
+				"fromAddr" : "0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137",
+				"nValue" : 3,
+				"nonce" : 2,
+				"r" : "0A51BB1FA7ECA1146B2A72875FE3A6A86AF6F73E6E4C2C27270D039FD7A43806",
+				"s" : "5D9FBDC628ABC8806D207D99C476C35786157FAFCC031104DDF4DCE5110E9636",
+				"toAddr" : "048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E",
+				"txnHash" : "\u0005H\u001al!\u001e\u013b"
+			}
+		}
+	]
+}
+BlockChain validateBlock() SUCCESS block Hash:0x72b6e70079 calcHash:0x72b6e70079
+Global account credit COINBASE transaction 10000000000 To:0x7fbba67049b0
+$$$$$$ OnChain Global Account: addr:0x7fbba67049b0 balance:30000000000 nonce:3
+Global account debit 3 from:0x7fbba6719f40
+$$$$$$ OnChain Global Account: addr:0x7fbba6719f40 balance:49994 nonce:3
+Global account credit 3 To:0x7fbba6719bc0
+$$$$$$ OnChain Global Account: addr:0x7fbba6719bc0 balance:30006 nonce:3
+ Transaction::calcHash: md: 1930295858949515574
+Transaction ECDSA signature verify success
+Miner coinMiner received transaction -> 
+printTransaction: fromaddress:0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137 to address:048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E amt:4 nonce:3 context: from Alice to Bob
+ Transaction::calcHash: md: 15724050995815861850
+Wallet : CoinBase signing with toAddress
+txnHash:15724050995815861850 Sign: 0x7fbba75040d0
+coinMiner sending from account: 0x0 to account: 0x7fbba67049b0 amount: 10000000000 nonce:0 context: coinMiner CoinBase Transaction
+ Transaction::calcHash: md: 15724050995815861850
+Transaction verify : CoinBase transaction, verify with toAddress
+Transaction ECDSA signature verify success
+ to address:04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440 amt:10000000000 nonce:0 context: coinMiner CoinBase Transaction
+calcHashTransactionsRoot: txn:1 adding txnHash:0x15724050995815861850
+calcHashTransactionsRoot: txn:2 adding txnHash:0x1930295858949515574
+calcHashTransactionsRoot:0x13067207026000130469
+
+Miner starting Proof of work for block# 4 nShift:42
+
+handle POST
+Rx: {"context":"@@@@@@ JSON TEST @@@@@@","fromAddr":"048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E","nValue":10,"nonce":0,"r":"31987E68CE1F27122DEE9986570DE6620C596A3FA51BBCFCDDC6C32CA27F2EE3","s":"A6816B85FAF9D4ACA81CAFE1E36CEFFDDF0090D6AA1984554A31B894F72B78FC","toAddr":"0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137","txnHash":"o\u0013|ȟ߂b"}
+POST rx{"context":"@@@@@@ JSON TEST @@@@@@","fromAddr":"048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E","nValue":10,"nonce":0,"r":"31987E68CE1F27122DEE9986570DE6620C596A3FA51BBCFCDDC6C32CA27F2EE3","s":"A6816B85FAF9D4ACA81CAFE1E36CEFFDDF0090D6AA1984554A31B894F72B78FC","toAddr":"0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137","txnHash":"o\u0013|ȟ߂b"}
+not an array
+contextStr:@@@@@@ JSON TEST @@@@@@
+fromAddrStr:048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E
+rStr:31987E68CE1F27122DEE9986570DE6620C596A3FA51BBCFCDDC6C32CA27F2EE3
+sStr:A6816B85FAF9D4ACA81CAFE1E36CEFFDDF0090D6AA1984554A31B894F72B78FC
+nValue:10
+nonce:0
+toAddrStr:0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137
+txnHashStr:o|ȟ߂b
+
+createTransactionFromJSON: ################
+
+ Transaction::calcHash: md: 7080431981749343087
+ Transaction::calcHash: md: 7080431981749343087
+Transaction ECDSA signature verify success
+printTransaction: fromaddress:048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E to address:0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137 amt:10 nonce:0 context: @@@@@@ JSON TEST @@@@@@
+Sent: {"setTransaction":"@@@@@@ JSON TEST @@@@@@"}
+
+Mined a block, hash:0x3778592923213 in 59.9423 seconds
+<<<<<<<<<<< Dynamic difficulty decreased. nShift:43
+
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "y\u0000\u7db2\u0000\u0000\u0000",
+		"hashTransactionsRoot" : "\u01719\u07ce\u000bX\ufffd",
+		"nBits" : 42,
+		"nNonce" : 5396497,
+		"nTime" : 1609947279,
+		"nVersion" : 1
+	},
+	"dataPayload" : "coinMiner mining this block at UTC: Wed Jan  6 15:34:39 2021\n",
+	"nTransactions" : 2,
+	"vTxn" : 
+	[
+		{
+			"txn" : 
+			{
+				"context" : "coinMiner CoinBase Transaction",
+				"fromAddr" : 0,
+				"nValue" : 10000000000,
+				"nonce" : 0,
+				"r" : "628D4D415A6C385B8626139D3A7A4361E9551FD4EB5BAEC701F49CF9F965498E",
+				"s" : "3A88FACE80036B79D124278D0CE0E64E807DB2B10DEE0EF02E673DF950401D49",
+				"toAddr" : "04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440",
+				"txnHash" : "ZN\u06f3\u0012\r7\ufffd"
+			}
+		},
+		{
+			"txn" : 
+			{
+				"context" : "from Alice to Bob",
+				"fromAddr" : "0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137",
+				"nValue" : 4,
+				"nonce" : 3,
+				"r" : "6D832E7467F89B6D3801E924DD063A17A1763B863240D3C71F8F6E3B7205DA69",
+				"s" : "C2456BB0AFF03E76F4786648D886763E7D5D381ECCD904B62C980383B62715D1",
+				"toAddr" : "048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E",
+				"txnHash" : "6\u95c8\u06c9\u025a"
+			}
+		}
+	]
+}
+BlockChain:toyChain Adding block# 4
+printBlock(): data payload : coinMiner mining this block at UTC: Wed Jan  6 15:34:39 2021
+
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "y\u0000\u7db2\u0000\u0000\u0000",
+		"hashTransactionsRoot" : "\u01719\u07ce\u000bX\ufffd",
+		"nBits" : 42,
+		"nNonce" : 5396497,
+		"nTime" : 1609947279,
+		"nVersion" : 1
+	},
+	"dataPayload" : "coinMiner mining this block at UTC: Wed Jan  6 15:34:39 2021\n",
+	"nTransactions" : 2,
+	"vTxn" : 
+	[
+		{
+			"txn" : 
+			{
+				"context" : "coinMiner CoinBase Transaction",
+				"fromAddr" : 0,
+				"nValue" : 10000000000,
+				"nonce" : 0,
+				"r" : "628D4D415A6C385B8626139D3A7A4361E9551FD4EB5BAEC701F49CF9F965498E",
+				"s" : "3A88FACE80036B79D124278D0CE0E64E807DB2B10DEE0EF02E673DF950401D49",
+				"toAddr" : "04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440",
+				"txnHash" : "ZN\u06f3\u0012\r7\ufffd"
+			}
+		},
+		{
+			"txn" : 
+			{
+				"context" : "from Alice to Bob",
+				"fromAddr" : "0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137",
+				"nValue" : 4,
+				"nonce" : 3,
+				"r" : "6D832E7467F89B6D3801E924DD063A17A1763B863240D3C71F8F6E3B7205DA69",
+				"s" : "C2456BB0AFF03E76F4786648D886763E7D5D381ECCD904B62C980383B62715D1",
+				"toAddr" : "048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E",
+				"txnHash" : "6\u95c8\u06c9\u025a"
+			}
+		}
+	]
+}
+BlockChain validateBlock() SUCCESS block Hash:0x36fc5b05e4d calcHash:0x36fc5b05e4d
+Global account credit COINBASE transaction 10000000000 To:0x7fbba67049b0
+$$$$$$ OnChain Global Account: addr:0x7fbba67049b0 balance:40000000000 nonce:4
+Global account debit 4 from:0x7fbba6719f40
+$$$$$$ OnChain Global Account: addr:0x7fbba6719f40 balance:49990 nonce:4
+Global account credit 4 To:0x7fbba6719bc0
+$$$$$$ OnChain Global Account: addr:0x7fbba6719bc0 balance:30010 nonce:4
+ Transaction::calcHash: md: 7080431981749343087
+Transaction ECDSA signature verify success
+Miner added fromAddr:0x7fbba7006790 Nonce:0
+Miner coinMiner received transaction -> 
+printTransaction: fromaddress:048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E to address:0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137 amt:10 nonce:0 context: @@@@@@ JSON TEST @@@@@@
+ Transaction::calcHash: md: 15724050995815861850
+Wallet : CoinBase signing with toAddress
+txnHash:15724050995815861850 Sign: 0x7fbba6607fb0
+coinMiner sending from account: 0x0 to account: 0x7fbba67049b0 amount: 10000000000 nonce:0 context: coinMiner CoinBase Transaction
+ Transaction::calcHash: md: 15724050995815861850
+Transaction verify : CoinBase transaction, verify with toAddress
+Transaction ECDSA signature verify success
+ to address:04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440 amt:10000000000 nonce:0 context: coinMiner CoinBase Transaction
+calcHashTransactionsRoot: txn:1 adding txnHash:0x15724050995815861850
+calcHashTransactionsRoot: txn:2 adding txnHash:0x7080431981749343087
+calcHashTransactionsRoot:0x1098512653368892155
+
+Miner starting Proof of work for block# 5 nShift:43
+
+Mined a block, hash:0x919835873574 in 15.0721 seconds
+>>>>>>>>>>> Dynamic difficulty increased. nShift:42
+
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "M^\u0405o\u0003\u0000\u0000",
+		"hashTransactionsRoot" : "\ufffd\u001aS%p\u04fe\u000f",
+		"nBits" : 43,
+		"nNonce" : 1441161,
+		"nTime" : 1609947310,
+		"nVersion" : 1
+	},
+	"dataPayload" : "coinMiner mining this block at UTC: Wed Jan  6 15:35:10 2021\n",
+	"nTransactions" : 2,
+	"vTxn" : 
+	[
+		{
+			"txn" : 
+			{
+				"context" : "coinMiner CoinBase Transaction",
+				"fromAddr" : 0,
+				"nValue" : 10000000000,
+				"nonce" : 0,
+				"r" : "4576465EDBFAB535BAF702616A6A6D92784C378E3F55CCB4FF190D2502DDF056",
+				"s" : "D4B3740D9F7D75D10CD1E800492312CA2B5D9C31A8C62BAE7111893927143908",
+				"toAddr" : "04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440",
+				"txnHash" : "ZN\u06f3\u0012\r7\ufffd"
+			}
+		},
+		{
+			"txn" : 
+			{
+				"context" : "@@@@@@ JSON TEST @@@@@@",
+				"fromAddr" : "048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E",
+				"nValue" : 10,
+				"nonce" : 0,
+				"r" : "31987E68CE1F27122DEE9986570DE6620C596A3FA51BBCFCDDC6C32CA27F2EE3",
+				"s" : "A6816B85FAF9D4ACA81CAFE1E36CEFFDDF0090D6AA1984554A31B894F72B78FC",
+				"toAddr" : "0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137",
+				"txnHash" : "o\u0013|\u021f\u07c2b"
+			}
+		}
+	]
+}
+BlockChain:toyChain Adding block# 5
+printBlock(): data payload : coinMiner mining this block at UTC: Wed Jan  6 15:35:10 2021
+
+{
+	"blockHdr" : 
+	{
+		"hashPrevBlock" : "M^\u0405o\u0003\u0000\u0000",
+		"hashTransactionsRoot" : "\ufffd\u001aS%p\u04fe\u000f",
+		"nBits" : 43,
+		"nNonce" : 1441161,
+		"nTime" : 1609947310,
+		"nVersion" : 1
+	},
+	"dataPayload" : "coinMiner mining this block at UTC: Wed Jan  6 15:35:10 2021\n",
+	"nTransactions" : 2,
+	"vTxn" : 
+	[
+		{
+			"txn" : 
+			{
+				"context" : "coinMiner CoinBase Transaction",
+				"fromAddr" : 0,
+				"nValue" : 10000000000,
+				"nonce" : 0,
+				"r" : "4576465EDBFAB535BAF702616A6A6D92784C378E3F55CCB4FF190D2502DDF056",
+				"s" : "D4B3740D9F7D75D10CD1E800492312CA2B5D9C31A8C62BAE7111893927143908",
+				"toAddr" : "04185C7EB9033B129877912060D6F1652CD0E14F687D8813C8EE66D71B39FB0D27DFD670EA658F5C845563BED651283803F11B3599E0A4B578F2F210993C173440",
+				"txnHash" : "ZN\u06f3\u0012\r7\ufffd"
+			}
+		},
+		{
+			"txn" : 
+			{
+				"context" : "@@@@@@ JSON TEST @@@@@@",
+				"fromAddr" : "048467FB8E4BBD67D3A08838C6264E9F33305A8AE517E67AD470660730CDAB4B801FF7F7CEDBBD0B68D6EFD46B717023CAA27B412AC306F2CEA05037C9CF986C4E",
+				"nValue" : 10,
+				"nonce" : 0,
+				"r" : "31987E68CE1F27122DEE9986570DE6620C596A3FA51BBCFCDDC6C32CA27F2EE3",
+				"s" : "A6816B85FAF9D4ACA81CAFE1E36CEFFDDF0090D6AA1984554A31B894F72B78FC",
+				"toAddr" : "0454E1006492B18F568CE42629BFF2F3CF3FEE44AD659119B22612EF148840E65779365FE86AB349338BE762580DE7BA8E38ED9E35B968D29072AEF95B4D6A1137",
+				"txnHash" : "o\u0013|\u021f\u07c2b"
+			}
+		}
+	]
+}
+BlockChain validateBlock() SUCCESS block Hash:0xd62a7d9126 calcHash:0xd62a7d9126
+Global account credit COINBASE transaction 10000000000 To:0x7fbba67049b0
+$$$$$$ OnChain Global Account: addr:0x7fbba67049b0 balance:50000000000 nonce:5
+Global account debit 10 from:0x7fbba7006790
+$$$$$$ OnChain Global Account: addr:0x7fbba6719bc0 balance:30000 nonce:5
+Global account credit 10 To:0x7fbba70072d0
+$$$$$$ OnChain Global Account: addr:0x7fbba6719f40 balance:50000 nonce:5
+
+bash-3.2$ exit
+
+Script done on Wed Jan  6 21:05:31 2021

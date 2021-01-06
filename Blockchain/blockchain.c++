@@ -32,26 +32,56 @@ void BlockChain::updateGlobalAccounts (Block* b) {
     chainAddr to = txn->toAddr;
     uint64_t amount = txn->nValue;
     Account *acct;
+    hash_t pkHash;
     bool ret;
     if (from) {
-      acct = pk2acct[from];
-      cout << "Global account debit " << amount << " from:" << from << endl;
-      ret = acct->debitFromAccount(amount);
+      pkHash = getPkHash(from);
+      acct = pk2acct[pkHash];
+      if (acct) {
+        cout << "Global account debit " << amount << " from:" << from << endl;
+        ret = acct->debitFromAccount(amount);
+      } else {
+        cout << "Global account NOT FOUND for debit " << amount << " from:" << from << endl;
+      }
       if (ret) {
-        acct = pk2acct[to];
-        cout << "Global account credit " << amount << " To:" << to << endl;
-        acct->creditIntoAccount(amount);
+        pkHash = getPkHash(to);
+        acct = pk2acct[pkHash];
+        if (acct) {
+          cout << "Global account credit " << amount << " To:" << to << endl;
+          acct->creditIntoAccount(amount);
+        } else {
+          cout << "Global account NOT FOUND for debit " << amount << " to:" << to << endl;
+        }
       }
     } else {
       // Coinbase transaction
-      acct = pk2acct[to];
-      cout << "Global account credit COINBASE transaction " << dec << amount << " To:" << to << endl;
-      acct->creditIntoAccount(amount);
+      pkHash = getPkHash(to);
+      acct = pk2acct[pkHash];
+      if (acct) {
+        cout << "Global account credit COINBASE transaction " << dec << amount << " To:" << to << endl;
+        acct->creditIntoAccount(amount);
+      } else {
+        cout << "Global account NOT FOUND credit COINBASE transaction " << dec << amount << " To:" << to << endl;
+      }
+
     }
   }
 }
 
 bool BlockChain::validateBlock (Block* b) {
+  if (!b) return false;
+  // Many a validations are required
+  // We will do some most basic ones.
+
+  // Check for matching proposed block's prevBlock hash with blockchain's last block's hash
+  hash_t chainLastHash = getLastBlockHash();
+  hash_t blockLastHash = b->blockHdr.hashPrevBlock;
+  if (chainLastHash != blockLastHash) {
+    cout << "==================Mismatched hashes chainLastHash:" << chainLastHash << " blockLastHash:" << blockLastHash << endl;
+    return false;
+  }
+
+  // Verify proposed block's hash
   hash_t currHash = b->getBlockHash();
   hash_t calcHash = b->calcHash();
   if (currHash != calcHash) {
@@ -174,13 +204,16 @@ coin_t getBlockReward (string nameBC) {
 }
 
 bool BlockChain::openAccount (chainAddr newAddr, uint64_t deposit) {
-  if (pk2acct.find(newAddr) != pk2acct.end()) {
+
+  hash_t pkHash = getPkHash(newAddr);
+
+  if (pk2acct.find(pkHash) != pk2acct.end()) {
     cout << "BlockChain: account:" << newAddr << " already exists!" << endl;
     return false;
   }
   bool isWalletAccount = false;
   Account *acct = new Account(bcName, newAddr, deposit, isWalletAccount);
-  pk2acct[newAddr] = acct;
+  pk2acct[pkHash] = acct;
   cout << "######## On " << bcName << " : opened account for pubAddr:" << newAddr << " balance:" << deposit << " acct:0x" << acct << endl;
   return true;
 }

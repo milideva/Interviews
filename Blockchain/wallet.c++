@@ -100,8 +100,11 @@ Transaction* Wallet::createTransaction (chainAddr from, chainAddr to, uint64_t a
   } else {
     eckey = getECKey(from);
   }
+
   ecdsaSig_t sign = eckey->sign((const unsigned char *) &txnHash, sizeof txnHash);
+
   cout << "txnHash:" << txnHash << " Sign: " << sign << endl;
+
   if (sign == NULL) {
     cout << "eckey sign failed" << endl;
     delete txn;

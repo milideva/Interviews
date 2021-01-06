@@ -6,7 +6,7 @@
 #include "eckey.h"
 
 class Transaction {
-  bool calcSHA256 (const char* input, unsigned long length, hash_t *md);
+ 
   string nameBlockChain;
 
 public:
@@ -26,8 +26,13 @@ public:
   hash_t calcHash (void);
   bool setSig (ecdsaSig_t sig);
   bool verify (void);
-
+  
   Json::Value getTransactionToJSON (void);
 };
+
+void createTransactionFromJSON (string contextStr, string fromAddrStr, string sStr, string rStr, 
+                                int nValue, int nonce, string toAddrStr, string txnHashStr);
+
+bool calcSHA256 (const char* input, unsigned long length, hash_t *md);
 
 #endif

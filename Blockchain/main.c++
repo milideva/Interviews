@@ -17,12 +17,12 @@ int main() {
   Miner minerA("coinMiner");
 
   thread t1(restServer, 0);
-  thread txnProducerThread(entity);
-
   thread minerThread(minerMainLoop, &bc, &minerA);
 
+  createTestTxnProducerThreads();
+
   minerThread.join();
-  txnProducerThread.join();
+
   t1.join();
 
   return 0;

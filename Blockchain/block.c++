@@ -127,16 +127,9 @@ uint32_t Block::getNonce () {
 
 void Block::printBlock (void) {
 
-  cout << "printBlock(): " << dataPayload << endl;
+  cout << "printBlock(): data payload : " << dataPayload << endl;
   getBlockToJSON();
-/*
-  for (int i = 0; i < vTxn.size(); i++) {
-    Transaction* txn = vTxn[i];
-    if (txn) {
-      txn->printTransaction();
-    }
-  }
-*/  
+
 }
 
 void Block::proofOfWork (void) {
@@ -225,6 +218,10 @@ Json::Value Block::getBlockToJSON (void) {
 
   root["blockHdr"] = blockJ;
   root["dataPayload"] = dataPayload;
+
+  int sz = vTxn.size();
+
+  root["nTransactions"] = sz;
 
   Json::Value vec;
   for (int i = 0; i < vTxn.size(); i++) {

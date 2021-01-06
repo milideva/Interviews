@@ -9,7 +9,7 @@ DEPENDS := $(patsubst %.c++,%.d,$(SRCS))
 
 # The build target 
 TARGET = blockchain
-REST_CLIENT = restClient
+REST_CLIENT = client
 
 all: $(TARGET) $(REST_CLIENT)
 

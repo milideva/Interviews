@@ -13,6 +13,7 @@ using namespace web::http::experimental::listener;
 using namespace std;
 
 #include "blockchain.h"
+#include "transaction.h"
 
 #define TRACE(msg)            cout << msg
 #define TRACE_ACTION(a, k, v) cout << a << " (" << k << ", " << v << ")\n"
@@ -69,42 +70,38 @@ void handle_post (http_request request) {
   
   handle_request(request,
                  [](json::value const & jvalue, json::value & answer) {
+                   cout << "POST rx" << jvalue << endl;
+                   bool get = false;
 
-                   //cout << "POST rx" << jvalue << endl;
+                   try {
+                     auto arr = jvalue.as_array();
+                     string key = arr[0].as_string();
+                     get = true;
 
-                   auto arr = jvalue.as_array();
-                   //cout << "arr[0] " << arr[0] << " arr[1] " << arr[1] << endl;
+                     if (key.compare("getBlock") == 0) {
+                       cout << "key:" << key << endl; 
+                       string indexStr = arr[1].as_string();
+                       int index = stoul(indexStr, 0, 10);
+                       cout << "index:" << index << endl;
+                       
+                       if (index < 0) {
+                         answer["getBlock"] = json::value::string("<nil> Bad Param");
+                       } else {
+                         Json::Value ret = getBlockToJSON(index);
+                         string s = ret.toStyledString();
+                         answer["getBlock"] = json::value::string(s);
+                       }
+                     } 
 
-                   string key = arr[0].as_string();
-                   string commandStr = "getBlock";
-                   int ret = key.compare(commandStr);
-                   if (ret == 0) {
-                     //cout << "key:" << key << endl; 
-                     string indexStr = arr[1].as_string();
-                     int index = stoul(indexStr, 0, 10);
-                     //cout << "index:" << index << endl;
-
-                     if (index < 0) {
-                       answer["getBlock"] = json::value::string("<nil> Bad Param");
-                     } else {
-                       Json::Value ret = getBlockToJSON(index);
-                       string s = ret.toStyledString();
-                       answer["getBlock"] = json::value::string(s);
-                     }
-                   } else {
-                     commandStr = "getTransaction";
-                     ret = key.compare(commandStr);
-                     if (ret == 0) {
-                       //cout << "key:" << key << endl;
-
+                     else if (key.compare("getTransaction") == 0) {
+                       string commandStr = "getTransaction";
+                       cout << "key:" << key << endl; 
                        string bIndexStr = arr[1].as_string();
                        int bIndex = stoul(bIndexStr, 0, 10);
-                       //cout << "block index:" << bIndex << endl;
-
+                     
                        string tIndexStr = arr[2].as_string();
                        int tIndex = stoul(tIndexStr, 0, 10);
-                       //cout << "txn index:" << tIndex << endl;
-
+                     
                        if (bIndex < 0 || tIndex < 0) {
                          answer[commandStr] = json::value::string("<nil> Bad Param");
                        } else {
@@ -112,8 +109,51 @@ void handle_post (http_request request) {
                          string s = ret.toStyledString();
                          answer[commandStr] =  json::value::string(s);
                        }
-                     }
+                     } 
+                   } catch (exception const & e) { 
+                     cout << e.what() << endl;
+                     get = false;
                    }
+
+                   if (get == false) {
+                     string commandStr = "setTransaction";
+                     string contextStr = jvalue.at("context").as_string();
+                     cout << "contextStr:" << contextStr << endl;
+
+                     string fromAddrStr = jvalue.at("fromAddr").as_string();
+                     cout << "fromAddrStr:" << fromAddrStr << endl;
+
+                     string rStr = jvalue.at("r").as_string();
+                     cout << "rStr:" << rStr << endl;
+
+                     string sStr = jvalue.at("s").as_string();
+                     cout << "sStr:" << sStr << endl;
+/*
+  JSON CPP send sig as boolean as it does not support unsigned char pointer
+                     string fromSigStr = jvalue.at("fromSig").as_string();
+                     cout << "fromSigStr:" << fromSigStr << endl;
+
+                     int sigLen = jvalue.at("sigLen").as_integer();
+                     cout << "sigLen:" << sigLen << endl;
+*/
+                     int nValue = jvalue.at("nValue").as_integer();
+                     cout << "nValue:" << nValue << endl;
+
+                     int nonce = jvalue.at("nonce").as_integer();
+                     cout << "nonce:" << nonce << endl;
+
+                     string toAddrStr = jvalue.at("toAddr").as_string();
+                     cout << "toAddrStr:" << toAddrStr << endl;
+
+                     string txnHashStr = jvalue.at("txnHash").as_string();
+                     cout << "txnHashStr:" << txnHashStr << endl;
+
+                     createTransactionFromJSON(contextStr, fromAddrStr, rStr, sStr, 
+                                               nValue, nonce, toAddrStr, txnHashStr);
+
+                     answer[commandStr] = json::value::string(contextStr);
+                   }
+                   
                  });
 }
  

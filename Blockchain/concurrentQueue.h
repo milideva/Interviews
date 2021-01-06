@@ -47,12 +47,16 @@ class ConcurrentQueue {
   ConcurrentQueue()=default;
   ConcurrentQueue(const ConcurrentQueue&) = delete;            // disable copying
   ConcurrentQueue& operator=(const ConcurrentQueue&) = delete; // disable assignment
-
+  
+  unsigned int getCurrentQSize (void) {
+    return queue_.size();
+  }
+    
  private:
   std::queue<T> queue_;
   std::mutex mutex_;
   std::condition_variable cond_;
-  const static unsigned int BUFFER_SIZE = 100;
+  const static unsigned int BUFFER_SIZE = 1000;
 };
 
 #endif

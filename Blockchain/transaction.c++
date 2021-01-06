@@ -14,38 +14,38 @@ Transaction::Transaction (chainAddr fromAddr, chainAddr toAddr, uint64_t nValue,
 
 void Transaction::printTransaction (void) {
   if (fromAddr) {
-    cout << "printTransaction: fromAddr:" << fromAddr;
+    cout << "printTransaction: from";
+    printPublicKey(fromAddr);
   }
-  cout << " toAddr:" << toAddr << " amt:" << nValue << " nonce:" << nonce << " context: " << context << endl;
+//  cout << " toAddr:" << toAddr << " amt:" << nValue << " nonce:" << nonce << " context: " << context << endl;
+  cout << " to ";
+  printPublicKey(toAddr);
+  cout << " amt:" << nValue << " nonce:" << nonce << " context: " << context << endl;
 
   getTransactionToJSON();
-}
-
-bool Transaction::calcSHA256 (const char* input, unsigned long length, hash_t *md) {
-  if (!md)
-    return false;
-
-  SHA256_CTX context;
-  if (!SHA256_Init(&context))
-    return false;
-
-  if (!SHA256_Update(&context, input, length))
-    return false;
-
-  if (!SHA256_Final((unsigned char *)md, &context))
-    return false;
-
-  return true;
 }
 
 hash_t Transaction::calcHash (void) {
 
   // cout << "Entered Transaction::calcHash: this->txnHash: " << this->txnHash << endl;
   //if (this->txnHash) 
-  // return this->txnHash;
+  //  return this->txnHash;
 
   stringstream ss;
-  ss << fromAddr << toAddr << nValue << nonce << context;
+
+  if (fromAddr) {
+    char* serPKfromAddr = getCharPublicKey(fromAddr);
+    string fromStr(serPKfromAddr);
+    ss << fromStr;
+    //cout << "000000000000000 calcHash: fromStr:" << fromStr << endl;
+  }
+
+  char* serPKtoAddr = getCharPublicKey(toAddr);
+  string toStr(serPKtoAddr);
+  ss << toStr;
+  //cout << "000000000000000 calcHash: toStr:" << toStr << endl;
+
+  ss << nValue << nonce << context;
 
   string str;
   ss >> str;
@@ -57,7 +57,7 @@ hash_t Transaction::calcHash (void) {
   }
 
   this->txnHash = md;
-  //cout << " Transaction::calcHash: md: " << md << endl;
+  cout << " Transaction::calcHash: md: " << md << endl;
   return md;
 }
 
@@ -74,7 +74,7 @@ bool Transaction::verify (void) {
     return false;
   }
 
-  EC_KEY *eckeyPublic = EC_KEY_new_by_curve_name(NID_secp256k1);
+  EC_KEY *eckeyPublic = EC_KEY_new_by_curve_name(CURVE_ID);
   if (fromAddr != 0) {
     EC_KEY_set_public_key(eckeyPublic, fromAddr);
   } else {
@@ -115,7 +115,7 @@ Json::Value Transaction::getTransactionToJSON (void) {
   }
 
   if (toAddr) {
-    EC_KEY *eckeyPublic = EC_KEY_new_by_curve_name(NID_secp256k1);
+    EC_KEY *eckeyPublic = EC_KEY_new_by_curve_name(CURVE_ID);
     EC_KEY_set_public_key(eckeyPublic, toAddr);
     char *serPK = getSerializedPublicKey(eckeyPublic);
     root["toAddr"] = serPK;
@@ -125,7 +125,6 @@ Json::Value Transaction::getTransactionToJSON (void) {
   root["nValue"] = nValue;
   root["nonce"] = nonce;
   root["context"] = context;
-  Json::Value sigJ;
 
   const BIGNUM *r;
   const BIGNUM *s;
@@ -133,19 +132,78 @@ Json::Value Transaction::getTransactionToJSON (void) {
   char* rStr = getSerializedBIGNUM(r);
   char* sStr = getSerializedBIGNUM(s);
 
-  sigJ["r"] = rStr;
-  sigJ["s"] = sStr;
-  root["fromSig"] = sigJ;
+//  Json::Value sigJ;
+//  sigJ["r"] = rStr;
+//  sigJ["s"] = sStr;
+//  root["fromSig"] = sigJ;
+  root["r"] = rStr;
+  root["s"] = sStr;
 
   OPENSSL_free(sStr);
   OPENSSL_free(rStr);
+
+/*
+  // openSSL needs unsigned char pointer and jsoncpp returns bool for unsigned
+  // char pointer, so this is not going work
+
+  // Serialize using openSSL api
+  int sigLen = i2d_ECDSA_SIG(fromSig, NULL);
+  cout << "sigLen" << sigLen << endl;
+  unsigned char *sigBytes = (unsigned char *) OPENSSL_malloc(sigLen);
+  sigLen = i2d_ECDSA_SIG(fromSig, &sigBytes);
+  cout << "SERIALIZING signature len:" << sigLen << " sign:" << sigBytes << endl; 
+  root["fromSig"] = reinterpret_cast<char *>(sigBytes);
+  root["sigLen"] = sigLen;
   
+*/
   string strHash = hashToString(txnHash);
   root["txnHash"] = strHash;
 
-  Json::StreamWriterBuilder builder;
-  string message = Json::writeString(builder, root);
-  cout << message << endl;
+  //Json::StreamWriterBuilder builder;
+  //string message = Json::writeString(builder, root);
+  //cout << message << endl;
 
   return root;
+}
+
+#include "concurrentQueue.h"
+extern ConcurrentQueue <Transaction *> conQ;
+
+
+void createTransactionFromJSON (string contextStr, string fromAddrStr, string rStr, string sStr, 
+                                int nValue, int nonce, string toAddrStr, string txnHashStr) {
+
+  const char* fromAddrPtr = fromAddrStr.c_str(); // These pointers point to internal string - no need to free
+  const char* toAddrPtr = toAddrStr.c_str();
+  const char* rPtr = rStr.c_str();
+  const char* sPtr = sStr.c_str();
+  const char* txnHashPtr = txnHashStr.c_str();
+  
+  EC_KEY* fromEckey;
+  fromEckey = deserPublicKey(fromAddrPtr);
+  
+  EC_KEY* toEckey;
+  toEckey = deserPublicKey(toAddrPtr);
+
+  chainAddr fromAddr = getPublicKey(fromEckey);
+  chainAddr toAddr = getPublicKey(toEckey);
+
+  cout << endl << "createTransactionFromJSON: ################" << endl << endl;
+
+  ECDSA_SIG* sig = ECDSA_SIG_new();
+  BIGNUM* r = NULL;
+  BIGNUM* s = NULL;
+
+  getDeserializedBIGNUM(&r, rPtr);
+  getDeserializedBIGNUM(&s, sPtr);
+  int ret = ECDSA_SIG_set0(sig, r, s);
+
+  Transaction* txn = new Transaction(fromAddr, toAddr, nValue, nonce, contextStr, BLOCKCHAIN_NAME);
+  hash_t txnHash = txn->calcHash();
+
+  txn->setSig(sig);
+
+  txn->printTransaction();
+  
+  conQ.push(txn);
 }

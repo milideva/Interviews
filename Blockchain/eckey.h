@@ -2,13 +2,11 @@
 #define ECKEY_H
 #pragma once
 
+#include "commonHeader.h"
+
 #include <openssl/ecdsa.h>
 #include <openssl/obj_mac.h> // for NID
-#include <openssl/bio.h>
-#include <openssl/pem.h>
-
-#include <iostream>
-using namespace std;
+#define CURVE_ID NID_secp256k1
 
 typedef EC_POINT const* publicKey_t;
 typedef EC_POINT const* chainAddr;
@@ -38,4 +36,16 @@ class ECKey {
 
 char* getSerializedPublicKey (EC_KEY *);
 char* getSerializedBIGNUM (const BIGNUM *);
+int getDeserializedBIGNUM (BIGNUM **priv, const char *bigNumStr);
+
+EC_KEY* deserPublicKey (const char *pub_key);
+BIGNUM* getDeserializedBIGNUM (char *bigNumStr);
+
+chainAddr getPublicKey (EC_KEY *);
+void printPublicKey (chainAddr pkAddr);
+char* getCharPublicKey (chainAddr pkAddr);
+
+bool calcSHA256 (const char* input, unsigned long length, hash_t *md);
+hash_t getPkHash (chainAddr addr);
+
 #endif

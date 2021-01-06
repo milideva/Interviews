@@ -151,8 +151,17 @@ void minerMainLoop (BlockChain *bc, Miner *miner) {
       txn->printTransaction();
     }
     i++;
-    if ((i % 3) == 0)
-      doProofOfWork(bc, miner);
-    sleep(2);  
+    unsigned sz = conQ.getCurrentQSize();
+    if (sz > 10) {
+      if ((i % 10) == 0)
+        doProofOfWork(bc, miner);
+    } else {
+      // just for testing purposes
+      if (i > 2 && (i % 2) == 0)
+        doProofOfWork(bc, miner);
+      else 
+        doProofOfWork(bc, miner);
+    }
+    sleep(1);  
   }
 }

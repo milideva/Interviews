@@ -4,7 +4,7 @@
 
 #pragma once
 
-#define numTransactions (5)
+#define numTransactions (1000)
 
 void createTestTxnProducerThreads (void);
 

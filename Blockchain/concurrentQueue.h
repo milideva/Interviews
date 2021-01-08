@@ -6,9 +6,6 @@
 #include <mutex>
 #include <condition_variable>
 
-//#include "transaction.h"
-//typedef Transaction * T;
-
 template <typename T>
 class ConcurrentQueue {
  public:
@@ -58,5 +55,7 @@ class ConcurrentQueue {
   std::condition_variable cond_;
   const static unsigned int BUFFER_SIZE = 1000;
 };
+
+extern ConcurrentQueue <Transaction *> conQ;
 
 #endif

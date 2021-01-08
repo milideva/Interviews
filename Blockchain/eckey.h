@@ -9,7 +9,7 @@
 #define CURVE_ID NID_secp256k1
 
 typedef EC_POINT const* publicKey_t;
-typedef EC_POINT const* chainAddr;
+typedef EC_POINT const* chainAddr; // This is just a handle and not an actual address, TODO - change name
 typedef BIGNUM privateKey_t;
 typedef ECDSA_SIG* ecdsaSig_t;
 

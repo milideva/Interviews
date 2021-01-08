@@ -24,6 +24,7 @@ int BlockChain::getVersion (void) {
 }
 
 void BlockChain::updateGlobalAccounts (Block* b) {
+
   for (int i = 0; i < b->vTxn.size(); i++) {
     Transaction* txn = b->vTxn[i];
     if (!txn)
@@ -66,6 +67,7 @@ void BlockChain::updateGlobalAccounts (Block* b) {
 
     }
   }
+  
 }
 
 bool BlockChain::validateBlock (Block* b) {
@@ -77,7 +79,7 @@ bool BlockChain::validateBlock (Block* b) {
   hash_t chainLastHash = getLastBlockHash();
   hash_t blockLastHash = b->blockHdr.hashPrevBlock;
   if (chainLastHash != blockLastHash) {
-    cout << "==================Mismatched hashes chainLastHash:" << chainLastHash << " blockLastHash:" << blockLastHash << endl;
+    cout << "================== Mismatched hashes chainLastHash:" << chainLastHash << " blockLastHash:" << blockLastHash << endl;
     return false;
   }
 
@@ -90,7 +92,7 @@ bool BlockChain::validateBlock (Block* b) {
   }
   // Validate transactions
   // Validate nonce
-  // This is similar to code implemented in Miner::validateTransaction
+  // TO DO This is similar to code implemented in Miner::validateTransaction
 
   cout << "BlockChain validateBlock() SUCCESS block Hash:0x" << hex << currHash << " calcHash:0x" << calcHash << endl;
   return true;
@@ -109,15 +111,21 @@ bool BlockChain::addBlock (Block* b) {
     return false;
   }
 
+  std::unique_lock<std::mutex> mlock(mutex_);
+
   // Update Global Account for each transaction
+  // Protect the Critical section
   updateGlobalAccounts(b);
   vecChain.push_back(b);
   mapChain[b->getBlockHash()] = b;
   last++;
+
+  mlock.unlock();
+
   return true;
 }
 
-void BlockChain::CreateGenesisBlock (int ver, size_t prevHash, size_t merkleHash, time_t nTime, coin_t reward) {
+void BlockChain::CreateGenesisBlock (int ver, hash_t prevHash, hash_t merkleHash, time_t nTime, coin_t reward) {
   gen = new Block(ver, 0, 0, nTime, reward, "This is the Genesis block");
 }
 
@@ -213,7 +221,9 @@ bool BlockChain::openAccount (chainAddr newAddr, uint64_t deposit) {
   }
   bool isWalletAccount = false;
   Account *acct = new Account(bcName, newAddr, deposit, isWalletAccount);
+
   pk2acct[pkHash] = acct;
+
   cout << "######## On " << bcName << " : opened account for pubAddr:" << newAddr << " balance:" << deposit << " acct:0x" << acct << endl;
   return true;
 }

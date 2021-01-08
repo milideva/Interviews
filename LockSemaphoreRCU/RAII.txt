@@ -1,0 +1,64 @@
+There are three parts to an RAII class:
+
+The resource is relinquished in the destructor
+Instances of the class are stack allocated
+The resource is acquired in the constructor. This part is optional, but common.
+
+RAII stands for "Resource Acquisition is initialization." The "resource
+acquisition" part of RAII is where you begin something that must be ended later,
+such as:
+Opening a file
+Allocating some memory
+Acquiring a lock
+The "is initialization" part means that the acquisition happens inside the constructor of a class.
+
+RAII" stands for "Resource Acquisition is Initialization" and is actually quite
+a misnomer, since it isn't resource acquisition (and the initialization of an
+object) it is concerned with, but releasing the resource (by means of
+destruction of an object). But RAII is the name we got and it sticks.
+
+Another name for this technique is SBRM, short for Scope-Bound Resource Management.
+
+
+At its very heart, the idiom features encapsulating resources (chunks of memory,
+open files, unlocked mutexes, you-name-it) in local, automatic objects, and
+having the destructor of that object releasing the resource when the object is
+destroyed at the end of the scope it belongs to.
+
+{
+  raii obj(acquire_resource());
+  // ...
+} // obj's dtor will call release_resource()
+
+Of course, objects aren't always local, automatic objects. They could be members
+of a class, too. They may also be allocated outside and passed in as a
+parameter.
+
+class something {
+private:
+  raii obj_;  // will live and die with instances of the class
+  // ... 
+};
+
+"smart pointers" :
+If such objects manage memory, they are often called "smart pointers".
+
+"unique_ptr"
+There are many variations of this. For example, in the first code snippets the
+question arises what would happen if someone wanted to copy obj. The easiest way
+out would be to simply disallow copying. std::unique_ptr<>, a smart pointer to
+be part of the standard library as featured by the next C++ standard, does this.
+
+"shared_ptr"
+Another such smart pointer, std::shared_ptr features "shared ownership" of the
+resource (a dynamically allocated object) it holds. That is, it can freely be
+copied and all copies refer to the same object. The smart pointer keeps track of
+how many copies refer to the same object and will delete it when the last one is
+being destroyed. 
+
+"auto_ptr"
+A third variant is featured by std::auto_ptr which implements a kind of
+move-semantics: An object is owned by only one pointer, and attempting to copy
+an object will result (through syntax hackery) in transferring ownership of the
+object to the target of the copy operation.
+

@@ -1,13 +1,13 @@
-#include "test.h"
-#include "wallet.h"
 #include <unistd.h>
-
 #include <iostream>
 #include <thread>
+#include "json/json.h"
 
+#include "test.h"
+#include "wallet.h"
 #include "transaction.h"
-
 #include "concurrentQueue.h"
+
 extern ConcurrentQueue <Transaction *> conQ;
 
 static void produce (Wallet* aWall, chainAddr A, chainAddr B, string context, ConcurrentQueue<Transaction *>& conQ) {
@@ -22,18 +22,6 @@ static void produce (Wallet* aWall, chainAddr A, chainAddr B, string context, Co
     conQ.push(txn);
     sleep(2);
   }
-}
-
-#include "json/json.h"
-#include <fstream>
-#include <iostream>
-
-void test_json (void) {
-  
-  Json::Value root;
-  std::ifstream file("test.json");
-  file >> root;
-  std::cout << root;
 }
 
 static string nameBC = BLOCKCHAIN_NAME;
@@ -87,10 +75,10 @@ void createTestTxnProducerThreads (void) {
 
   thread threadA2B(txnProducerThreadA2B);
 
-//  thread threadB2C(txnProducerThreadB2C);
-//  thread threadC2A(txnProducerThreadC2A);
+  thread threadB2C(txnProducerThreadB2C);
+  thread threadC2A(txnProducerThreadC2A);
 
   threadA2B.join();
-//  threadB2C.join();
-//  threadC2A.join();
+  threadB2C.join();
+  threadC2A.join();
 }

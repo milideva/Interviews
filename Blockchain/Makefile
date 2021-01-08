@@ -9,9 +9,10 @@ DEPENDS := $(patsubst %.c++,%.d,$(SRCS))
 
 # The build target 
 TARGET = blockchain
-REST_CLIENT = client
+REST_CLIENT = restclient
+PROTO_CLIENT = protoclient
 
-all: $(TARGET) $(REST_CLIENT)
+all: $(TARGET) $(REST_CLIENT) $(PROTO_CLIENT)
 
 #$(TARGET): $(SRCS)
 #	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS) $(LDFLAGS)
@@ -28,6 +29,9 @@ $(TARGET): $(OBJS)
 $(REST_CLIENT): restClient.cpp
 	$(CXX) $(CXXFLAGS) -o $(REST_CLIENT) restClient.cpp $(LDFLAGS)
 
+$(PROTO_CLIENT): protoClient.cpp
+	$(CXX) $(CXXFLAGS) -o $(PROTO_CLIENT) protoClient.cpp -ljsoncpp
+
 clean:
-	$(RM) -r $(TARGET) $(REST_CLIENT) $(OBJS) a.out* *.dSYM .depend *.d
+	$(RM) -r $(TARGET) $(REST_CLIENT) $(PROTO_CLIENT) $(OBJS) a.out* *.dSYM .depend *.d .#* \#*
 

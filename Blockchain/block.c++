@@ -5,11 +5,11 @@
 #include <openssl/sha.h>
 #include <iostream>
 
+// Move these to Chain Params TODO
 #define BLOCK_TIME_SECONDS (30)
 #define INIT_SHIFT (44);
 uint dynDifficulty = INIT_SHIFT;
 
-// Move this to Chain Params TODO
 uint32_t getBlockchainParamsDifficulty() {
   return dynDifficulty;
 }
@@ -75,7 +75,7 @@ bool Block::calcSHA256 (const char* input, unsigned long length, hash_t *md) {
   return true;
 }
 
-// This is a hash each transaction's hash in the block
+// This is a hash of each transaction's hash in the block
 void Block::calcHashTransactionsRoot (void) {
   stringstream ss;
    for (int i = 0; i < vTxn.size(); i++) {
@@ -85,6 +85,7 @@ void Block::calcHashTransactionsRoot (void) {
        cout << "calcHashTransactionsRoot: txn:" << i+1 << " adding txnHash:0x" << txn->txnHash << endl;
      }
    }
+
    string str;
    ss >> str;
 
@@ -94,7 +95,7 @@ void Block::calcHashTransactionsRoot (void) {
    cout << "calcHashTransactionsRoot:0x" << blockHdr.hashTransactionsRoot << endl;
 }
 
-// This is the header hash.
+// This is the Block header hash.
 // It includes time, nonce of block header, prev block's hash, and current transactions' hash
 hash_t Block::calcHash (void) {
   
@@ -129,7 +130,6 @@ void Block::printBlock (void) {
 
   cout << "printBlock(): data payload : " << dataPayload << endl;
   getBlockToJSON();
-
 }
 
 void Block::proofOfWork (void) {

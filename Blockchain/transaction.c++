@@ -27,10 +27,6 @@ void Transaction::printTransaction (void) {
 
 hash_t Transaction::calcHash (void) {
 
-  // cout << "Entered Transaction::calcHash: this->txnHash: " << this->txnHash << endl;
-  //if (this->txnHash) 
-  //  return this->txnHash;
-
   stringstream ss;
 
   if (fromAddr) {
@@ -57,7 +53,7 @@ hash_t Transaction::calcHash (void) {
   }
 
   this->txnHash = md;
-  cout << " Transaction::calcHash: md: " << md << endl;
+  //cout << " Transaction::calcHash: md: " << md << endl;
   return md;
 }
 

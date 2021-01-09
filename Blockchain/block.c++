@@ -96,7 +96,7 @@ void Block::calcHashTransactionsRoot (void) {
 }
 
 // This is the Block header hash.
-// It includes time, nonce of block header, prev block's hash, and current transactions' hash
+// It includes time, nonce of block header, prev block's hash, and current transactions' root hash
 hash_t Block::calcHash (void) {
   
   stringstream ss;

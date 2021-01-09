@@ -1,6 +1,6 @@
 CXX = g++ 
 CXXFLAGS  = -std=c++2a -g
-LDFLAGS = -L/usr/local/opt/openssl/lib -lcrypto -lssl -lcpprest -ljsoncpp
+LDFLAGS = -L/usr/local/opt/openssl/lib -lcrypto -lcpprest -ljsoncpp
 
 SRCS := $(shell find . -name "*.c++")
 #OBJS := $(subst .c++,.o,$(SRCS))

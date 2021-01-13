@@ -29,6 +29,11 @@ algorithm that requires copies to be made. A unique_ptr can only be moved. This
 means that the ownership of the memory resource is transferred to another
 unique_ptr and the original unique_ptr no longer owns it.
 
+(plain old C++ objects aka POCO). 
+
+Use as the default choice for POCO unless you know for certain that you require
+a shared_ptr.
+
 */
 
 

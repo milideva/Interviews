@@ -29,6 +29,9 @@ void Print (int &&x) {
 - all variables are l-value
 - can be assigned a value
 - has a name
+- must be able to take the address using the & operator
+- cannot be moved from
+- the lifetime persists beyond the current expression
 - functions that return by reference
 = l-value reference to l-value only (except it can reference to a const r-value)
 
@@ -41,7 +44,9 @@ void Print (int &&x) {
 
 R-value Reference && 
 always binds to temporary, can not bind to l-value
-Used to implement move!
+
+Application of rvalue references :
+To identify objects that may be moved from.
 
 */
 

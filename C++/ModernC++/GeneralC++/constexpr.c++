@@ -3,9 +3,8 @@
 /*
   Constexpr represents expression that is a constant.
   Can apply constexpr to variables or functions! const only for variables
-  compile time constant
-  constexpr implicitly inlined
-
+  A compile time constant
+  C++17 made constexpr to implicitly mean inline
 */
 
 // Only literal types : void, scalar types (int, float, char, references etc)

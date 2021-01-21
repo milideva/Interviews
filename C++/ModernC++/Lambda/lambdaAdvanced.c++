@@ -1,5 +1,17 @@
 #include <iostream>
 
+
+/*
+  A closure is the runtime object created by a lambda. Depending on the capture
+  mode, closures hold copies of or references to the captured data.
+
+  A closure class is a class from which a closure is instantiated. Each lambda
+  causes compilers to generate a unique closure class. The statements inside a
+  lambda become executable instructions in the member functions of its closure
+  class.
+
+*/
+
 template <typename T, int size, typename Callback>
 // ForEach does not know what operation is getting performed for each element
 void ForEach (T(&arr)[size], Callback operation) {

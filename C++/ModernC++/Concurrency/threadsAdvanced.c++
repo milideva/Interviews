@@ -19,6 +19,20 @@ int main() {
   // High level concurrency - dont deal with threads of a particular library (windows/pthreads etc) 
   // Functions that execute in separate thread are called tasks
   // aka Task based concurrency
+
+
+  /*
+
+    One of the advantages of using std::async instead of manually creating
+    std::thread objects is supposed to be that std::async can use thread pools
+    under the covers to avoid oversubscription problems.
+
+    There is no guarantee that the task will be executed in a separate thread if
+    the launch policy is not specified. Implementation may choose to execute the
+    task in same thread depending on certain conditions (too many threads for
+    example).
+
+   */
   
   // arg is any callable such as function pointer or function object or a lambda
   // async returns an object of type future and return type (here an int) !

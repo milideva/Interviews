@@ -1,3 +1,6 @@
+#include<iostream> 
+#include<iomanip> 
+using namespace std; 
 
 // User Defined Literals (UDL) are added in C++ from C++11
 
@@ -7,15 +10,7 @@ long double Weight = 2.3; //  pounds? kilograms? grams?
 // following advantages
 // 1) The code becomes readable.
 // 2) Conversion computations are done at compile time. 
-// weight = 2.3kg;
-// ratio = 2.3kg/1.2lb;
 
-#include<iostream> 
-#include<iomanip> 
-using namespace std; 
-  
-// user defined literals 
-  
 // KiloGram 
 long double operator"" _kg( long double x )  { 
   return x*1000; 

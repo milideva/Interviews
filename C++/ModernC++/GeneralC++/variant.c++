@@ -4,6 +4,9 @@
 
 using namespace std;
 
+// This is a C++17 feature
+// type safe Union
+
 /*
 
 union S {

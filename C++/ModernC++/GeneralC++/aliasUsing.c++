@@ -23,4 +23,3 @@
 typedef void (*FP)(int, const std::string&);
 
 using FP = void (*)(int, const std::string&); // alias 
-

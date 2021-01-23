@@ -4,7 +4,7 @@
 
 using namespace std;
 
-// C++17 feature
+// C++17 feature : nullable type
 
 // Old way of doing things 
 const char * GetErrorString (int errorNo) {

@@ -36,13 +36,12 @@ int numIslands (vector<vector<char>>& grid) {
   if (!m) return 0;
   int n = grid[0].size();
   vector<vector<bool>> visited(m, vector<bool> (n, false)); 
-  
   int count = 0;
   
   for (int i = 0; i < m; i++ ) {
     for (int j = 0; j < n; j++ ) {
       if (visited[i][j] == false &&  grid[i][j] == '1') {
-        count_islands_dfs(grid, m, n, visited);
+        count_islands_dfs(grid, i, j, visited);
         count++;
       }
     }
@@ -56,7 +55,7 @@ int main () {
   vector<vector<char>> myvect = { { '1', '1', '1', '1', '0'}, 
                                  { '1', '1', '0', '1', '0'}, 
                                  { '1', '1', '0', '0', '0'},
-                                 { '0', '0', '0', '0', '0'},
+                                 { '0', '0', '0', '1', '0'},
   };
 
   int count = numIslands(myvect);

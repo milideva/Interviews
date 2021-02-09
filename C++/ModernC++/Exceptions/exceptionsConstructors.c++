@@ -2,6 +2,31 @@
 #include <memory>
 #include <vector>
 
+/*
+
+Exceptions versus assertions
+
+Exceptions and asserts are two distinct mechanisms for detecting run-time errors
+in a program. 
+
+Use assert statements to test for conditions during development that should
+never be true if all your code is correct. There's no point in handling such an
+error by using an exception, because the error indicates that something in the
+code has to be fixed. It doesn't represent a condition that the program has to
+recover from at run time. An assert stops execution at the statement so that you
+can inspect the program state in the debugger.
+
+An exception continues execution from the first appropriate catch handler. Use
+exceptions to check error conditions that might occur at run time even if your
+code is correct, for example, "file not found" or "out of memory." Exceptions
+can handle these conditions, even if the recovery just outputs a message to a
+log and ends the program. 
+
+Always check arguments to public functions by using exceptions. Even if your
+function is error-free, you might not have complete control over arguments that
+a user might pass to it.
+*/
+
 class A {
 public:
   A() {

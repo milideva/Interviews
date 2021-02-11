@@ -39,17 +39,19 @@ int main() {
     which pred(Unary Function) returns true. If no such element is found, the
     function returns last.
   */
-  auto found = std::find(data.begin(), data.end(), value) ;
-  if (found != data.end()) {
-    std::cout << "Found at index:" <<  found - data.begin() << '\n' ;
-  }
   
-  //auto found = std::find_if(data.begin(), data.end(), [](int x) {
-  //	return x % 2== 0 ;
-  //}) ;
-  //if(found != data.end()) {
-  //	std::cout << "Found:" <<  *found  << '\n' ;
+  //auto found = std::find(data.begin(), data.end(), value) ;
+  //if (found != data.end()) {
+  //  std::cout << "Found at index:" <<  found - data.begin() << '\n' ;
   //}
+  
+  auto found = std::find_if(data.begin(), data.end(), [](int x) {
+  	return x % 2== 0 ;
+  }) ;
+
+  if (found != data.end()) {
+  	std::cout << "Found evens:" <<  *found  << '\n' ;
+  }
   
   /*auto found = std::count(data.begin(), data.end(), 1) ;
     std::cout << "Count:" <<  found  << '\n' ;*/

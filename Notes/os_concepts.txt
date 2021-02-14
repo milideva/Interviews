@@ -169,11 +169,16 @@ can wreak.
 
 
 * Microkernels
-Has basic IPC, virtual memory, process/thread scheduling.
-thread/signal/message passing/timer/process mgmt
-What is outside : filesystem manager, networking TCP/IP, device manager, GUI.
+Inside kernel:
+       Has basic scheduler, IPC, hw/interrrupt management.
+What is outside : 
+     process management, memory management, filesystem manager, networking TCP/IP, device manager, GUI.
 
-+ modular
-+ small size
++ small size - very small footprint qnx procnto kernel < 32 KB
++ new os code can not mess up old solid 'inside kernel' code.
++ fewer crashes in kernel
++ minimality principle - more secure
 
-example Neutrino.
+- performance, slower (although qnx has pretty fast IPC). because more context switches/tlb etc
+
+example qnx Neutrino.

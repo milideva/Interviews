@@ -36,71 +36,67 @@ Note: The length of each dimension in the given grid does not exceed 50.
 using namespace std;
 
 class Solution {
-    vector <vector <bool>> visited;
-    int r, c;
+  vector <vector <bool>> visited;
+  int r, c;
+  
+  bool isSafe (int x, int y) {
+    return x < r && x >= 0  && y >= 0 && y < c;
+  }
+  
+  int dfs (vector<vector<int>>& grid, int i, int j) {
+    visited[i][j] = true;
+    int count = 0;
     
-    bool isSafe (int x, int y) {
-        return x < r && x >= 0  && y >= 0 && y < c;
+    int rAdj[] = { -1, 0, 0, +1};
+    int cAdj[] = { 0, -1, +1, 0};
+    
+    for (int k = 0; k < 4; k++) {
+      int dx = i + rAdj[k];
+      int dy = j + cAdj[k];
+      if (isSafe(dx, dy) == false)
+        continue;
+      if (grid[dx][dy] && visited[dx][dy] == false) {
+        count += dfs(grid, dx, dy);
+      }
     }
     
-    int dfs (vector<vector<int>>& grid, int i, int j, int count) {
-        visited[i][j] = true;
-        count++;
-        
-        int rAdj[] = { -1, 0, 0, +1};
-        int cAdj[] = { 0, -1, +1, 0};
-        
-        for (int k = 0; k < 4; k++) {
-            int dx = i + rAdj[k];
-            int dy = j + cAdj[k];
-            if (isSafe(dx, dy) == false)
-                continue;
-            if (grid[dx][dy] && visited[dx][dy] == false) {
-                count = dfs(grid, dx, dy, count);
-            }
-        }
-        
-        return count;
-    }
-    
+    return 1 + count; // this is the crucial step
+  }
+  
 public:
-    int maxAreaOfIsland(vector<vector<int>>& grid) {
-        r = grid.size();
-        c = grid[0].size();
+  int maxAreaOfIsland(vector<vector<int>>& grid) {
+    r = grid.size();
+    c = grid[0].size();
     
-        visited.resize(r, vector<bool>(c, false));
-        
-        if (!r) return 0;
-        int maxArea = 0;
-        
-        for (int i = 0; i < r; i++) {
-            for (int j = 0; j < c; j++) {
-                if (grid[i][j] && visited[i][j] == false) {
-                    int count = 0;
-                    int area = dfs(grid, i, j, count);
-                    if (area > maxArea)
-                        maxArea = area;
-                }
-            }
-        }
-        return maxArea;
+    visited.resize(r, vector<bool>(c, false));
+    
+    if (!r) return 0;
+    int maxArea = 0;
+    
+    for (int i = 0; i < r; i++) {
+      for (int j = 0; j < c; j++) {
+        if (grid[i][j] && visited[i][j] == false)
+          maxArea = max(maxArea, dfs(grid, i, j));
+      }
     }
+    return maxArea;
+  }
 };
-
+  
 int main () {
   
   vector<vector<int>> grid = {{0,0,1,0,0,0,0,1,0,0,0,0,0},
-                  {0,0,0,0,0,0,0,1,1,1,0,0,0},
-                  {0,1,1,0,1,0,0,0,0,0,0,0,0},
-                  {0,1,0,0,1,1,0,0,1,0,1,0,0},
-                  {0,1,0,0,1,1,0,0,1,1,1,0,0},
-                  {0,0,0,0,0,0,0,0,0,0,1,0,0},
-                  {0,0,0,0,0,0,0,1,1,1,0,0,0},
-                  {0,0,0,0,0,0,0,1,1,0,0,0,0}};
+                              {0,0,0,0,0,0,0,1,1,1,0,0,0},
+                              {0,1,1,0,1,0,0,0,0,0,0,0,0},
+                              {0,1,0,0,1,1,0,0,1,0,1,0,0},
+                              {0,1,0,0,1,1,0,0,1,1,1,0,0},
+                              {0,0,0,0,0,0,0,0,0,0,1,0,0},
+                              {0,0,0,0,0,0,0,1,1,1,0,0,0},
+                              {0,0,0,0,0,0,0,1,1,0,0,0,0}};
   
   class Solution sol;
   int max = sol.maxAreaOfIsland(grid);
   cout << "Max area of island:" << max << endl;
-
+  
   return 0;
 }

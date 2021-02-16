@@ -47,7 +47,7 @@ class Solution {
   
   int dfs (vector<vector<int>>& grid, int i, int j) {
     visited[i][j] = true;
-    int count = 0;
+    int count = 1;
     
     int rAdj[] = { -1, 0, 0, +1};
     int cAdj[] = { 0, -1, +1, 0};
@@ -62,7 +62,7 @@ class Solution {
       }
     }
     
-    return 1 + count; // this is the crucial step
+    return count; 
   }
   
 public:

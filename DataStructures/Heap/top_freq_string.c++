@@ -43,6 +43,7 @@ struct comp {
 };
     
 // Using a minHeap, & a custom comparator
+// Advantage : stores only K 
 vector<string> topKFrequent(vector<string>& words, int k) {
   map <string, int> mywords;
   
@@ -69,6 +70,8 @@ vector<string> topKFrequent(vector<string>& words, int k) {
   return res;
 }
 
+// Using a maxHeap
+// Disadv: need to store all
 vector<string> topKFrequent2 (vector<string>& words, int k) {
   map <string, int> mywords;
   
@@ -83,7 +86,7 @@ vector<string> topKFrequent2 (vector<string>& words, int k) {
   }
     
   vector <string> res;
-  while (!pq.empty()) {
+  while (!pq.empty() && k--) {
     auto [n, w] = pq.top();
     pq.pop();
     res.push_back(w);
@@ -100,17 +103,19 @@ int main () {
    vector <string> ans;
 
    ans = topKFrequent(s, 4);
-   
+
+   cout << "Using MinHeap: " ;
    for (auto v : ans) {
-     cout << " " << v ;
+     cout << v << " ";
    }
    cout << endl;
 
    ans.clear();
    ans = topKFrequent2(s, 4);
    
+   cout << "Using MaxHeap: " ;
    for (auto v : ans) {
-     cout << " " << v ;
+     cout << v << " " ;
    }
    cout << endl;
 

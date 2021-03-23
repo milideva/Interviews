@@ -70,8 +70,10 @@ public:
         closing++;
       }
     }
+    // Remove value from range
     auto s1 = remove(s.begin(), s.end(), '*');
     
+    // clean up from s1+1 till s.end()
     s.erase(s1, s.end());
     return s;
   }

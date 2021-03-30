@@ -40,26 +40,56 @@ contract Allowance is Ownable {
     }
 }
 
-contract GCBank is Allowance {
+contract GCBank is Allowance  {
     
     event MoneySent(address indexed _beneficiary, uint _amount);
     
     event MoneyReceived(address indexed _from, uint _amount);
     
-    constructor() public payable {
+    constructor() payable {
     }
     
-    function withdrawPoints (address payable _to, uint256 _amount) public ownerOrAllowed (_amount) {
+    function withdrawPoints (uint256 _amount) public ownerOrAllowed  (_amount)  {
         require(_amount <= address(this).balance, "Contract doesn't have enough money");
-        
+
         // Comment the following line if you do not want the allowance, also remove contract's "is Allowance" inheritance
         reduceAllowance(msg.sender, _amount);  // calls ownerOrAllowed which checks for allowance > _amount
 
+        address payable _to = payable(msg.sender);
         _to.transfer(_amount);
         emit MoneySent(_to, _amount);
     }
     
-    function renounceOwnership() public view override onlyOwner {
+    function renounceOwnership() public view  override onlyOwner  {
+        revert("Can't renounceOwnership here"); //not possible with this smart contract
+    }
+    
+    function receive() external payable {
+        emit MoneyReceived(msg.sender, msg.value);
+    }
+}
+
+contract GCBankWithoutAllowance {
+    
+    event MoneySent(address indexed _beneficiary, uint _amount);
+    
+    event MoneyReceived(address indexed _from, uint _amount);
+    
+    constructor() payable {
+    }
+    
+    function withdrawPoints (uint256 _amount) public /* ownerOrAllowed  (_amount)  */ {
+        require(_amount <= address(this).balance, "Contract doesn't have enough money");
+
+        // Comment the following line if you do not want the allowance, also remove contract's "is Allowance" inheritance
+        //reduceAllowance(msg.sender, _amount);  // calls ownerOrAllowed which checks for allowance > _amount
+
+        address payable _to = payable(msg.sender);
+        _to.transfer(_amount);
+        emit MoneySent(_to, _amount);
+    }
+    
+    function renounceOwnership() public view /* override onlyOwner */ {
         revert("Can't renounceOwnership here"); //not possible with this smart contract
     }
     

@@ -7,6 +7,7 @@ pragma solidity ^0.8.0;
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
 contract Allowance is Ownable {
+    
     event AllowanceChanged(address indexed _forWho, address indexed _byWhom, uint _oldAmount, uint _newAmount);
     
     function isOwner() internal view returns(bool) {
@@ -74,23 +75,16 @@ contract GCBankWithoutAllowance {
     event MoneySent(address indexed _beneficiary, uint _amount);
     
     event MoneyReceived(address indexed _from, uint _amount);
-    
+
     constructor() payable {
     }
     
-    function withdrawPoints (uint256 _amount) public /* ownerOrAllowed  (_amount)  */ {
+    function withdrawPoints (uint256 _amount) public {
         require(_amount <= address(this).balance, "Contract doesn't have enough money");
-
-        // Comment the following line if you do not want the allowance, also remove contract's "is Allowance" inheritance
-        //reduceAllowance(msg.sender, _amount);  // calls ownerOrAllowed which checks for allowance > _amount
 
         address payable _to = payable(msg.sender);
         _to.transfer(_amount);
         emit MoneySent(_to, _amount);
-    }
-    
-    function renounceOwnership() public view /* override onlyOwner */ {
-        revert("Can't renounceOwnership here"); //not possible with this smart contract
     }
     
     function receive() external payable {

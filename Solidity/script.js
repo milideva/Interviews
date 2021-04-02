@@ -81,6 +81,16 @@ var abi =
 				"internalType": "uint256",
 				"name": "_amount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_nonce",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_sig",
+				"type": "bytes"
 			}
 		],
 		"name": "withdrawPoints",
@@ -90,8 +100,27 @@ var abi =
 	},
 	{
 		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
+		"name": "getBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getOwner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
 		"stateMutability": "view",
 		"type": "function"
 	}
@@ -101,7 +130,8 @@ var abi =
 abiDecoder.addABI(abi);
 
 // contract address
-var contractAddress = '0xF483d691c6c832CC78611A12090E5246395cE175'; 
+var contractAddress = '0xe5E4Ec7A038e46aC05fD92aEC25F13F9091E6a82'; 
+var ownerAddress = '0xbB628bEe019B48E6Fa673863DbBbad4Aa9285F68';
 
 function updateStatus (status) {
     const statusEl = document.getElementById('status');
@@ -120,7 +150,6 @@ async function loadWeb3() {
     }
 }
 
-
 async function load() {
     await loadWeb3();
     window.contract = await loadContract();
@@ -129,8 +158,16 @@ async function load() {
 
 load();
 
+var defaultAccount;
+
 async function getCurrentAccount () {
     const accounts = await window.web3.eth.getAccounts();
+    console.log("#################### getCurrentAccount() : " + accounts[0]);
+    defaultAccount = accounts[0];
+    web3.eth.defaultAccount = defaultAccount;
+    //web3.eth.personal.unlockAccount(web3.eth.defaultAccount);
+    console.log("web3.eth.defaultAccount:" + web3.eth.defaultAccount);
+    
     return accounts[0];
 }
 
@@ -147,12 +184,68 @@ async function waitForTxToBeMined (txHash) {
     updateStatus("Success: transaction confirmed!");
 }
 
+var clientNonce = 0;
+
+function getUserNonce () {
+	clientNonce = clientNonce + 1;
+	return clientNonce;
+}
+
+// recipient is the address that should be paid.
+// amount, in wei, specifies how much ether should be sent.
+// nonce can be any unique number, used to prevent replay attacks.
+// contractAddress is used to prevent cross-contract replay attacks.
+function calculateHash (recipient, amount, userNonce, owner) {
+	/*
+	var hash = "0x" + web3.utils.soliditySha3(
+    	["address", "uint256", "uint256", "address"],
+    	[recipient, amount, userNonce, contractAddr]).toString("hex");
+    	*/
+    var hash = web3.utils.soliditySha3(recipient, amount, userNonce, owner);
+	console.log("#################### calculateHash() ");
+	console.log("recipient:" + recipient + " amount:"  + amount + " userNonce:" + userNonce + " owner:" + owner);
+	console.log("hash: ", hash);
+	return hash;
+}
+
+// Move this to node.js server side
+async function getServerSign (hash) {
+
+	var passwd = "My Server Secret Password";
+	console.log("#################### getServerSign() : ownerAddress:" + ownerAddress + " defaultAccount:" + defaultAccount);
+	//var addr = web3.eth.defaultAccount;
+	var addr;
+	addr = ownerAddress;
+	addr = defaultAccount; //works
+
+	console.log("hash:" + hash + " addr:" + addr + " passwd:" + passwd);
+
+	var signature = await web3.eth.personal.sign(hash, addr, passwd);
+    console.log("#################### sign =" + signature);
+
+    return signature;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function redeemPointsAsync (points) {
     updateStatus(`Redeeming with ${points}`);
     const account = await getCurrentAccount();
-    //await window.contract.methods.withdrawPoints(points).send({ from: account });
-    const gasLimit = '22222';
-    window.contract.methods.withdrawPoints(points).send({ from: account, gas: gasLimit })
+    const gasLimit = '35555';
+
+    var userNonce = getUserNonce();
+
+    var hash = calculateHash(account, points, userNonce, contractAddress);
+
+    var sig = getServerSign(hash);
+    console.log("sig: ", sig);
+    var bytes = web3.utils.asciiToHex(sig);
+    window.contract.methods.withdrawPoints(points, 
+    	userNonce, 
+    	bytes)
+    	.send({ from: account, gas: gasLimit })
     	.on ('transactionHash', function(transactionHash){
             console.log('Transaction submitted with txHash:' + transactionHash);
             updateStatus('Transaction submitted with txHash:' + transactionHash);
@@ -161,14 +254,21 @@ async function redeemPointsAsync (points) {
         .catch(console.error);
 }
 
+function points2Coins (points) {
+	// formula to convert points to GC coins
+	// Currently one point = one coin.
+	return points;
+}
+
 function redeemPoints (points) {
 
 	if (points <= 0) {
 	    return;
 	}
-
   	console.log("#################### redeemPoints() Points: " + points);
-	redeemPointsAsync(points);
+
+	redeemPointsAsync(points2Coins(points));
+
 	return;
 }
 

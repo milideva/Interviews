@@ -1,47 +1,10 @@
 //SPDX-License-Identifier: UNLICENSED
 
-// Deploy with JavaScript VM @ https://remix.ethereum.org/
-
 pragma solidity ^0.8.0;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
-contract Allowance is Ownable {
-    
-    event AllowanceChanged(address indexed _forWho, address indexed _byWhom, uint _oldAmount, uint _newAmount);
-    
-    function isOwner() internal view returns(bool) {
-        return owner() == msg.sender;
-    }
-    
-    // using SafeMath for uint; // Add this only if you are using solidity < 0.8!!! 
-    // Note about SafeMath : In a recent update of Solidity the Integer type variables cannot overflow anymore.
-    // https://docs.soliditylang.org/en/v0.8.0/080-breaking-changes.html#silent-changes-of-the-semantics
-    mapping (address => uint) public allowance;
-
-    function setAllowance(address _who, uint _amount) public onlyOwner {
-        emit AllowanceChanged(_who, msg.sender, allowance[_who], _amount);
-        allowance[_who] = _amount;
-    }
-
-    modifier ownerOrAllowed(uint _amount) {
-        require(isOwner() || allowance[msg.sender] >= _amount, "You are not allowed OR amount > allowance!");
-        _;
-    }
-    
-    // An internal function to reduce the allowance to avoid repeated withdraw of allowance
-    function reduceAllowance(address _who, uint _amount) internal ownerOrAllowed(_amount) {
-        emit AllowanceChanged(_who, msg.sender, allowance[_who], allowance[_who] - _amount);
-        allowance[_who] -= _amount;
-    }
-    
-    function addAllowance (address _who, uint _amount) public onlyOwner {
-        emit AllowanceChanged(_who, msg.sender, allowance[_who], allowance[_who] + _amount);
-        allowance[_who] += _amount;
-    }
-}
-
-contract GCBank is Allowance  {
+contract GCBank is Ownable {
     
     event MoneySent(address indexed _beneficiary, uint _amount);
     
@@ -50,44 +13,89 @@ contract GCBank is Allowance  {
     constructor() payable {
     }
     
-    function withdrawPoints (uint256 _amount) public ownerOrAllowed  (_amount)  {
-        require(_amount <= address(this).balance, "Contract doesn't have enough money");
+    mapping(address => mapping(uint256 => bool)) usedNonces;
 
-        // Comment the following line if you do not want the allowance, also remove contract's "is Allowance" inheritance
-        reduceAllowance(msg.sender, _amount);  // calls ownerOrAllowed which checks for allowance > _amount
+    function withdrawPoints (uint256 _amount, uint256 _nonce, bytes calldata _sig) public {
+        require(_amount <= address(this).balance, "Contract doesn't have enough money");
+        require (!usedNonces[msg.sender][_nonce]);
+
+        // This recreates the message that was signed on the client.
+        bytes32 message = prefixed(keccak256(abi.encodePacked(msg.sender, _amount, _nonce, address(this))));
+
+        require (recoverSigner(message, _sig) == owner());
+        // Set the nonce first, before transfer
+        usedNonces[msg.sender][_nonce] = true;
 
         address payable _to = payable(msg.sender);
         _to.transfer(_amount);
+        
         emit MoneySent(_to, _amount);
     }
     
-    function renounceOwnership() public view  override onlyOwner  {
+    function receive() external payable {
+        emit MoneyReceived(msg.sender, msg.value);
+    }
+    
+    function renounceOwnership () public pure override {
         revert("Can't renounceOwnership here"); //not possible with this smart contract
     }
     
-    function receive() external payable {
-        emit MoneyReceived(msg.sender, msg.value);
-    }
-}
-
-contract GCBankWithoutAllowance {
-    
-    event MoneySent(address indexed _beneficiary, uint _amount);
-    
-    event MoneyReceived(address indexed _from, uint _amount);
-
-    constructor() payable {
+    function getContractAddress ()  public view returns(address){
+        return address(this);
     }
     
-    function withdrawPoints (uint256 _amount) public {
-        require(_amount <= address(this).balance, "Contract doesn't have enough money");
-
-        address payable _to = payable(msg.sender);
-        _to.transfer(_amount);
-        emit MoneySent(_to, _amount);
+    function getContractBalance () public view returns(uint256){
+        return address(this).balance;
     }
     
-    function receive() external payable {
-        emit MoneyReceived(msg.sender, msg.value);
+    function getOwnerBalance () public view returns(uint256){
+        return owner().balance;
+    }
+    
+    // Signature methods
+
+    function splitSignature (bytes memory sig)
+        internal
+        pure
+        returns (uint8, bytes32, bytes32)
+    {
+        require(sig.length == 65);
+
+        bytes32 r;
+        bytes32 s;
+        uint8 v;
+
+        assembly {
+            // first 32 bytes, after the length prefix
+            r := mload(add(sig, 32))
+            // second 32 bytes
+            s := mload(add(sig, 64))
+            // final byte (first byte of the next 32 bytes)
+            v := byte(0, mload(add(sig, 96)))
+        }
+
+        return (v, r, s);
+    }
+    
+    function recoverSigner (bytes32 message, bytes calldata sig)
+        internal
+        pure
+        returns (address)
+    {
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+
+        (v, r, s) = splitSignature(sig);
+
+        return ecrecover(message, v, r, s);
+    }
+
+    function prefixed (bytes32 hash) 
+        internal 
+        pure 
+        returns (bytes32) 
+    {
+        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
     }
 }

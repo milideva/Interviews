@@ -69,10 +69,42 @@ var abi =
 		"type": "event"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
 		"inputs": [],
 		"name": "receive",
 		"outputs": [],
 		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -100,7 +132,20 @@ var abi =
 	},
 	{
 		"inputs": [],
-		"name": "getBalance",
+		"name": "getContractAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getContractBalance",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -113,7 +158,20 @@ var abi =
 	},
 	{
 		"inputs": [],
-		"name": "getOwner",
+		"name": "getOwnerBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
 		"outputs": [
 			{
 				"internalType": "address",
@@ -123,6 +181,13 @@ var abi =
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "pure",
+		"type": "function"
 	}
 ]
 ; 
@@ -130,8 +195,8 @@ var abi =
 abiDecoder.addABI(abi);
 
 // contract address
-var contractAddress = '0xe5E4Ec7A038e46aC05fD92aEC25F13F9091E6a82'; 
-var ownerAddress = '0xbB628bEe019B48E6Fa673863DbBbad4Aa9285F68';
+var contractAddress = '0xc23b8081a2ef71FA0b01d6Ab5034b62E09Ab070D'; 
+var ownerAddress = '0xd93697773fc828F1e7FD8c28A328B26e28e1c033';
 
 function updateStatus (status) {
     const statusEl = document.getElementById('status');
@@ -195,15 +260,15 @@ function getUserNonce () {
 // amount, in wei, specifies how much ether should be sent.
 // nonce can be any unique number, used to prevent replay attacks.
 // contractAddress is used to prevent cross-contract replay attacks.
-function calculateHash (recipient, amount, userNonce, owner) {
+function calculateHash (recipient, amount, userNonce, addr) {
 	/*
 	var hash = "0x" + web3.utils.soliditySha3(
     	["address", "uint256", "uint256", "address"],
     	[recipient, amount, userNonce, contractAddr]).toString("hex");
     	*/
-    var hash = web3.utils.soliditySha3(recipient, amount, userNonce, owner);
+    var hash = web3.utils.soliditySha3(recipient, amount, userNonce, addr);
 	console.log("#################### calculateHash() ");
-	console.log("recipient:" + recipient + " amount:"  + amount + " userNonce:" + userNonce + " owner:" + owner);
+	console.log("recipient:" + recipient + " amount:"  + amount + " userNonce:" + userNonce + " addr:" + addr);
 	console.log("hash: ", hash);
 	return hash;
 }
@@ -233,18 +298,28 @@ function sleep(ms) {
 async function redeemPointsAsync (points) {
     updateStatus(`Redeeming with ${points}`);
     const account = await getCurrentAccount();
-    const gasLimit = '35555';
+    const gasLimit = '99999';
 
     var userNonce = getUserNonce();
 
     var hash = calculateHash(account, points, userNonce, contractAddress);
 
-    var sig = getServerSign(hash);
+    var sig = await getServerSign(hash);
+
+    var signing_address = await web3.eth.personal.ecRecover(hash, sig);
+    console.log("verify: signing_address: ", signing_address);
+
     console.log("sig: ", sig);
+    console.log("sig len (string): " + sig.length);
+
+/*
     var bytes = web3.utils.asciiToHex(sig);
+    console.log("sig len (bytes): " + bytes.length);
+    console.log(" $$$$$ Args to contract: points:" + points + " nonce:" + userNonce + " sig:" + bytes);
+*/
     window.contract.methods.withdrawPoints(points, 
     	userNonce, 
-    	bytes)
+    	sig)
     	.send({ from: account, gas: gasLimit })
     	.on ('transactionHash', function(transactionHash){
             console.log('Transaction submitted with txHash:' + transactionHash);

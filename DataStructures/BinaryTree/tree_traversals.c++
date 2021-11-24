@@ -36,16 +36,41 @@ class Solution {
         if (l->val != r->val) return false;
         return isSymmetricHelper(l->left, r->right) && isSymmetricHelper(l->right, r->left);
     }
-    
-public:
 
+  bool pathSumDfs (TreeNode *root, int targetSum, int &pathSum) {
+    if (!root)
+      return false;
+    pathSum += root->val;
+    if (!root->left && !root->right) {
+      if (targetSum == pathSum) 
+	return true;
+      pathSum -= root->val;
+      return false;
+    }
+    if (pathSumDfs(root->left, targetSum, pathSum)) {
+      return true;
+    }
+    
+    if (pathSumDfs(root->right, targetSum, pathSum)){
+      return true;
+    }
+    pathSum -= root->val;
+    return false;
+  }
+public:
+    bool hasPathSum(TreeNode* root, int targetSum) {
+      if (!root) return false;
+      int pathSum = 0;
+      return pathSumDfs(root, targetSum, pathSum);
+    }
+  
   vector<int> preOrderTraversal(TreeNode* root) {
     vector <int> vec;
     if (!root) return vec;
     preOrderTraversalHelper(root, vec); 
     return vec;
   }
-
+  
   vector <int> preOrderIterative (TreeNode* root) {
     vector <int> ans;
     if (!root)
@@ -193,6 +218,14 @@ int main () {
   root = create_tree(arr2, sz-1);
   isMirror = sol.isSymmetric(root);
   cout << endl << (isMirror ? "symmetric" : "not symmetric") << endl;
+
+  int sum  = 17;
+  bool hasPathSum = sol.hasPathSum(root, sum);
+  cout << endl << "hasPathSum: " << hasPathSum << " for pathSum:" << sum << endl;
+
+  sum = 7;
+  hasPathSum = sol.hasPathSum(root, sum);
+  cout << endl << "hasPathSum: " << hasPathSum << " for pathSum:" << sum << endl;
 
   return 0;
 }

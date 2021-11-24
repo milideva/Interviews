@@ -6,32 +6,36 @@ using namespace std;
 
 void print_vector (vector <int> &v) {
     // By value  
-    for (auto it : v) 
-        cout << it << " ";
+    for (auto i : v)
+        cout << i << " ";
 
     cout << endl;
     return;
 
     // By reference - if you want to modify
     // For proxy iterators such as bool, we need to use &&it
-    for (auto &it : v)
-        it += 1;
+    for (auto &i : v)
+        i += 1;
 
     // reverse order
     for (auto itr = v.rbegin(); itr != v.rend(); itr++) 
         cout << *itr << " ";
 
-    for (auto &it : v) 
-        it -= 1;
+    for (auto &i : v)
+        i -= 1;
 
+    for (auto itr = begin(v); itr != end(v); itr++) {
+        cout << *itr << endl;
+    }
     cout << endl;
 }
 
 /*
 
-Given an array of integers and an integer k, 
-you need to find the number of unique k-diff pairs in the array. 
-Here a k-diff pair is defined as an integer pair (i, j), where i and j are both numbers in the array and their absolute difference is k.
+Given an array of integers and an integer k, you need to find the
+number of unique k-diff pairs in the array.  Here a k-diff pair is
+defined as an integer pair (i, j), where i and j are both numbers in
+the array and their absolute difference is k.
 
 */
 int findPairs(vector<int>& nums, int k) {

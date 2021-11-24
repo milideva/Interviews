@@ -21,7 +21,7 @@ int main ()
   sz = bar.capacity();
   bar.reserve(100);   // this is the only difference with foo above
   std::cout << "making bar grow:\n";
-  for (int i=0; i<100; ++i) {
+  for (int i=0; i<110; ++i) {
     bar.push_back(i);
     if (sz!=bar.capacity()) {
       sz = bar.capacity();

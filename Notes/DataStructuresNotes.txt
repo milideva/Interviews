@@ -604,7 +604,15 @@ length two and so on.
 - for finding the neighbour nodes in peer to peer networks like BitTorrent, GPS systems to find nearby locations, 
 - social networking sites to find people in the specified distance and things like that.
 
-Time complexity O(|V|+|E|)
+Time complexity O(|V|+|E|) O(E) may be O(V^2)
+Space complexity O(|V|) - vertices added to the queue
+
+With graphs that are too large or infinite, it is more practical to
+describe the complexity of BFS in different terms: to find the nodes
+that are at distance d from the start node (measured in number of edge
+traversals), BFS takes O(b^(d + 1)) time and memory, where b is the
+"branching factor" of the graph (the average out-degree)
+
 
 DFS - recursive - thus uses stack.
 

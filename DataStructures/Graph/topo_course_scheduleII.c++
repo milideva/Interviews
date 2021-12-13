@@ -55,17 +55,13 @@ All the pairs [ai, bi] are distinct.
 using namespace std;
 
 class Solution {
-    
+  vector <int> result;
 public:
   vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
     
-    vector<int> result;
     vector <int> indegrees(numCourses, 0);
-    //vector<vector<int>> preCourses(numCourses, vector<int>());
-    vector <vector<int>> preCourses(numCourses, {0});
-    queue <int> q;
+    vector <vector<int>> preCourses(numCourses, vector<int>());
 
-    cout << "prereq.s" << endl;
     for (auto pre : prerequisites) {
       auto u = pre[0];
       auto v = pre[1];
@@ -73,16 +69,16 @@ public:
       preCourses[v].push_back(u);
       // someone before u
       indegrees[u]++;
-      cout << "u:" << u << " v:" << v << endl;
     }
     
     // BFS 
     // push all vertices with 0 incoming edge
+    queue <int> q;
     for (int i = 0; i < numCourses; i++) {
       if (indegrees[i] == 0)
 	q.push(i);
     }
-    cout << "q size:" << q.size() << endl;
+
     while (!q.empty()) {
       // Remove the vertex with no incoming edges
       auto vertex = q.front(); q.pop();
@@ -98,7 +94,8 @@ public:
     if (result.size() == numCourses)
       return result;
     // If it is not equal, then a cycle exists!
-    cout << "Cycle: " << result.size() << endl;
+
+    //cout << "Cycle: " << result.size() << endl;
     return {};
   }
 };

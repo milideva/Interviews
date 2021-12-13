@@ -81,7 +81,7 @@ public:
       if (indegrees[i] == 0)
 	q.push(i);
     }
-    
+    cout << "q size:" << q.size() << endl;
     while (!q.empty()) {
       // Remove the vertex with no incoming edges
       auto vertex = q.front(); q.pop();
@@ -96,7 +96,8 @@ public:
     
     if (result.size() == numCourses)
       return result;
-    
+    // If it is not equal, then a cycle exists!
+    cout << "Cycle: " << result.size() << endl;
     return {};
   }
 };
@@ -114,7 +115,7 @@ int main () {
   cout << "Done" << endl;
 
   // cycle exists 
-  vector <vector <int>> v2 { {1,2},{2,3},{3,0},{0,1} };
+  vector <vector <int>> v2 { {1,2},{2,3},{3,1},{1,0} };
   vector<int> res2 = sol.findOrder(4, v2);
 
   cout << "Topo sort on v2 : ";

@@ -60,9 +60,10 @@ public:
   vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
     
     vector<int> result;
-    vector<int> indegrees(numCourses, 0);
-    vector<vector<int>> preCourses(numCourses, vector<int>());
-    queue<int> q;
+    vector <int> indegrees(numCourses, 0);
+    //vector<vector<int>> preCourses(numCourses, vector<int>());
+    vector <vector<int>> preCourses(numCourses, {0});
+    queue <int> q;
 
     cout << "prereq.s" << endl;
     for (auto pre : prerequisites) {

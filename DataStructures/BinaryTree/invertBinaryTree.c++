@@ -63,6 +63,23 @@ void printTreePostorder (TreeNode *n) {
   cout << endl;
 }
 
+void print_vec_vec (vector <vector <int>> &res, string str) {
+  cout << endl << str << endl;
+  for (auto v: res) {
+    for (auto e : v) {
+      cout << e << " ";
+    }
+    cout << endl;
+  }
+}
+
+void print_vec (vector <int> &res, string str) {
+  cout << endl << str << endl;
+  for (auto v:res) {
+    cout << v << " ";
+  }
+  cout << endl;
+}
 
 // Helper function to create a BST
 TreeNode *create_BST_from_array (int array[], int start, int end) {

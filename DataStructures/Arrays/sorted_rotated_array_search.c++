@@ -43,7 +43,13 @@ class Solution {
         int right = size(nums) - 1;
         
         while (left <= right) {
-            int mid = left + (right - left) / 2 ;
+	  // In case of Duplicates, add this code :
+	  while (left < right and nums[left] == nums[left+1])
+	    left++;
+	  while (left < right and nums[right] == nums[right-1])
+	    right--;
+
+	  int mid = left + (right - left) / 2 ;
             if (nums[mid] == target) {
                 return mid;
             }

@@ -1,4 +1,5 @@
 /*
+
 Given an array of meeting time intervals where intervals[i] = [starti, endi],
 determine if a person could attend all meetings.
 
@@ -18,6 +19,24 @@ Constraints:
     0 <= starti < endi <= 106
 */
 
+/*
+ 
+ https://leetcode.com/problems/meeting-rooms-ii/discuss/203658/HashMapTreeMap-resolves-Scheduling-Problem
+
+ Here is the idea -
+
+ Load all intervals to the TreeMap, where keys are intervals'
+ start/end boundaries, and values accumulate the changes at that point
+ in time.
+
+ Traverse the TreeMap (in other words, sweep the timeline). If a new
+ interval starts, increase the counter (k value) by 1, and the counter
+ decreases by 1, if an interval has finished.
+
+ Calcalulate the number of the active ongoing intervals.
+
+*/
+
 #include <vector>
 #include <iostream>
 #include <map>
@@ -27,8 +46,8 @@ class Solution {
   map <int, int> calMap;
   bool canAdd (int maxConflicts) {
     int count = 0;
-    for (auto e : calMap) {
-      count += e.second;
+    for (auto [t, cnt] : calMap) {
+      count += cnt;
       if (count > maxConflicts) 
         return false;
     }
@@ -36,10 +55,7 @@ class Solution {
   }
 public:
   bool canAttendMeetings(vector<vector<int>>& intervals) {
-    int len = intervals.size();
-    if (len == 0) return true;
-    
-    if (len == 1) return true;
+    if (intervals.size() <= 1) return true;
     
     for (auto v :intervals) {
       calMap[v[0]]++;

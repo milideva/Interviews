@@ -1,4 +1,5 @@
 * Gossip
+
 * Multicast is an important problem for group membership
     * IP multicast may not be enabled in switches and routers. => Application level multicast
 * Tree based multicast protocols O(log (n)) rather than centralized O(n)
@@ -13,7 +14,7 @@
     * No Master/  No Leader / Follower  etc => P2P
 * No external store
 * Examples -
-    *  Akka Actor cluster 
+    * Akka Actor cluster 
     * cassandra key-value store
     * hashicorp consul
     * Usenet NNTP etc
@@ -22,6 +23,7 @@
     * Failure detection (decentralized)
     * Information dissemination
 * Cluster size : 1000s, spread across DC
+
 * Requirements 
 2.3 Gossip Analysis UIUC
 
@@ -36,7 +38,7 @@ Log n is a very slow growing number
 * Push pull Gossip protocol (Cassandra version)
 * Heartbeat is part of message
 * Eventual consistency
-* Gossip protocol, hash map of ip address and port, . key’s have version. heartbeat every few moments.
+* Gossip protocol, hash map of ip address and port. key’s have version. heartbeat every few moments.
 * Periodically send Gossip to b random targets. b is a small number < 10 
 * Those nodes (infected) then send the Gossip message to another b random targets.
 * Once you’ve a multicast message you start Gossip.ing about it => Push Gossip 

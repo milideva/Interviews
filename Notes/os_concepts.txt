@@ -85,7 +85,7 @@ A set of table <---> A set of functions to attach <---> hooked to kernel events
 
 
 - limited and specific instruction set in a sandbox.
-- event based, limitd and bounded access to kernel memory
+- event based, limited and bounded access to kernel memory
 - no indefinite run time
 - interacts with user space using "Maps" (key-value pairs)
 

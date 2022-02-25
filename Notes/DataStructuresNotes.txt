@@ -264,7 +264,7 @@ BFS(G, start_v, end_v)
                  visited[w] = true
                  Q.enqueue(w)
 
-* Binary search tree (it's NOT Balanced Search Tree)
+* Binary search tree (it's NOT a "Balanced" Search Tree)
 
 BST is a binary tree with following properties :
 - the keys in the left subtree are less then the key in its parent node P, 
@@ -372,7 +372,7 @@ Because B trees contain data with each key, frequently accessed nodes can lie
 closer to the root, and therefore can be accessed more quickly.
 
 
-* Binary heap, Min-heap/Max-heap
+* Binary Heap, Min-heap/Max-heap
 - Shape property, complete binary tree, except the last level.
 - All nodes are either >= or <= than all of its children.
 
@@ -387,14 +387,14 @@ Insert/delete O(log n)
 Max heap : key(node) >= key(both children) at each level
 Min heap : key(node) <= key(both children) at each level
 
-insert in max heap (always insert at the end or last leaf and then rebalance)
+Insert in max heap (always insert at the end or last leaf and then rebalance)
 Step 1 − Create a new node at the end of heap.
 Step 2 − Assign new value to the node.
 Step 3 − Compare the value of this child node with its parent.
 Step 4 − If value of parent is less than child, then swap them.
 Step 5 − Repeat step 3 & 4 until Heap property holds.
 
-delete in max heap (always deletes root and then rebalance)
+Delete in max heap (always deletes root and then rebalance)
 Step 1 − Remove root node.
 Step 2 − Move the last element of last level to root.
 Step 3 − Compare the value of new root parent with both the children
@@ -402,20 +402,30 @@ Step 4 − If heap property of parent holds, we are done.
 Else If value of parent is less than child, then swap them.
 Step 5 − Repeat step 3 & 4 until Heap property holds.
 
-* hash tables
+* Hash tables
 key-value pairs : no ordering
 O(1) search
 properties of a hash func: 
-deterministic, uniform distribution,  variable range, crypto,
-continuity (similar neighbors, hash almost same).
-cuckoo hashing for collisions (two hash functions).
+  deterministic, 
+  uniform distribution,  
+  variable range, 
+  crypto,
+  continuity (similar neighbors, hash almost same).
+
+Cuckoo hashing for collisions (two hash functions).
 L2 mac tables use hash table.
 
-* bloom filter : http://billmill.org/bloomfilter-tutorial/
+* Bloom filter : http://billmill.org/bloomfilter-tutorial/
 
 new password check in dictionary - reject if edit distance of 1
 
-graphs
+A Bloom filter is a data structure designed to tell you, rapidly and memory-efficiently, whether an element is present in a set.
+
+The price paid for this efficiency is that a Bloom filter is a probabilistic data structure: it tells us that the element either definitely is not in the set or may be in the set.
+
+The base data structure of a Bloom filter is a Bit Vector.
+
+* Graphs
 can represent a network
 
 2. determine the algorithm
@@ -582,12 +592,7 @@ G(V,E) n=|V| and m = |E|
 adjacency matrix : space O(V*V)
 adjacency list : space O(V) + O(2E)
 
-* DFS and BFS
-
-stack for DFS.
-queue for BFS
-
-BFS (used for shortest path)
+* BFS (used for shortest path)
 - uses queue
 - use when breadth is more and not much depth
 - when you want to reach a node by traversing as few edges (or moves) as possible.
@@ -614,7 +619,7 @@ traversals), BFS takes O(b^(d + 1)) time and memory, where b is the
 "branching factor" of the graph (the average out-degree)
 
 
-DFS - recursive - thus uses stack.
+* DFS - recursive - thus uses stack.
 
 Connectivity
 Detecting cycles
@@ -673,20 +678,19 @@ Every DAG has one sink vertex.
 
 Example : pre-requisites of courses in university.
 
-* Heap: 2 operations
+* Heap: 
 Insert O(log n)
 Extract-min (or extract-max) 
 Heapify O(n)
 Delete O(log n)
 
-
-Selection Sort :
+* Selection Sort :
 1 to n, pick the smallest,
 2 to n, pick smallest 
 …
 quadratic
 
-Heapsort :
+* Heapsort :
 insert in heap  - 
 from last element of “full binary tree” to bubble-up with swap
 extract-min pick smaller of child as root and bubble-down.

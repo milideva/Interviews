@@ -43,20 +43,20 @@ public:
     multiset <int> mst(arr.begin(), arr.end());
     auto sz = mst.size();
     for (auto i = 0; i < sz/2; i++) {
-      auto elem = *mst.begin();
-            mst.erase(mst.begin());
-            auto toFind = 2 * elem;
-            if (elem < 0) {
-	      // {-5, -2} should be false, beware of truncation match
-	      if (elem % 2) 
-		return false;
-	      toFind = elem / 2;
-            }
-            auto it = mst.find(toFind);
-            if (it == mst.end()) {
-	      return false;
-            }
-            mst.erase(it);
+        auto elem = *mst.begin();
+        mst.erase(mst.begin());
+        auto toFind = 2 * elem;
+        if (elem < 0) {
+	          // {-5, -2} should be false, beware of truncation match
+	          if (elem % 2) 
+		            return false;
+	          toFind = elem / 2;
+        }
+        auto it = mst.find(toFind);
+        if (it == mst.end()) {
+	          return false;
+        }
+        mst.erase(it);
     }
     return true;
   }

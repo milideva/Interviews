@@ -34,9 +34,9 @@ Explanation: 3 + 3 = 6 = 5 - 2 + 2 + 5 + 1 - 9 + 4
 class Solution {
 public:
     /*
-    If we have three parts with the same sum, what is the sum of each? If you can find the first part, can you find the second part?
-
-*/
+        If we have three parts with the same sum, what is the sum of each? 
+        If you can find the first part, can you find the second part?
+    */
     bool canThreePartsEqualSum(vector<int>& arr) {
         int sz = size(arr);
         if (sz == 0) 

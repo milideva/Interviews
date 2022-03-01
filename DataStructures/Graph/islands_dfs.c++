@@ -35,7 +35,10 @@ int numIslands (vector<vector<char>>& grid) {
   int m = grid.size();
   if (!m) return 0;
   int n = grid[0].size();
-  vector<vector<bool>> visited(m, vector<bool> (n, false)); 
+  vector <vector <bool>> visited;
+  //vector<vector<bool>> visited(m, vector<bool> (n, false));
+  visited.assign(m, vector <bool> (n, false));
+  
   int count = 0;
   
   for (int i = 0; i < m; i++ ) {

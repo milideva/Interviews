@@ -39,7 +39,7 @@ class Solution {
 public:
   bool canReorderDoubled(vector<int>& arr) {
     if (size(arr) % 2)
-      return {};
+      return false;
     multiset <int> mst(arr.begin(), arr.end()); // set and multiset are ordered tree
     /* Per the C++ standard, iteration over the elements in an std::set proceeds 
     in sorted order as determined by std::less or by the optional comparison 

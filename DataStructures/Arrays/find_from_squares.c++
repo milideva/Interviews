@@ -50,7 +50,7 @@ public:
     vector<int> findOriginalArray(vector<int>& changed) {
         if (size(changed) % 2) 
             return {};
-	result.clear();
+	      result.clear();
         multiset <int> mst(changed.begin(), changed.end());
         auto sz = mst.size();
         for (auto i = 0; i < sz/2; i++) {

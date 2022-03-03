@@ -65,8 +65,8 @@ public:
       pq.push(val);
     } else {
       if (pq.top() < val) {
-	pq.pop();
-	pq.push(val);
+	      pq.pop();
+	      pq.push(val);
       }
     }
     cout << "kth largest : " << pq.top() << " k: " << k << endl;

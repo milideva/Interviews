@@ -20,12 +20,12 @@ Can do search, min/max, pred/succ, rank, etc very fast.
 
 - delete: hard to remove elements/recopy remaining elements.
 
-* Dynamic arrays. 
+* Dynamic arrays (Amortized analysis) 
 
 Suppose we start with an array of size 1, and double its size
 from m to 2m each time we run out of space. This doubling process involves
 allocating a new contiguous array of size 2m, copying the contents of the old
-array to the lower half of the new one, and returning the space used by the
+array to the lower half of the new one, and freeing the space used by the
 old array.
 
 The apparent waste in this procedure involves the recopying of the old contents
@@ -43,6 +43,13 @@ M = (Sigma : for i=1 lg n)  i · n/2^i <= 2n
 Thus, each of the n elements move only two times on average, and the total work
 of managing the dynamic array is the same O(n) as it would have been if a
 single array of sufficient size had been allocated in advance!
+
+So when we do m appends, the appends themselves cost m, and the doubling costs 2m. 
+Put together, we've got a cost of 3m, which is O(m). 
+So on average, each individual append is O(1) since m appends cost us O(m).
+This is called amortized analysis.
+
+The point is, it's fine to use Vectors (which are dynamic arrays).
 
 * Hash table
 insert, delete, lookup based on a key
@@ -419,9 +426,11 @@ L2 mac tables use hash table.
 
 new password check in dictionary - reject if edit distance of 1
 
-A Bloom filter is a data structure designed to tell you, rapidly and memory-efficiently, whether an element is present in a set.
+A Bloom filter is a data structure designed to tell you, rapidly and memory-efficiently, 
+whether an element is present in a set.
 
-The price paid for this efficiency is that a Bloom filter is a probabilistic data structure: it tells us that the element either definitely is not in the set or may be in the set.
+The price paid for this efficiency is that a Bloom filter is a probabilistic data structure:
+ it tells us that the element either definitely is not in the set or may be in the set.
 
 The base data structure of a Bloom filter is a Bit Vector.
 

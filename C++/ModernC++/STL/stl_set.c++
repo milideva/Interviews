@@ -17,6 +17,33 @@ using namespace std;
 // unordered_set is simply a hash table
 
 
+
+/*
+  A priority queue only gives you access to one element in sorted order -- i.e., 
+  you can get the highest priority item, and when you remove that, 
+  you can get the next highest priority, and so on. 
+  A priority queue also allows duplicate elements, so it's more like a multiset than a set.
+
+  A set allows you full access in sorted order, so you can, for example, 
+  find two elements somewhere in the middle of the set, then traverse in order from 
+  one to the other. 
+
+std::priority_queue allows to do the following:
+  Insert an element O(log n)
+  Get the smallest element O(1)
+  Erase the smallest element O(log n)
+  
+while std::set has more possibilities:
+  Insert any element O(log n) and the constant is greater than in std::priority_queue
+  Find any element O(log n)
+  Find an element, >= than the one your are looking for O(log n) (lower_bound)
+  Erase any element O(log n)
+  Erase any element by its iterator O(1)
+  Move to previous/next element in sorted order O(1)
+  Get the smallest element O(1)
+  Get the largest element O(1)
+
+*/
 set<int>::iterator test_set_find_count (set <int> &myset, int val) {
 
   // find()
@@ -110,7 +137,7 @@ void test_set_init () {
 void learn_set (void) {
  
   test_set_init();
-  
+
   set<int> myset;
 
   test_set_insert(myset);

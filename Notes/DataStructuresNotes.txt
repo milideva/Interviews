@@ -409,6 +409,41 @@ Step 4 − If heap property of parent holds, we are done.
 Else If value of parent is less than child, then swap them.
 Step 5 − Repeat step 3 & 4 until Heap property holds.
 
+* std::Set versus std::priority_queue (heap)
+
+set/multiset are generally immplemented as a RB tree (balanced)
+priority_queue is generally backed by a heap (array/vector)
+
+When should you use a binary tree instead of a heap?
+
+Both structures are laid out in a tree, however the rules about the relationship between anscestors are different.
+
+We will call the positions P for parent, L for left child, and R for right child.
+
+In a binary tree L < P < R.
+
+In a heap P < L and P < R
+
+So binary trees sort "sideways" and heaps sort "upwards".
+
+So if we look at this as a triangle than in the binary tree L,P,R are completely sorted, 
+whereas in the heap the relationship between L and R is unknown (only their relationship to P).
+
+This has the following effects:
+
+If you have an unsorted array and want to turn it into a binary tree it takes O(nlogn) time. 
+If you want to turn it into a heap it only takes O(n) time, (as it just compares to find the extreme element)
+
+Heaps are more efficient if you only need the extreme element (lowest or highest by some comparison function). 
+Heaps only do the comparisons (lazily) necessary to determine the extreme element.
+
+Binary trees perform the comparisons necessary to order the entire collection, and keep the entire collection sorted all-the-time.
+
+Heaps have constant-time lookup (peek) of lowest element, 
+binary trees have logarithmic time lookup of lowest element.
+
+Memory overhead for std::set is much bigger also because it has to store many pointers between its nodes.
+
 * Hash tables
 key-value pairs : no ordering
 O(1) search

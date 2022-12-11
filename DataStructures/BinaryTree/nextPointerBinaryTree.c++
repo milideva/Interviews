@@ -29,16 +29,16 @@ public:
     while (!q.empty()) {
       int size = q.size();
       while (size--) {
-	TreeNode *n = q.front(); q.pop();
-	if (size == 0) {
-	  n->next = nullptr;
-	} else {
-	  n->next = q.front();
-	}
-	if (n->left)
-	  q.push(n->left);
-	if (n->right)
-	  q.push(n->right);
+	      TreeNode *n = q.front(); q.pop();
+	      if (size == 0) {
+	        n->next = nullptr;
+	      } else {
+	        n->next = q.front();
+	      }
+	      if (n->left)
+	        q.push(n->left);
+	      if (n->right)
+	        q.push(n->right);
       }
     }
     return root;

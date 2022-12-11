@@ -43,7 +43,7 @@ class Solution {
     pathSum += root->val;
     if (!root->left && !root->right) {
       if (targetSum == pathSum) 
-	return true;
+	        return true;
       pathSum -= root->val;
       return false;
     }
@@ -82,10 +82,10 @@ public:
       stk.pop();
       ans.push_back(rt->val);
       if (rt->right) {
-	stk.push(rt->right);
+	      stk.push(rt->right);
       }
       if (rt->left) {
-	stk.push(rt->left);
+	      stk.push(rt->left);
       }
     }
     return ans;

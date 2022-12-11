@@ -51,7 +51,7 @@ void printTreeInorder (TreeNode *n) {
 static void postorder (TreeNode *root)  {
     if (root) {
         postorder(root->left);
-	      postorder(root->right);
+	postorder(root->right);
         cout << root->val << " ";
     }
 }

@@ -83,13 +83,11 @@ public:
 void test_3sum(vector<int> &v)
 {
     class Solution sol;
-    vector<vector<int>> result = sol.find_triplet_sum(v);
+    vector <vector <int>> vv = sol.find_triplet_sum(v);
 
-    for (auto itr : result)
-    {
-        vector<int> oneresult = itr;
-        for (auto itr2 : oneresult)
-            cout << itr2 << " ";
+    for (auto v : vv) {
+        for (auto elem : v) 
+            cout << elem << " ";
         cout << endl;
     }
 }

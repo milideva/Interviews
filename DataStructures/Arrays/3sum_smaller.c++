@@ -27,7 +27,7 @@ using namespace std;
 
 class Solution
 {
-    int twoSumSmaller(vector<int> &nums, int startI, int target)
+    int twoSumSmaller(vector <int> &nums, int startI, int target)
     {
         int l = startI;
         int r = size(nums) - 1;
@@ -46,7 +46,7 @@ class Solution
     }
 
 public:
-    int threeSumSmaller(vector<int> &nums, int target)
+    int threeSumSmaller (vector <int> &nums, int target)
     {
         int ans = 0;
         /*

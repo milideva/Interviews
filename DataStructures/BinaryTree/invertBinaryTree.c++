@@ -3,26 +3,35 @@
 
 using namespace std;
 
-// Populate each next pointer to point to its next right node at same
-// height. If there is no next right node, the next pointer should be
-// set to NULL.
+/*
+226. Invert Binary Tree
+Given the root of a binary tree, invert the tree, and return its root.
 
+Input: root = [4,2,7,1,3,6,9]
+Output: [4,7,2,9,6,3,1]
 
-struct TreeNode {
+Input: root = [2,1,3]
+Output: [2,3,1]
+
+*/
+struct TreeNode
+{
   int val;
   TreeNode *left;
   TreeNode *right;
   TreeNode *next;
-  TreeNode() : val(0), left(nullptr), right(nullptr), next(nullptr){}
-  TreeNode(int x) : val(x), left(nullptr), right(nullptr), next(nullptr) {}  
+  TreeNode() : val(0), left(nullptr), right(nullptr), next(nullptr) {}
+  TreeNode(int x) : val(x), left(nullptr), right(nullptr), next(nullptr) {}
 };
 
 #define MY_NULL (-999)
 
-class Solution {
+class Solution
+{
 
 public:
-  TreeNode* invertTree(TreeNode* root) {
+  TreeNode *invertTree(TreeNode *root)
+  {
     if (!root)
       return nullptr;
     TreeNode *left = invertTree(root->left);
@@ -33,87 +42,102 @@ public:
   }
 };
 
-static void inorder (TreeNode *root)  {
-    if (root) {
-        inorder(root->left);
-        cout << root->val << " ";
-        inorder(root->right);
-    }
+static void inorder(TreeNode *root)
+{
+  if (root)
+  {
+    inorder(root->left);
+    cout << root->val << " ";
+    inorder(root->right);
+  }
 }
 
-
-void printTreeInorder (TreeNode *n) {
+void printTreeInorder(TreeNode *n)
+{
   cout << "Inorder:" << endl;
   inorder(n);
   cout << endl;
 }
 
-static void postorder (TreeNode *root)  {
-    if (root) {
-        postorder(root->left);
-	postorder(root->right);
-        cout << root->val << " ";
-    }
+static void postorder(TreeNode *root)
+{
+  if (root)
+  {
+    postorder(root->left);
+    postorder(root->right);
+    cout << root->val << " ";
+  }
 }
 
-
-void printTreePostorder (TreeNode *n) {
+void printTreePostorder(TreeNode *n)
+{
   cout << "Postorder:" << endl;
   postorder(n);
   cout << endl;
 }
 
-void print_vec_vec (vector <vector <int>> &res, string str) {
+void print_vec_vec(vector<vector<int>> &res, string str)
+{
   cout << endl << str << endl;
-  for (auto v: res) {
-    for (auto e : v) {
+  for (auto v : res)
+  {
+    for (auto e : v)
+    {
       cout << e << " ";
     }
     cout << endl;
   }
 }
 
-void print_vec (vector <int> &res, string str) {
+void print_vec(vector<int> &res, string str)
+{
   cout << endl << str << endl;
-  for (auto v:res) {
+  for (auto v : res)
+  {
     cout << v << " ";
   }
   cout << endl;
 }
 
 // Helper function to create a BST
-TreeNode *create_BST_from_array (int array[], int start, int end) {
-    if (!array) return NULL;
-    if (start > end) return NULL;
+TreeNode *create_BST_from_array(int array[], int start, int end)
+{
+  if (!array)
+    return NULL;
+  if (start > end)
+    return NULL;
 
-    int mid = (start+end)/2;
-    if (array[mid] == MY_NULL) {
-      return NULL;
-    }
-    TreeNode *n = new TreeNode(array[mid]);
-    if (!n) return n;
-
-    n->left = create_BST_from_array(array, start, mid-1);
-    n->right = create_BST_from_array(array, mid+1, end);
-
-    printf("TreeNode:%d left:%d right:%d\n", n->val,
-           n->left ? n->left->val : -999,
-           n->right ? n->right->val : -999);
+  int mid = (start + end) / 2;
+  if (array[mid] == MY_NULL)
+  {
+    return NULL;
+  }
+  TreeNode *n = new TreeNode(array[mid]);
+  if (!n)
     return n;
+
+  n->left = create_BST_from_array(array, start, mid - 1);
+  n->right = create_BST_from_array(array, mid + 1, end);
+
+  printf("TreeNode:%d left:%d right:%d\n", n->val,
+         n->left ? n->left->val : -999,
+         n->right ? n->right->val : -999);
+  return n;
 }
 
-int main () {
+int main()
+{
 
-  int array[] = { 1, 2, 3, 4, 5, 6, 7 };
+  int array[] = {1, 2, 3, 4, 5, 6, 7};
   int sz = sizeof array / sizeof array[0];
-  TreeNode *root = create_BST_from_array(array, 0, sz-1);
+  TreeNode *root = create_BST_from_array(array, 0, sz - 1);
 
   printTreeInorder(root);
   printTreePostorder(root);
-  
+
   class Solution sol;
   root = sol.invertTree(root);
-  
+
   printTreeInorder(root);
   printTreePostorder(root);
 

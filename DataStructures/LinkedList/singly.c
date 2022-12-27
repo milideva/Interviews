@@ -660,6 +660,37 @@ static node_t *remove_middle (node_t *head) {
     return middle;
 }
 
+/*
+    Given a linked list, swap every two adjacent nodes and return its head. 
+    You must solve the problem without modifying the values in the list's nodes 
+    (i.e., only nodes themselves may be changed.)
+
+    Input: head = [1,2,3,4]
+    Output: [2,1,4,3]
+
+    Tricky part is to make 1 point to 4.
+*/
+
+node_t* swapPairs (node_t* head) {
+    if (!head) return nullptr;
+    node_t *nh = head->next ? head->next : head;
+    node_t *next, *nextHead;
+    node_t *curr = head;
+
+    while (curr && curr->next) {
+        next = curr->next;
+        nextHead = curr->next->next;
+        if (nextHead && nextHead->next)
+            curr->next = nextHead->next;
+        else {
+            curr->next = nextHead;
+        }
+        next->next = curr;
+        curr = nextHead;
+    }
+    return nh;
+}
+
 /******************************  Test code *******************************/
 static node_t *build_list (int start, int end, int step,
                            bool random, bool sorted)

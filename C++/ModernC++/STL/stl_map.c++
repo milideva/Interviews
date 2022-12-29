@@ -77,7 +77,7 @@ void test_map(void)
         {'i', 8},
     };
 
-    // Inserting an element in map
+    // Inserting an element in map when it already exists
     auto k1 = 't';
     pair mPair(k1, 9); // auto mPair = make_pair('t', 9);
     auto ret = mymap.insert(mPair);

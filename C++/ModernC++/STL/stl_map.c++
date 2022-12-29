@@ -78,9 +78,13 @@ void test_map(void)
     };
 
     // Inserting an element in map
-
-    pair mPair('t', 9); // auto mPair = make_pair('t', 9);
-    mymap.insert(mPair);
+    auto k1 = 't';
+    pair mPair(k1, 9); // auto mPair = make_pair('t', 9);
+    auto ret = mymap.insert(mPair);
+    if (ret.second==false) {
+        cout << "element " << k1 << " already existed";
+        cout << " with a value of " << ret.first->second << '\n';
+    }
 
     std::cout << "************ map ****************" << std::endl;
     // Iterate over the multimap using Iterator

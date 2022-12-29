@@ -515,7 +515,21 @@ static void copy_linked_list (node_t *src, node_t **dest)
     }
 }
 
-/* Merge two sorted linked lists */
+/* Merge two sorted linked lists- recursive */
+node_t* mergeTwoLists(node_t* list1, node_t* list2) {
+    if (!list1 || !list2)
+      return list1 ? list1 : list2;
+    if (list1->value > list2->value) {
+      //swap(list1, list2);
+      node_t *temp = list1;
+      list1 = list2;
+      list2 = temp;
+    }
+    list1->next = mergeTwoLists(list1->next, list2);
+    return list1;
+  }
+
+/* Merge two sorted linked lists - iterative */
 node_t* merge (node_t *head1, node_t *head2) {
     node_t *it1, *it2, *head; // two iterators and a new head to return
 
@@ -672,7 +686,7 @@ static node_t *remove_middle (node_t *head) {
 */
 
 node_t* swapPairs (node_t* head) {
-    if (!head) return nullptr;
+    if (!head) return NULL;
     node_t *nh = head->next ? head->next : head;
     node_t *next, *nextHead;
     node_t *curr = head;

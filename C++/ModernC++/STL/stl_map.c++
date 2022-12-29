@@ -20,7 +20,7 @@ using namespace std;
 void test_multimap(void)
 {
 
-    multimap<char, int> multimap = {
+    multimap<char, int> mmap = {
         {'t', 1},
         {'h', 1},
         {'i', 2},
@@ -33,30 +33,38 @@ void test_multimap(void)
     // Inserting an element in map
 
     pair mPair('t', 9); // auto mPair = make_pair('t', 9);
-    multimap.insert(mPair);
+    mmap.insert(mPair);
 
     std::cout << "************ multimap ****************" << std::endl;
 
     // Iterate over the multimap using Iterator
-    for (auto it = multimap.begin(); it != multimap.end(); it++)
+    for (auto it = mmap.begin(); it != mmap.end(); it++)
         std::cout << it->first << " :: " << it->second << std::endl;
     std::cout << "****************************************" << std::endl;
 
     // Iterate over the multimap using range based for loop
-    for (auto elem : multimap)
+    for (auto elem : mmap)
         std::cout << elem.first << " :: " << elem.second << std::endl;
     std::cout << "****************************************" << std::endl;
 
     // find a key and all multi elements for that key
     auto key = 'i';
-    if (auto search = multimap.find(key); search != multimap.end())
+    if (auto search = mmap.find(key); search != mmap.end())
     {
-        std::cout << "Found " << search->first << " " << search->second << " count " << multimap.count(key) << '\n';
-        for (auto it = multimap.equal_range(key).first; it != multimap.equal_range(key).second; ++it)
+        std::cout << "Found " << search->first << " " << search->second << " count " << mmap.count(key) << '\n';
+        for (auto it = mmap.equal_range(key).first; it != mmap.equal_range(key).second; ++it)
             std::cout << ' ' << (*it).second;
-        multimap.erase(search);
+
+        // Using equal_range - cleaner way
+        std::pair <std::multimap<char,int>::iterator, std::multimap<char,int>::iterator> ret;
+        ret = mmap.equal_range(key);
+        std::cout << key << " =>";
+        for (std::multimap<char,int>::iterator it=ret.first; it!=ret.second; ++it)
+            std::cout << ' ' << it->second;
+            
+        mmap.erase(search);
         std::cout << "\nErased one pair"
-                  << " count " << multimap.count(key) << '\n';
+                  << " count " << mmap.count(key) << '\n';
     }
     else
     {

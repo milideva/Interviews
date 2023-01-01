@@ -33,9 +33,11 @@ using namespace std;
 // 2.
 // Associative containers : like a binary search tree - always ordered (actually implemented as RB tree)
 // always sorted.  takes O(logn) time for insertion/deletion/search.
-// - set, multiset  = can store single item, use multi for allowing duplicate items
-        // Primary application of set is trees, such as BST
-// - map, multimap = key, value store : can map itemA (key) to itemB (value), use multi for allowing duplicate items
+// 2a) set, multiset  = can store single item aka "value", use multi for allowing duplicate items
+// In Section 3 below : unordered_set is a hash table of values (no ordering)
+// Primary application of set is trees, such as BST
+// 2b) map, multimap store a pair {key, value} : can map itemA (key) to itemB (value), use multi for allowing duplicate items
+// In Section 3 below : unordered_map is a hash table of pair {key, val} (no ordering)
 
 // find is faster than array but slower than unordered_set or unordered_map which are Hash Tables
 // Modifying an element, would invalidate ordering. Hence it must be erased first and then reinserted with new value.
@@ -55,8 +57,8 @@ to make lots of changes to the data in your application.
 // 3.
 // Unordered containers (implemented as a hash table - hence O(1) to access)
 // Hash table entries are 'unordered'
-// Unordered set, multiset, 
-// Unordered map, multimap
+// Unordered set, Unordered multiset, 
+// Unordered map, Unordered multimap
 
 
 /* 
@@ -92,7 +94,7 @@ void show_list (list <int> ls) {
     cout << "\nmax_size() : " << ls.max_size(); 
 }
 
-// Properties of list
+// Properties of a list
 // fast insert/remove at ANY point using iterator : O(1)
 // slow insert/remove at the beginning or in the middle : O(n)
 // slow search : O(n)

@@ -153,35 +153,58 @@ void learn_set (void) {
   std::cout << "myset size: " << myset.size() << '\n';
 }
 
+void print_multiset (multiset <int> &mset, string msg) {
+
+  cout << msg << endl;
+  cout << "Multiset myset contains:";
+  for (auto i : mset)
+    cout << ' ' << i;
+  cout << '\n';
+}
+
 void learn_multiset (void) {
  
-  multiset<int> myset;
+  int myints[]= {77,30,16,2,30,30 };
+
+  // A multiset is an ordered data struct
+  multiset<int> multist(myints, myints + 6); // 2 16 30 30 30 77 
+
+  print_multiset(multist, "Created multiset");
 
   for (int i=10; i>0; i--) 
-    myset.insert(i*10); // 10 20 30 40 50 60 70 80 90
+    multist.insert(i*10); 
 
-  myset.insert(30);
-  myset.insert(30);
-  myset.insert(80);
-  myset.insert(60);
+  multist.insert(30);
+  multist.insert(30);
+  multist.insert(80);
+  multist.insert(60);
 
+  // How to walk duplicate elements
+  // equal_range: Returns the bounds of a range that includes all the elements in the container that are equivalent to val.
+  // The function returns a pair, whose member pair::first is the lower bound of the range, 
+  // and pair::second is the upper bound.
+  auto rangeItr = multist.equal_range(30);
+  int cnt = 0;
+  for (auto it = rangeItr.first; it != rangeItr.second; it++) {
+    cout << "elem: " << *it << " cnt = " << ++cnt << endl;
+  }
   // Lower bound is the pointer to first >= occurence
-  auto itlow = myset.lower_bound(30);
+  auto itlow = multist.lower_bound(30);
 
   // Upper bound is the pointer to first > occurence
-  auto itup = myset.upper_bound(30);
+  auto itup = multist.upper_bound(30);
 
-  myset.erase(itlow, itup); 
+  multist.erase(itlow, itup); 
 
   std::cout << "Multiset myset contains:";
-  for (auto i : myset)
+  for (auto i : multist)
     cout << ' ' << i;
   cout << '\n';
 }
 
 int main () {
  
-  learn_set();
+  //learn_set();
   learn_multiset();
 
   return 0;

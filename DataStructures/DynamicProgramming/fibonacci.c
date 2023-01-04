@@ -30,11 +30,10 @@ the staircase ?
    14 377
  */
 int fibonacci (int num) {
-// O(2^n) calls
-    if (num < 0)
-        return -1;
-    if (num < 2) return num;
 
+    if (num < 2) return num;
+    // time complexity : O(2^n) calls
+    // space complexity : O(n) (for the function call stack depth)
     return fibonacci(num-1) + fibonacci(num-2);
 }
     
@@ -51,7 +50,8 @@ using Dynamic programming.
 
 */
 
-/* Memoization based. Dynamic programming. Without recursion
+/* 
+    Memoization based. Dynamic programming. Without recursion
  */
 
 unsigned int fibonacci_lookup (unsigned int n) {
@@ -81,7 +81,8 @@ unsigned int fibonacci_dp_recursion (unsigned int n, unsigned int lookup[]) {
         lookup[n] = n;
         return n;
     }
-    // following two calls O(2n) + 1 (first call)
+    // Time complexity : O(2*n) 
+    // Space complexity : O(n)
     unsigned int result = fibonacci_dp_recursion(n-1, lookup) + fibonacci_dp_recursion(n-2, lookup);
     lookup[n] = result;
 

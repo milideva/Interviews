@@ -39,7 +39,7 @@ Example 3:
 Input: words = ["z","x","z"]
 Output: ""
 Explanation: The order is invalid, so return "".
- 
+
 
 Constraints:
 
@@ -48,45 +48,53 @@ Constraints:
 words[i] consists of only lowercase English letters.
 */
 
-class Solution {
-  
-  unordered_map <char, int> inDegree; // char->numCharsBefore
-  unordered_map <char, vector<char>> graph;
+class Solution
+{
+
+  unordered_map<char, int> inDegree; // char->numCharsBefore
+  unordered_map<char, vector<char>> graph;
   string result = "";
-  
-  bool buildGraph(vector<string>& words) {
-    for (auto w : words) {
-      for (auto c: w) {
-	inDegree[c] = 0;
-	graph[c] = vector<char>();
+
+  bool buildGraph(vector<string> &words)
+  {
+    for (auto w : words)
+    {
+      for (auto c : w)
+      {
+        inDegree[c] = 0;
+        graph[c] = vector<char>();
       }
     }
-    
-    for (int i = 0; i < words.size() - 1; i++) {
+
+    for (int i = 0; i < words.size() - 1; i++)
+    {
       auto w1 = words[i];
-      auto w2 = words[i+1];
-      if (w1.length() > w2.length() && w1.find(w2) == 0) {
-	return false;
+      auto w2 = words[i + 1];
+      if (w1.length() > w2.length() && w1.find(w2) == 0)
+      {
+        return false;
       }
       // char after common len, can not have ordering
       auto commonLen = min(w1.length(), w2.length());
-      
-      for (int j = 0; j < commonLen; j++) {
-	auto parentCh = w1[j];
-	auto childCh = w2[j];
-        
-	if (parentCh != childCh) {
-	  // First different character within commonLength
-	  // parentCh comes before childCh
-	  graph[parentCh].push_back(childCh);
-	  // someone is before childCh
-	  inDegree[childCh]++;
-	  // no further ordering
-	  break;
-	}
+
+      for (int j = 0; j < commonLen; j++)
+      {
+        auto parentCh = w1[j];
+        auto childCh = w2[j];
+
+        if (parentCh != childCh)
+        {
+          // First different character within commonLength
+          // parentCh comes before childCh
+          graph[parentCh].push_back(childCh);
+          // someone is before childCh
+          inDegree[childCh]++;
+          // no further ordering
+          break;
+        }
       }
     }
-    
+
     return true;
   }
 
@@ -94,10 +102,10 @@ class Solution {
 
     https://en.wikipedia.org/wiki/Topological_sorting#Algorithms
 
-    topo sort using BFS 
+    topo sort using BFS
 
     Kahn's algorithm:
-    
+
     First, find a list of "start nodes" which have no incoming edges
     and insert them into a set S; at least one such node must exist in
     a non-empty acyclic graph. Then:
@@ -108,73 +116,83 @@ class Solution {
 
     while S is not empty do
         remove a node n from S
-	add n to L
-	for each node m with an edge e from n to m do
-	    remove edge e from the graph
-	    if m has no other incoming edges then
+  add n to L
+  for each node m with an edge e from n to m do
+      remove edge e from the graph
+      if m has no other incoming edges then
                  insert m into S
 
     if graph has edges then
          return error   (graph has at least one cycle)
-    else 
+    else
          return L   (a topologically sorted order)
-    
+
 
     An alternative algorithm for topological sorting is based on depth-first search.
 
    */
-  void bfsTopoSort(void) {
-    queue <char> q;
-    for (auto [ch, count]: inDegree) {
-      if (count == 0) {
-	q.push(ch);
+  void bfsTopoSort(void)
+  {
+    queue<char> q;
+    for (auto [ch, count] : inDegree)
+    {
+      if (count == 0)
+      {
+        q.push(ch);
       }
     }
-        
-    while (!q.empty()) {
-      auto vertex = q.front(); q.pop();
+
+    while (!q.empty())
+    {
+      auto vertex = q.front();
+      q.pop();
       result += vertex;
       // decrement the indegree for each child as we are removing the source vertex
-      for (auto child : graph[vertex]) {
-	inDegree[child]--;
-	if (inDegree[child] == 0) {
-	  q.push(child);
-	}
+      for (auto child : graph[vertex])
+      {
+        inDegree[child]--;
+        if (inDegree[child] == 0)
+        {
+          q.push(child);
+        }
       }
     }
-    
-    if (result.size() != inDegree.size()) 
+
+    if (result.size() != inDegree.size())
       result = "";
   }
-  
+
 public:
-  string alienOrder(vector<string>& words) {
-    
+  string alienOrder(vector<string> &words)
+  {
+
     bool ret = buildGraph(words);
-    
-    if (ret == false) 
+
+    if (ret == false)
       return result; // something went wrong in ordering
-    
+
     bfsTopoSort();
     return result;
   }
 };
 
-
-int main () {
+int main()
+{
 
   class Solution sol;
 
-  vector <string> words {"wrt","wrf","er","ett","rftt"};
+  vector<string> words{"wrt", "wrf", "er", "ett", "rftt"};
 
   auto res = sol.alienOrder(words);
 
   cout << "Alien Dictionary : ";
-  for (auto w : words) {
+  for (auto w : words)
+  {
     cout << w << " ";
   }
 
-  cout << endl << "Alien Order : " << res << endl;
-  
+  cout << endl
+       << "Alien Order : " << res << endl;
+
   return 0;
 }

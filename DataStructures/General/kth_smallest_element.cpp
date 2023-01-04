@@ -31,7 +31,7 @@ Time Complexity of this solution is O(N Log N)
 /*
 Method 2
 
-A simple optomization is to create a Min Heap of the given n elements and call extractMin() k times.
+A simple optimization is to create a Min Heap of the given n elements and call extractMin() k times.
 Time complexity of this solution is O(n + kLogn).
 
 */

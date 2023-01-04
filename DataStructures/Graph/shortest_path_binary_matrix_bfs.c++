@@ -29,7 +29,7 @@ public:
         if (row == 0) return -1;
         int col = grid[0].size();
         if (col == 0) return -1;
-        if (grid[0][0] != 0 || grid[row-1][col-1] != 0) return -1;
+        if (grid[0][0] != 0 || grid[row-1][col-1] != 0) return -1; // start must be empty/unblocked(0)
         if (row == 1 && col == 1 &&  grid[0][0] == 0) return 1;
         
         // Needs a visited state because you may not be able to modify input grid
@@ -50,7 +50,7 @@ public:
             if (i == row-1 && j == col-1) {
                 return d;
             }          
-            // Cheeck all neighbors 
+            // Check all neighbors 
             for (auto [dx, dy] : dirs) {
                 int x = i+dx, y = j+dy;
                 if (x < 0 || x > row-1 || y < 0 || y > col-1) 

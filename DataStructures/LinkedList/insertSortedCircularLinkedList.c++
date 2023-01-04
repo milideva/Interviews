@@ -92,7 +92,7 @@ public:
         if (head->next == head) {
             head->next = n;
             n->next = head;
-            return n;
+            return head->val < n->val ? head : n;
         }
         Node *prev = head;
         Node *curr = head->next;

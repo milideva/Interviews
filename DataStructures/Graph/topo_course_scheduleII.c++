@@ -11,7 +11,7 @@ pairs, return the ordering of courses you should take to finish all courses.
 If there are many valid answers, return any of them. If it is impossible to
 finish all courses, return an empty array.
 
- 
+
 
 Example 1:
 
@@ -54,15 +54,19 @@ All the pairs [ai, bi] are distinct.
 
 using namespace std;
 
-class Solution {
-  vector <int> result;
-public:
-  vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
-    
-    vector <int> indegrees(numCourses, 0);
-    vector <vector<int>> preCourses(numCourses, vector<int>());
+class Solution
+{
+  vector<int> result;
 
-    for (auto pre : prerequisites) {
+public:
+  vector<int> findOrder(int numCourses, vector<vector<int>> &prerequisites)
+  {
+
+    vector<int> indegrees(numCourses, 0);
+    vector<vector<int>> preCourses(numCourses, vector<int>());
+
+    for (auto pre : prerequisites)
+    {
       auto u = pre[0];
       auto v = pre[1];
       // v must come before u
@@ -70,55 +74,62 @@ public:
       // someone before u
       indegrees[u]++;
     }
-    
-    // BFS 
+
+    // BFS
     // push all vertices with 0 incoming edge
-    queue <int> q;
-    for (int i = 0; i < numCourses; i++) {
+    queue<int> q;
+    for (int i = 0; i < numCourses; i++)
+    {
       if (indegrees[i] == 0)
-	q.push(i);
+        q.push(i);
     }
 
-    while (!q.empty()) {
+    while (!q.empty())
+    {
       // Remove the vertex with no incoming edges
-      auto vertex = q.front(); q.pop();
+      auto vertex = q.front();
+      q.pop();
       result.push_back(vertex);
       // decrement indegree for vertex of each edge
-      for (auto pre : preCourses[vertex]) {
-	indegrees[pre]--;
-	if (indegrees[pre] == 0)
-	  q.push(pre);
+      for (auto pre : preCourses[vertex])
+      {
+        indegrees[pre]--;
+        if (indegrees[pre] == 0)
+          q.push(pre);
       }
     }
-    
+
     if (result.size() == numCourses)
       return result;
     // If it is not equal, then a cycle exists!
 
-    //cout << "Cycle: " << result.size() << endl;
+    // cout << "Cycle: " << result.size() << endl;
     return {};
   }
 };
 
-int main () {
-  
+int main()
+{
+
   class Solution sol;
-  vector <vector <int>> v {{5,8},{3,5},{1,9},{4,5},{0,2},{7,8},{4,9}};
-  
+  vector<vector<int>> v{{5, 8}, {3, 5}, {1, 9}, {4, 5}, {0, 2}, {7, 8}, {4, 9}};
+
   vector<int> res = sol.findOrder(10, v);
   cout << "Topo sort on v1: ";
-  for (auto i : res) {
-    cout << i << " " ;
+  for (auto i : res)
+  {
+    cout << i << " ";
   }
   cout << "Done" << endl;
 
-  // cycle exists 
-  vector <vector <int>> v2 { {1,2},{2,3},{3,1},{1,0} };
+  // cycle exists
+  vector<vector<int>> v2{{1, 2}, {2, 3}, {3, 1}, {1, 0}};
   vector<int> res2 = sol.findOrder(4, v2);
 
   cout << "Topo sort on v2 : ";
-  for (auto i : res2) {
-    cout << i << " " ;
+  for (auto i : res2)
+  {
+    cout << i << " ";
   }
 
   cout << endl;

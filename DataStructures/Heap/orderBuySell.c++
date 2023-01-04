@@ -2,14 +2,20 @@
 
 1801. Number of Orders in the Backlog
 
-You are given a 2D integer array orders, where each orders[i] = [pricei, amounti, orderTypei] denotes that amounti orders have been placed of type orderTypei at the price pricei. The orderTypei is:
+You are given a 2D integer array orders, 
+where each orders[i] = [pricei, amounti, orderTypei] denotes that amounti orders have been placed of type orderTypei at the price pricei. 
+The orderTypei is:
 
 0 if it is a batch of buy orders, or
 1 if it is a batch of sell orders.
 
-Note that orders[i] represents a batch of amounti independent orders with the same price and order type. All orders represented by orders[i] will be placed before all orders represented by orders[i+1] for all valid i.
+Note that orders[i] represents a batch of amounti independent orders with the same price and order type. 
+All orders represented by orders[i] will be placed before all orders represented by orders[i+1] for all valid i.
 
-There is a backlog that consists of orders that have not been executed. The backlog is initially empty. When an order is placed, the following happens:
+There is a backlog that consists of orders that have not been executed. 
+The backlog is initially empty. 
+
+When an order is placed, the following happens:
 
 If the order is a buy order, you look at the sell order with the
 smallest price in the backlog. If that sell order's price is smaller

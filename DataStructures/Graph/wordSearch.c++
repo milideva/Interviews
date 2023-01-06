@@ -13,6 +13,9 @@
 
     Input: board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCB"
     Output: false
+    
+    Input: board = [["C","A","A"],["A","A","A"],["B","C","D"]], word ="AAB"
+    Output: true
 
     Constraints:
 
@@ -42,20 +45,25 @@ class Solution {
     bool dfs (vector<vector<char>>& board, int i, int j,
             vector<vector<bool>>& visited, string& word, int wi) {
         
-        if (wi == word.size())
+        if (wi == word.size() - 1)
             return true;
         if (!isSafe(i, j)) 
             return false;
-        if (word[wi] != board[i][j] or visited[i][j])
-            return false;
-
         visited[i][j] = true;
         for (int k = 0; k < 4; k++) {
             int ix = i + x[k];
             int jy = j + y[k];
+            if (word[wi+1] != board[ix][jy] or visited[ix][jy])
+                continue;
+
+            // Typical mistake#1, return dfs unconditionally
+            // should return only if word is found
+            // otherwise continue the loop to try neighbors
             if (dfs(board, ix, jy, visited, word, wi+1)) 
                 return true;
         }
+        // Typical mistake#2, must backtrack here
+        // The word was not found, mark it unvisited
         visited[i][j] = false;
         return false;
     }
@@ -72,6 +80,8 @@ public:
 
         for (int i = 0; i < r; i++) {
             for (int j = 0; j < c; j++) {
+                if (word[0] != board[i][j] or visited[i][j])
+                    continue;
                 bool found = dfs(board, i, j, visited, word, 0);
                 if (found) {
                     return true;
@@ -94,6 +104,7 @@ void printBoard (vector <vector <char>> &board) {
 bool test (vector <vector <char>> &board, string word) {
     Solution sol;
     printBoard(board);
+    cout << "word: " << word << endl;
     return sol.exist(board, word);
 }
 
@@ -102,15 +113,21 @@ int main (void) {
     vector <vector <char>> board = {{'A','B','C','E'},{'S','F','C','S'},{'A','D','E','E'}};
     string word = "ABCCED";
     bool output = test(board, word);
-    cout << "word: " << word << " found:" << output << endl;
+    cout << "found:" << output << endl;
     
     word = "SEE";
     output = test(board, word);
-    cout << "word: " << word << " found:" << output << endl;
+    cout << "found:" << output << endl;
     
     word = "ABCB";
     output = test(board, word);
-    cout << "word: " << word << " found:" << output << endl;
+    cout << "found:" << output << endl;
+    
+    board = {{'C','A','A'},{'A','A','A'},{'B','C','D'}};
+    word = "AAB";
+    output = test(board, word);
+    cout << "found:" << output << endl;
+    
     
     return 0;
 }

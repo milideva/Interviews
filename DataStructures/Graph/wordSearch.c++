@@ -27,6 +27,12 @@
 
 */
 
+/*
+    Time: O(m * n * 4^|word|) => 4 recursive calls inside dfs
+    Space: O(4^|word|) => function call stack for 4 recursive calls
+
+*/
+
 #include <iostream>
 #include <vector>
 using namespace std;

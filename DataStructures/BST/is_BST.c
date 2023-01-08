@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 /*
+98. Validate Binary Search Tree
   The left subtree of a node contains only nodes with keys less than the
   node's key.  The right subtree of a node contains only nodes with keys
   greater than the node's key.  The left and right subtree each must also be a
@@ -63,20 +64,20 @@ bool isBST (node *node) {
         return true;
 
     /* Check immediate nodes */
-    if (node->left && node->left->key > node->key) return false;
-    if (node->right && node->right->key < node->key) return false;
+    if (node->left && node->left->key >= node->key) return false;
+    if (node->right && node->right->key <= node->key) return false;
 
     /* Get the values of max Left subtree and min Right subtree */
     if (node->left)  {
         int maxL = max(node->left);
         /* max in left subtree must be < this node */
-        if (maxL > node->key) return false;
+        if (maxL >= node->key) return false;
     }
 
     if (node->right) {
         int minR = min(node->right);
         /* min in right subtree must be > this node */
-        if (minR < node->key) return false;
+        if (minR <= node->key) return false;
     }
 
     /* Recurse */
@@ -99,7 +100,7 @@ bool isBST_2 (node *node, int min, int max) {
     /* Empty tree is a BST */
     if (!node) return true;
     
-    if (node->key < min || node->key > max) return false;
+    if (node->key <= min || node->key >= max) return false;
     
     return isBST_2(node->left, min, node->key) && 
         isBST_2(node->right, node->key, max);
@@ -109,8 +110,8 @@ bool isBST_2 (node *node, int min, int max) {
 bool isBST_3 (node *node, int *min, int *max) {
     if (!node) return true;
     
-    if (min && node->key < *min) return false;
-    if (max && node->key > *max) return false;
+    if (min && node->key <= *min) return false;
+    if (max && node->key >= *max) return false;
 
     return isBST_3(node->left, min, &node->key) && isBST_3(node->right, &node->key, max);
 }

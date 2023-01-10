@@ -705,6 +705,68 @@ node_t* swapPairs (node_t* head) {
     return nh;
 }
 
+
+typedef node_t ListNode;
+ListNode* reverseHelper(ListNode* start, ListNode* end) {
+    ListNode* curr = start;
+    ListNode *next, *prev = NULL;
+        
+    if (!start) return end;
+    if (!end) return start;
+    if (start == end) return start;
+
+    while (curr) {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        if (curr == end)
+            break;
+            
+        curr = next;
+    }
+    return curr;
+}
+
+ListNode* reverseBetween(ListNode* head, int left, int right) {
+    if (!head) return NULL;
+    ListNode *prev1, *next2, *curr, *start, *end;
+    prev1 = NULL;
+    int count = 1;
+    curr = head;
+        
+    if (left >= right) return head;
+
+    while (count < left && curr) {
+        prev1 = curr;
+        curr = curr->next;
+        count++;
+    }
+    if (curr == NULL) 
+        return head;
+
+    start = curr;
+
+    while (count < right && curr) {
+        curr = curr->next;
+        count++;
+    }
+    if (curr == NULL)
+        return head;
+
+    end = curr;
+    next2 = curr->next;
+
+    ListNode *revHead = reverseHelper(start, end);
+    if (prev1) {
+        prev1->next = revHead;
+    }
+    start->next = next2;
+    if (start == head) {
+        return revHead;
+    }
+    return head;
+}
+
 /******************************  Test code *******************************/
 static node_t *build_list (int start, int end, int step,
                            bool random, bool sorted)

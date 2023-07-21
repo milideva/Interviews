@@ -13,7 +13,7 @@ Notice that you may not slant the container.
 
 Input: height = [1,8,6,2,5,4,8,3,7]
 Output: 49
-Explanation: The above vertical lines are represented by array [1,8,6,2,5,4,8,3,7]. 
+Explanation: The above vertical lines are represented by an array [1,8,6,2,5,4,8,3,7]. 
 In this case, the max area of water (blue section) the container can contain is 49.
 
 
@@ -33,17 +33,6 @@ n == height.length
 using namespace std;
 
 class Solution {
-    int min (int a, int b) {
-        return a < b ? a : b;
-    }
-
-    int getArea (vector <int>& height, int i, int j) {
-        if (i < 0 || i >= height.size())
-            return 0;
-        if (j < 0 || j >= height.size())
-            return 0;
-        return min(height[i], height[j]) * abs(j - i);
-    }
 
 public:
     int maxArea (vector <int>& height) {
@@ -52,10 +41,10 @@ public:
         int l = 0;
         int r = sz - 1;
         while (l < r) {
-            int area = getArea(height, l, r);
-            if (area > maxArea) {
-                maxArea = area;
-            }
+
+            int area = min(height[l], height[r]) * (r - l);
+            maxArea = max(area, maxArea);
+            
             if (height[l] > height[r]) {
                 r--;
             } else {

@@ -14,8 +14,7 @@ using namespace std;
 // Time:  O(n ^2)
 // Space: O(∣ans∣)
     
-class Solution
-{
+class Solution {
 
     // hash table elem2index :  a[i] -> i
     unordered_map<int, int> elem2index;

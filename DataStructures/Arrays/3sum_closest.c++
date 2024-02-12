@@ -25,6 +25,10 @@ Input: nums = [0,0,0], target = 1
 Output: 0
 
 */
+
+// Time:  O(n^2)
+// Space: O(∣ans∣)
+
 class Solution {
     int closestSum = 1000000000;
 public:

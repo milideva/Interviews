@@ -54,19 +54,16 @@ All the pairs [ai, bi] are distinct.
 
 using namespace std;
 
-class Solution
-{
+class Solution {
   vector<int> result;
 
 public:
-  vector<int> findOrder(int numCourses, vector<vector<int>> &prerequisites)
-  {
+  vector<int> findOrder(int numCourses, vector<vector<int>> &prerequisites) {
 
-    vector<int> indegrees(numCourses, 0);
-    vector<vector<int>> preCourses(numCourses, vector<int>());
+    vector <int> indegrees(numCourses, 0);
+    vector <vector <int>> preCourses(numCourses, vector<int>());
 
-    for (auto pre : prerequisites)
-    {
+    for (auto pre: prerequisites) {
       auto u = pre[0];
       auto v = pre[1];
       // v must come before u
@@ -76,23 +73,20 @@ public:
     }
 
     // BFS
-    // push all vertices with 0 incoming edge
+    // Push all vertices with 0 incoming edge
     queue<int> q;
-    for (int i = 0; i < numCourses; i++)
-    {
+    for (int i = 0; i < numCourses; i++) {
       if (indegrees[i] == 0)
         q.push(i);
     }
 
-    while (!q.empty())
-    {
+    while (!q.empty()) {
       // Remove the vertex with no incoming edges
       auto vertex = q.front();
       q.pop();
       result.push_back(vertex);
-      // decrement indegree for vertex of each edge
-      for (auto pre : preCourses[vertex])
-      {
+      // decrement indegree for the vertex of each edge
+      for (auto pre: preCourses[vertex]) {
         indegrees[pre]--;
         if (indegrees[pre] == 0)
           q.push(pre);
@@ -108,16 +102,14 @@ public:
   }
 };
 
-int main()
-{
+int main () {
 
   class Solution sol;
   vector<vector<int>> v{{5, 8}, {3, 5}, {1, 9}, {4, 5}, {0, 2}, {7, 8}, {4, 9}};
 
   vector<int> res = sol.findOrder(10, v);
   cout << "Topo sort on v1: ";
-  for (auto i : res)
-  {
+  for (auto i: res) {
     cout << i << " ";
   }
   cout << "Done" << endl;
@@ -127,8 +119,7 @@ int main()
   vector<int> res2 = sol.findOrder(4, v2);
 
   cout << "Topo sort on v2 : ";
-  for (auto i : res2)
-  {
+  for (auto i: res2) {
     cout << i << " ";
   }
 

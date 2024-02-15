@@ -5,7 +5,8 @@
 using namespace std;
 
 /* 
-3sum closest
+
+16. 3Sum Closest
 
 Given an integer array nums of length n and an integer target, find
 three integers in nums such that the sum is closest to target.
@@ -30,14 +31,13 @@ Output: 0
 // Space: O(∣ans∣)
 
 class Solution {
-    int closestSum = 1000000000;
 public:
     int threeSumClosest(vector<int>& nums, int target) {
-    
+        int closestSum = INT_MAX - abs(target);
         sort(begin(nums), end(nums));
             
         for (auto i = 0; i < size(nums) - 2; i++) {
-            int left = i+1;
+            int left = i + 1;
             int right = size(nums) - 1;
             
             while (left < right) {

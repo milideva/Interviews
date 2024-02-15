@@ -5,7 +5,16 @@ using namespace std;
 #define MAXN 10000 
 #define SQRSIZE  100 
   
-// The key concept of this technique is to decompose given array into small chunks specifically of size sqrt(n).
+
+  /*
+  
+  Square Root Decomposition Technique is one of the most common query optimization techniques used. 
+
+  It allows you to perform some common operations (finding sum of the elements of the sub-array, finding the minimal/maximal element, etc.) in  
+  O(sqrt n)  operations, which is much faster than O(n) for the trivial algorithm.
+
+  The key concept of this technique is to preprocess, decompose a given array into small chunks specifically of size sqrt(N).
+  */
 
 int arr[MAXN];               // original array 
 int block[SQRSIZE];          // decomposed array 

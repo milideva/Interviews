@@ -37,9 +37,15 @@ Constraints:
 
 */
 
+#include <vector>
+#include <unordered_map>
+#include <iostream>
+
+using namespace std;
+
 class Solution {
 public:
-  vector<int> twoSum(vector<int>& nums, int target) {
+  vector <int> twoSum (vector <int>& nums, int target) {
     unordered_map <int, int> hashtable;
     
     for (int i = 0; i < nums.size(); i++) {
@@ -51,3 +57,27 @@ public:
     
   }
 };
+
+void test (vector <int>& v, int target) {
+  Solution sol;
+  auto out = sol.twoSum(v, target);
+  cout << "out = [" << out[0] << " , " << out[1] << "]" << endl;
+
+  if (target != v[out[0]] + v[out[1]]) {
+    cout << "target:" << target << " not matching with " << v[out[0]] << " + " << v[out[1]] << endl;
+  } else {
+    cout << "target:" << target << " matches with " << v[out[0]] << " + " << v[out[1]] << endl;
+  }
+}
+
+int main () {
+  vector <int> v1 = {2,7,11,15};
+  int target = 9;
+  test(v1, target);
+
+  vector <int> v2 = {3,2,4};
+  target = 6;
+  test(v2, target);
+  
+  return 0;
+}

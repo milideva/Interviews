@@ -38,33 +38,76 @@ using namespace std;
 class Solution {
 public:
   int lengthOfLongestSubstring(string s) {        
-    unordered_map <char, int> charMap;
-    int start = -1;
-    int maxLen = 0;
+    unordered_map <char, int> char2Index; // Track char to index map
+    int l = 0, r = 0;
+    int result = 0;
     
-    for (int i = 0; i < s.size(); i++) {
-      if (charMap.count(s[i]) != 0) {
-        start = max(start, charMap[s[i]]);
+    while (r < s.length()) {
+      // Find the char in the map
+      auto it = char2Index.find(s[r]);
+      if (it == char2Index.end()) {
+        // char not found, update the max
+        result = max(result, r - l + 1);
+      } else {
+        // char is already seen, move to the next char
+        if (char2Index[s[r]] >= l) {
+          l = char2Index[s[r]] + 1;
+        }
       }
-      charMap[s[i]] = i;
-      maxLen = max(maxLen, i - start);
+      char2Index[s[r]] = r;
+      r++;
     }
+    return result;
+  }
     
-    return maxLen;
+  // Without using map 
+  int lengthOfLongestSubstring_2(string s) {        
+    int char2Index[128]; // Track char to index map
+    int l = 0, r = 0;
+    int result = 0;
+    
+    for (int i = 0; i < 128; ++i) {
+      char2Index[i] = -1;
+    }
+
+    while (r < s.length()) {
+      // Find the char in the map
+      auto index = char2Index[s[r]];
+      if (index == -1) {
+        // char not found, update the max
+        result = max(result, r - l + 1);
+      } else {
+        // char is already seen, move to the next char
+        if (index >= l) {
+            l = index + 1;
+        }
+      }
+      char2Index[s[r]] = r;
+      r++;
+    }
+    return result;
   }
 };
+
+void test (string s) {
+  Solution sol;
+  int len = sol.lengthOfLongestSubstring(s);
+  cout << "String:" << s << " \t\tLongest Substring Without Repeating Characters len:" << len << '\n' ;
+
+  len = sol.lengthOfLongestSubstring_2(s);
+  cout << "String:" << s << " \t\tLongest Substring Without Repeating Characters len:" << len << '\n' ;
+}
 
 int main (void) {
   Solution sol;
   
   string s1 = "abcabcbb";
-  
-  int len = sol.lengthOfLongestSubstring(s1);
-  cout << "String:" << s1 << " len:" << len << '\n' ;
-  
+  test(s1);
+
   string s2 = "pwwkew";
-  len = sol.lengthOfLongestSubstring(s2);
-  cout << "String:" << s2 << " len:" << len << '\n' ;
-  
+  test(s2);
+
+  test("");
+
   return 0;
 }

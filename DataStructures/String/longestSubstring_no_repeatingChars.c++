@@ -60,6 +60,10 @@ public:
     return result;
   }
     
+  /*
+      Time O(n)
+      Space O(128)=O(1)
+  */
   // Without using map 
   int lengthOfLongestSubstring_2(string s) {        
     int char2Index[128]; // Track char to index map

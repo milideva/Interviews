@@ -96,7 +96,7 @@ public:
 };
 
 void test_set () {
-  class MyCalendar my;
+  MyCalendar my;
   bool ret;
   ret = my.book(10, 20); // returns true
   cout << "Start: " << 10 << " End: " << 20 << " Booked:" << ret << endl;

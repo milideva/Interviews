@@ -45,7 +45,7 @@ cache_line *allocate_cacheline (unsigned cache_tag) {
     return n;
 }
 
-/* Search takes O(N), consider moving this to a hash map for O(log n) */
+/* Search takes O(N), consider moving this to a hash map for O(1) */
 cache_line *search_cache (cache *c, unsigned cache_tag) {
     if (!c) return NULL;
 

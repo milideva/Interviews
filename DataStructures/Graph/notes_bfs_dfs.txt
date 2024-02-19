@@ -46,9 +46,9 @@ basic structure of a DFS
 void DFS_recur(int curr) {        
 	V[curr] = true; //visited
 	
-	for(int i : G[curr]) // for all edgs from curr node
+	for(int i : G[curr]) // for all edges from curr node
 		if(!V[i]) 
-            DFS_recur(i);
+                  DFS_recur(i);
 }
 
 void DFS(Graph g) {        
@@ -64,7 +64,7 @@ void DFS_recur(int curr) {
 
 	for(int i : G[curr])
 		if(!V[i]) 
-            DFS_recur(i);
+                  DFS_recur(i);
 
 	S.push(curr); // Push curr in stack
 }
@@ -101,7 +101,7 @@ void BFS (Graph g, root) {
            
            // for all edges of node n
            for (m : G[curr]) {
-               if (visited[m] == false {
+               if (visited[m] == false) {
                   visited[m] = true;
                   q.push( {m, n.level+1}); // distance keep track
                }

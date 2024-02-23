@@ -1,4 +1,6 @@
-Depth First Traversals:
+Types of tree traversals:
+
+* Depth First Traversals:
 (a) Inorder (Left, Root, Right) 
     In-order traversal is used to retrive data of binary search tree in sorted order.
 
@@ -10,5 +12,5 @@ Depth First Traversals:
     Postorder traversal is used to delete the tree.
     Postorder traversal is also used to get the postfix expression of an expression tree.
 
-Breadth First or Level Order Traversal 
+* Breadth First or Level Order Traversal 
 

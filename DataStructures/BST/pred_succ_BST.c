@@ -9,11 +9,10 @@ struct node_ {
 
 typedef struct node_ node_t;
 
-
-/* 
-   Inorder predecessor and successor for a given key in BST.
+/*
+   In-order predecessor and successor for a given key in BST.
    Pseudo code
-   0. start from root, succ = pred = NULL 
+   0. start from root, succ = pred = NULL
    1. terminate
         if (node == null) return
 
@@ -118,17 +117,17 @@ node_t* delete_node (node_t* root, int key)  {
       node_t *temp = root->left; 
       free(root); 
       return temp; 
-    } 
-  
-    // node with two childre.
-    // Get the inorder successor (smallest in the right subtree) 
-    node_t *temp = min_value_node(root->right); 
-    // inorder predecessor (biggest in left subtree) will also do.
-  
-    // Copy the inorder successor's content to this node 
-    root->key = temp->key; 
-  
-    // Delete the inorder successor 
+    }
+
+    // node with two children.
+    // Get the in-order successor (smallest in the right subtree)
+    node_t *temp = min_value_node(root->right);
+    // in-order predecessor (biggest in left subtree) will also do.
+
+    // Copy the in-order successor's content to this node
+    root->key = temp->key;
+
+    // Delete the in-order successor
     root->right = delete_node(root->right, temp->key); 
     
     return root; 

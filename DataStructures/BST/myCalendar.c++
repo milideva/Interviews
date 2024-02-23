@@ -41,7 +41,7 @@ Note:
 using namespace std;
 
 class MyCalendar {
-    set <pair<int, int>> cal;
+  set<pair<int, int>> cal;
 
 public:
     MyCalendar() {   
@@ -65,17 +65,19 @@ public:
 };
 
 class MyCalendarMap {
-    map <int, int> calMap;
-    
-    bool canAdd (int maxConflicts) {
-        int count = 0;
-        for (auto e : calMap) {
-            count += e.second;
-            if (count > maxConflicts) 
-                return false;
-        }
-        return true;
+  map<int, int> calMap;
+
+  bool canAdd(int maxConflicts)
+  {
+    int count = 0;
+    for (auto e : calMap)
+    {
+      count += e.second;
+      if (count > maxConflicts)
+        return false;
     }
+    return true;
+  }
 
 public:
     MyCalendarMap() {   

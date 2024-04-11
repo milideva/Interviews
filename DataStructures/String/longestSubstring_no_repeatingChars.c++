@@ -38,26 +38,20 @@ using namespace std;
 class Solution {
 public:
   int lengthOfLongestSubstring(string s) {        
-    unordered_map <char, int> char2Index; // Track char to index map
-    int l = 0, r = 0;
-    int result = 0;
-    
-    while (r < s.length()) {
-      // Find the char in the map
-      auto it = char2Index.find(s[r]);
-      if (it == char2Index.end()) {
-        // char not found, update the max
-        result = max(result, r - l + 1);
-      } else {
-        // char is already seen, move to the next char
-        if (char2Index[s[r]] >= l) {
-          l = char2Index[s[r]] + 1;
-        }
-      }
-      char2Index[s[r]] = r;
-      r++;
+    int ans = 0;
+    // The substring s[j + 1..i] has no repeating characters.
+    int j = -1;
+    // lastSeen[c] := the index of the last time char c appeared
+    vector<int> lastSeen(128, -1);
+
+    for (int i = 0; i < s.length(); ++i) {
+      // Update j to lastSeen[s[i]], so the window must start from j + 1.
+      j = max(j, lastSeen[s[i]]);
+      ans = max(ans, i - j);
+      lastSeen[s[i]] = i;
     }
-    return result;
+
+    return ans;
   }
     
   /*
@@ -66,27 +60,20 @@ public:
   */
   // Without using map 
   int lengthOfLongestSubstring_2(string s) {        
-    int char2Index[128]; // Track char to index map
+    vector <int> count(128);
     int l = 0, r = 0;
     int result = 0;
     
-    for (int i = 0; i < 128; ++i) {
-      char2Index[i] = -1;
-    }
-
     while (r < s.length()) {
-      // Find the char in the map
-      auto index = char2Index[s[r]];
-      if (index == -1) {
-        // char not found, update the max
-        result = max(result, r - l + 1);
-      } else {
-        // char is already seen, move to the next char
-        if (index >= l) {
-            l = index + 1;
-        }
+      count[s[r]]++; // unconditionally count current char
+      while (count[s[r]] > 1) {
+        // this char already exists
+        // move from left, until you find the char, decrement all left char count by 1
+        count[s[l]]--;
+        l++;
       }
-      char2Index[s[r]] = r;
+      // update max
+      result = max(result, r - l + 1);
       r++;
     }
     return result;
@@ -96,10 +83,10 @@ public:
 void test (string s) {
   Solution sol;
   int len = sol.lengthOfLongestSubstring(s);
-  cout << "String:" << s << " \t\tLongest Substring Without Repeating Characters len:" << len << '\n' ;
+  cout << "String:" << s << " \t\tlengthOfLongestSubstring() Longest Substring Without Repeating Characters len:" << len << '\n' ;
 
   len = sol.lengthOfLongestSubstring_2(s);
-  cout << "String:" << s << " \t\tLongest Substring Without Repeating Characters len:" << len << '\n' ;
+  cout << "String:" << s << " \t\tlengthOfLongestSubstring_2() Longest Substring Without Repeating Characters len:" << len << '\n' ;
 }
 
 int main (void) {
@@ -112,6 +99,10 @@ int main (void) {
   test(s2);
 
   test("");
+
+  // This test case is tricky because t appears first and last and broke earlier code.
+  string s3 = "tmmzuxt";
+  test(s3);
 
   return 0;
 }

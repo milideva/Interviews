@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <unordered_map> 
+#include <set>
 
 using namespace std;
 
@@ -45,67 +46,113 @@ Note: The length of each dimension in the given grid does not exceed 50.
 
 */
 
-void dfs (vector<vector<int>>& grid, int i, int j, string& route) {
-  grid[i][j] = 0;
+void dfs(vector<vector<int>>& grid, vector<vector<bool>>& visited, int i, int j, string& route) {
+  visited[i][j] = true;
   
-  if (i-1 >= 0 && grid[i-1][j]) {
+  if (i - 1 >= 0 && grid[i - 1][j] && !visited[i - 1][j]) {
     route.push_back('u');
-    dfs(grid, i-1, j, route);
+    dfs(grid, visited, i - 1, j, route);
   } else {
     route.push_back('n');
   }
   
-  if (i+1 < grid.size() && grid[i+1][j]) {
+  if (i + 1 < grid.size() && grid[i + 1][j] && !visited[i + 1][j]) {
     route.push_back('d');
-    dfs(grid, i+1, j, route);
+    dfs(grid, visited, i + 1, j, route);
   } else {
     route.push_back('n');
   }
   
-  if (j-1 >= 0 && grid[i][j-1]) {
+  if (j - 1 >= 0 && grid[i][j - 1] && !visited[i][j - 1]) {
     route.push_back('l');
-    dfs(grid, i, j-1, route);
+    dfs(grid, visited, i, j - 1, route);
   } else {
     route.push_back('n');
   }
   
-  if (j+1 < grid[0].size() && grid[i][j+1]) {
+  if (j + 1 < grid[0].size() && grid[i][j + 1] && !visited[i][j + 1]) {
     route.push_back('r');
-    dfs(grid, i, j+1, route);
+    dfs(grid, visited, i, j + 1, route);
   } else {
     route.push_back('n');
   }
 }
 
-void print_routes (unordered_map <string, int> routes) {
-  for (auto [r, c]: routes) {
+void print_routes(unordered_map<string, int>& routes) {
+  for (auto [r, c] : routes) {
     cout << "route: " << r << " count:" << c << endl;
   }
 }
 
-int numDistinctIslands (vector<vector<int>>& grid) {
+int numDistinctIslands(vector<vector<int>>& grid) {
   if (grid.size() == 0 || grid[0].size() == 0) return 0;
   
-  unordered_map <string, int> routes;
+  int rows = grid.size();
+  int cols = grid[0].size();
+  vector<vector<bool>> visited(rows, vector<bool>(cols, false)); // Initialize visited array
   
-  for (int i = 0; i < grid.size(); i++) {
-    for (int j = 0; j < grid[0].size(); j++) {
-      if (grid[i][j]) {
+  unordered_map<string, int> routes;
+  
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      if (grid[i][j] && !visited[i][j]) {
         string route = "";
-        dfs(grid, i, j, route);
+        dfs(grid, visited, i, j, route);
         routes[route]++;
       }
     }
-    
   }
-  print_routes(routes);
+  
+  //print_routes(routes);
+  return routes.size();
+}
+
+// i0 and j0 are starting point co-ordinates which never change
+void dfs_2 (vector<vector<int>>& grid, vector<vector<bool>>& visited, 
+            vector <pair <int, int>>& route,
+            int i, int j, int i0, int j0) {
+  if (i < 0 or i >= grid.size() or j < 0 or j >= grid[0].size())
+    return;
+  if (visited[i][j] == true)
+    return;
+  if (grid[i][j] != 1)
+    return;
+
+  visited[i][j] = true;
+
+  // save the route wrt initial starting point, which never changes.
+  route.push_back({i - i0, j - j0});
+
+  dfs_2(grid, visited, route, i - 1, j, i0, j0);
+  dfs_2(grid, visited, route, i + 1, j, i0, j0);
+  dfs_2(grid, visited, route, i, j - 1, i0, j0);
+  dfs_2(grid, visited, route, i, j + 1, i0, j0);
+            
+}
+
+int numDistinctIslands_2 (vector<vector<int>>& grid) {
+  int r = grid.size();
+  int c = grid[0].size();
+
+  vector <vector <bool>> visited(r, vector<bool> (c));
+
+  set <vector <pair <int, int>>> routes;
+
+  for (int i = 0; i < r; i++) {
+    for (int j = 0; j < c; j++) {
+      vector <pair <int, int>> route;
+      if (grid[i][j] && visited[i][j] == false) {
+        dfs_2(grid, visited, route, i, j, i, j);
+        routes.insert(route);
+      }
+    }
+  }
   return routes.size();
 }
 
 void test (vector<vector<int>> &grid) {
-
-  int count = numDistinctIslands(grid);
-  cout << "Num islands " << count << endl;
+  cout << "Method1: Num islands " << numDistinctIslands(grid) << endl;
+  cout << "Method2 : Num islands " << numDistinctIslands_2(grid) << endl;
 }
 
 int main () {

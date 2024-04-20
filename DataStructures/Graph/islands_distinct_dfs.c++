@@ -77,6 +77,12 @@ void dfs (vector<vector<int>>& grid, int i, int j, string& route) {
   }
 }
 
+void print_routes (unordered_map <string, int> routes) {
+  for (auto [r, c]: routes) {
+    cout << "route: " << r << " count:" << c << endl;
+  }
+}
+
 int numDistinctIslands (vector<vector<int>>& grid) {
   if (grid.size() == 0 || grid[0].size() == 0) return 0;
   
@@ -92,19 +98,45 @@ int numDistinctIslands (vector<vector<int>>& grid) {
     }
     
   }
-  
+  print_routes(routes);
   return routes.size();
+}
+
+void test (vector<vector<int>> &grid) {
+
+  int count = numDistinctIslands(grid);
+  cout << "Num islands " << count << endl;
 }
 
 int main () {
 
-  vector<vector<int>> myvect = { { 1, 1, 1, 1, 0}, 
-                                 { 1, 1, 0, 1, 0}, 
-                                 { 1, 1, 0, 0, 0},
-                                 { 0, 0, 0, 0, 0},
-  };
+  vector<vector<int>> grid = {{1, 1, 0, 0, 0},
+                             {1, 1, 0, 0, 0},
+                             {0, 0, 0, 1, 1},
+                             {0, 0, 0, 1, 1}};
+  test(grid);
 
-  int count = numDistinctIslands(myvect);
-  cout << "Num islands " << count << endl;
+  grid = { { 1, 1, 1, 1, 0}, 
+            { 1, 1, 0, 1, 0}, 
+            { 1, 1, 0, 0, 0},
+            { 0, 0, 0, 0, 0},
+  };
+  test(grid);
+
+  grid = {
+    {1, 1, 1},
+    {1, 0, 1},
+    {1, 1, 1}
+  };
+  test(grid); // Expected: 1
+
+  grid = {
+    {1, 1, 0, 0},
+    {0, 1, 0, 1},
+    {1, 0, 1, 0},
+    {0, 0, 0, 1}
+  };
+  test(grid); // Expected: 2
+
   return 0;
 }

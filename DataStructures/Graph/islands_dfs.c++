@@ -50,20 +50,33 @@ bool is_safe (vector<vector<char>>& grid, int i, int j) {
   return true;
 }
     
+bool can_visit (vector<vector<char>>& grid, vector<vector<bool>>& visited, int row, int col) {
+  if (is_safe(grid, row, col) == false) {
+    return false;
+  }
+  if (grid[row][col] != '1') {
+    return false;
+  }
+  if (visited[row][col] == true) {
+    return false;
+  }
+  return true;
+}
 
-void count_islands_dfs (vector<vector<char>>& grid, int i, int j, 
-                        vector<vector<bool>>& visited) {
+void count_islands_dfs (vector<vector<char>>& grid, 
+                        vector<vector<bool>>& visited, int i, int j) {
   static int row_adj[] = {-1, 0, 0, +1};
   static int col_adj[] = {0, -1, +1, 0};
   
+  // We mark this node as visited and run dfs on its edges
   visited[i][j] = true;
   
   for (int k = 0; k < 4; k++) {
     int row = i + row_adj[k];
     int col = j + col_adj[k];
-    
-    if (is_safe(grid, row, col) && (grid[row][col] == '1') && !visited[row][col]) {
-      count_islands_dfs(grid, row, col, visited);
+
+    if (can_visit(grid, visited, i, j)) {
+      count_islands_dfs(grid, visited, row, col);
     }
   }
 }
@@ -73,16 +86,17 @@ int numIslands (vector<vector<char>>& grid) {
   int m = grid.size();
   if (!m) return 0;
   int n = grid[0].size();
-  vector <vector <bool>> visited;
-  //vector<vector<bool>> visited(m, vector<bool> (n, false));
-  visited.assign(m, vector <bool> (n, false));
+  //vector <vector <bool>> visited;
+  //visited.assign(m, vector <bool> (n, false));
+  vector<vector<bool>> visited(m, vector<bool> (n, false));
+  
   
   int count = 0;
   
   for (int i = 0; i < m; i++ ) {
     for (int j = 0; j < n; j++ ) {
-      if (visited[i][j] == false &&  grid[i][j] == '1') {
-        count_islands_dfs(grid, i, j, visited);
+      if (can_visit(grid, visited, i, j)) {
+        count_islands_dfs(grid, visited, i, j);
         count++;
       }
     }

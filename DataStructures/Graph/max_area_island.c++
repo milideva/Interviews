@@ -30,6 +30,9 @@ Example 2:
 Given the above grid, return 0.
 
 Note: The length of each dimension in the given grid does not exceed 50.
+
+Time : O(m*n)
+Space : O(1)
 */
 
 #include <vector>
@@ -45,7 +48,7 @@ class Solution {
     return x < r && x >= 0  && y >= 0 && y < c;
   }
   
-  int dfs (vector<vector<int>>& grid, int i, int j) {
+  int dfs_2 (vector<vector<int>>& grid, int i, int j) {
     visited[i][j] = true;
     int count = 1;
     
@@ -61,10 +64,30 @@ class Solution {
         count += dfs(grid, dx, dy);
       }
     }
-    
     return count; 
   }
   
+  int dfs(vector<vector<int>>& grid, int i, int j) {
+    // Check all error conditions 
+    // 1. Check if off the size
+    if (i < 0 || i == grid.size() || j < 0 || j == grid[0].size())
+      return 0;
+    // 2. Check if grid is not set
+    if (grid[i][j] != 1)
+      return 0;
+    // 3. Check if already visited
+    if (visited[i][j])
+      return 0;
+
+    // Mark visited first
+    visited[i][j] = true;
+
+    // try all 4 paths
+    return 1 +
+           dfs(grid, i + 1, j) + dfs(grid, i - 1, j) +
+           dfs(grid, i, j + 1) + dfs(grid, i, j - 1);
+  }
+
 public:
   int maxAreaOfIsland(vector<vector<int>>& grid) {
     r = grid.size();
@@ -78,7 +101,7 @@ public:
     for (int i = 0; i < r; i++) {
       for (int j = 0; j < c; j++) {
         if (grid[i][j] && visited[i][j] == false)
-          maxArea = max(maxArea, dfs(grid, i, j));
+          maxArea = max(maxArea, dfs_2(grid, i, j));
       }
     }
     return maxArea;

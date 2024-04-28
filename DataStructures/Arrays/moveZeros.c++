@@ -31,23 +31,14 @@ class Solution {
 public:
     void moveZeroes (vector<int>& nums) {
         int sz = nums.size();
-        /* Use 2 pointer technique */
-        int readPtr = 0;
         int writePtr = 0;
-        while (readPtr < sz && writePtr < sz) {
-            if (nums[readPtr] == 0) {
-                readPtr++;
-                continue;
+        for (auto num: nums) {
+            if (num != 0) {
+                nums[writePtr++] = num;
             }
-            if (nums[writePtr]) {
-                writePtr++;
-                readPtr++;
-                continue;
-            }
-            nums[writePtr] = nums[readPtr];
-            nums[readPtr] = 0;
-            writePtr++;
-            readPtr++;
+        }
+        while (writePtr < sz) {
+            nums[writePtr++] = 0;
         }
         return; 
     }

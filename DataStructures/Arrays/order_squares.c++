@@ -35,9 +35,9 @@ public:
       int lsq = in[left] * in[left];
       int rsq = in[right] * in[right];
       if (lsq < rsq) {
-	result.push_back(lsq);
-	left++;
-	continue;
+	      result.push_back(lsq);
+	      left++;
+	      continue;
       }
       result.push_back(rsq);
       right++;

@@ -33,13 +33,13 @@ Method 2 (Using Min Heap)
 In a min heap, the keys of parent nodes are less than or equal to those of the
 children and the lowest key is in the root node.
 
-A simple optimization is to create a Min Heap of the given n elements and call
+A simple optimization is to create a Min Heap of the all n elements and call
 extractMin() k times.
 
-O(n) for insert 
-Logn for the height of heap, times k extract min.
+O(n) for each insert , there are n inserts to n * O(log n)
+Logn for the height of heap, times k extract min, so k * O(log n)
  
-Time complexity of this solution is O(n + kLogn).
+Time complexity of this solution is (k + n) * O(log n).
 
 
 Method 3 (Using Max-Heap)
@@ -49,13 +49,13 @@ those of the children and the highest key is in the root node.
 
 Build a Max-Heap of the first k elements (arr[0] to arr[k-1]) => O(k)
 For each next element (arr[k] to arr[n-1]), compare it with root of MaxHeap.
-a) If the element is less than the root then make it root, call heapify for MH
+a) If the element is less than the root then make it root, call heapify for maxHeap
 b) Else ignore it.
 // The step 2 is O((n-k)*logk)
 
 Finally, root of the MaxHeap is the kth smallest element.
 
-Time complexity of this solution is O(k + (n-k)*Logk)
+Time complexity of this solution is O(k * log k+ (n-k) *  logk) = O(n * log k)
 
 children :: left : 2n + 1 and right : 2n + 2 in a zero-based array. 
 

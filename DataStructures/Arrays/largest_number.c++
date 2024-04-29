@@ -23,13 +23,34 @@ using namespace std;
     0 <= nums[i] <= 109
 */
 
+void print (vector <int> &nums, string prefix) {
+    cout << prefix ;
+    for (auto n: nums) {
+        cout << " " << n ;
+    }
+    cout << endl;
+}
+
+/*
+
+Before sorting :  10 2
+After sorting :  2 10
+answer: 210
+
+Before sorting :  3 30 34 5 9
+After sorting :  9 5 34 3 30
+answer: 9534330
+
+*/
 class Solution {
 public:
     string largestNumber(vector<int>& nums) {
+        print(nums, "Before sorting : ");
         sort(nums.begin(), nums.end(), [](int a, int b){
           return to_string(a)+to_string(b) > to_string(b)+to_string(a);
         });
-
+        print(nums, "After sorting : ");
+        
         string ans;
         for (int i = 0; i < nums.size(); i++) {
             ans += to_string(nums[i]);
@@ -45,10 +66,7 @@ public:
 void test (vector <int> nums) {
     Solution sol;
     auto str = sol.largestNumber(nums);
-    for (auto n: nums)
-        cout << n << " ";
-
-    cout << endl << "str: " << str << endl << endl;
+    cout << "answer: " << str << endl << endl;
 }
 
 int main (void) {

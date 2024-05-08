@@ -40,6 +40,44 @@ void print_map(std::string_view comment, const std::map<std::string, int>& m) {
     std::cout << '\n';
 }
  
+void test_multimap (void) {
+    std::multimap<int, std::string> myMultimap;
+
+    // Adding elements to the multimap
+    myMultimap.insert(std::make_pair(1, "Apple"));
+    myMultimap.insert(std::make_pair(2, "Banana"));
+    myMultimap.insert(std::make_pair(1, "Apricot")); // Duplicate key
+
+    // Printing elements of the multimap
+    std::cout << "Multimap elements:" << std::endl;
+    for (const auto& pair : myMultimap) {
+        std::cout << pair.first << ": " << pair.second << std::endl;
+    }
+
+    // Deleting only one element with a specific key
+    int keyToDelete = 1;
+    auto it = myMultimap.find(keyToDelete);
+    if (it != myMultimap.end()) {
+        myMultimap.erase(it);
+    }
+    // Printing elements of the multimap after deletion
+    std::cout << "\nMultimap elements after deletion of key " << keyToDelete << ":" << std::endl;
+    for (const auto& pair : myMultimap) {
+        std::cout << pair.first << ": " << pair.second << std::endl;
+    }
+
+    // Deleting elements with a specific key
+    keyToDelete = 1;
+    auto range = myMultimap.equal_range(keyToDelete);
+    myMultimap.erase(range.first, range.second);
+
+    // Printing elements of the multimap after deletion
+    std::cout << "\nMultimap elements after deletion of key " << keyToDelete << ":" << std::endl;
+    for (const auto& pair : myMultimap) {
+        std::cout << pair.first << ": " << pair.second << std::endl;
+    }
+}
+
 int main() {
     // Create a map of three (string, int) pairs
     std::map<std::string, int> m{{"CPU", 10}, {"GPU", 15}, {"RAM", 20}};
@@ -66,4 +104,6 @@ int main() {
  
     m.clear();
     std::cout << std::boolalpha << "8) Map is empty: " << m.empty() << '\n';
+
+    test_multimap();
 }

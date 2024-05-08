@@ -11,6 +11,7 @@ bool isAlpha (string s) {
 }
 
 void toLower (string &str) {
+// transform(InputIterator first, InputIterator last, OutputIterator result, UnaryOperation unary_op) -> OutputIterator
   transform(str.begin(), str.end(), str.begin(), ::tolower);
 }
 

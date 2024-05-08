@@ -13,11 +13,17 @@ unsigned int hash(const std::string& key) {
 class ConsistentHashing {
     
 private:
-    std::map<unsigned int, std::string> hashRing; // sorted by hash of node to node
-    const int maxVirtualKeys;
+    std::map <unsigned int, std::string> hashRing; // sorted by hash of node to node
+    const int numKeys;
+    const int numNodes;
 
 public:
-    ConsistentHashing(int maxKeys) : maxVirtualKeys(maxKeys) {
+    ConsistentHashing(int maxNodes, int maxKeys) : numNodes(maxNodes), numKeys(maxKeys) {
+        // Add nodes to the hash ring
+        for (auto i = 1; i <= maxNodes; i++) {
+            std::string node = "Node" + std::to_string(i);
+            addNode(node);
+        }
     }
     
     // Add node to the hash ring
@@ -47,15 +53,19 @@ public:
         return it->second; // Return the node responsible for the key
     }
     
-    int getMaxVirtualKeys (void) {
-        return maxVirtualKeys;
+    int getNumKeys (void) {
+        return numKeys;
+    }
+
+    int getNodes (void) {
+        return numNodes;
     }
 };
 
 
 void test(ConsistentHashing &ch, std::string text) {
     
-    for (auto i = 1; i <= ch.getMaxVirtualKeys(); i++) {
+    for (auto i = 1; i <= ch.getNumKeys(); i++) {
         std::string key = "data" + std::to_string(i);
         std::cout << "Key " << key << " is " << text << " mapped to node: " << ch.getNode(key) << std::endl;
     }
@@ -63,13 +73,10 @@ void test(ConsistentHashing &ch, std::string text) {
 
 
 int main() {
-    ConsistentHashing ch(100);
-    // Add some nodes to the hash ring
-    ch.addNode("Node1");
-    ch.addNode("Node2");
-    ch.addNode("Node3");
-    ch.addNode("Node4");
-    ch.addNode("Node5");
+    int numNodes = 5;
+    int numKeys = 100;
+
+    ConsistentHashing ch(numNodes, numKeys);
 
     // Get the node responsible for a key
     std::string testString = "currently";

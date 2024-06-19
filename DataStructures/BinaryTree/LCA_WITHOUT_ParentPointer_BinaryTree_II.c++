@@ -52,14 +52,20 @@ class Solution {
         return (findNode(root->left, n) || findNode(root->right, n));
     }
     
-    TreeNode* lca(TreeNode* root, TreeNode* p, TreeNode* q) {
+    TreeNode* lca(TreeNode* root, TreeNode* p, TreeNode* q, bool &foundP, bool &foundQ) {
         if (!root) 
-            return nullptr;
-        if (root == p || root == q) 
-            return root;
+          return nullptr;
+        if (root == p) {
+          foundP = true;
+          return root;
+        }
+        if (root == q) {
+          foundQ = true;
+          return root;
+        }
         
-        TreeNode *left = lca(root->left, p, q);
-        TreeNode *right = lca(root->right, p, q);
+        TreeNode *left = lca(root->left, p, q, foundP, foundQ);
+        TreeNode *right = lca(root->right, p, q, foundP, foundQ));
 
         if (left && right) 
             return root;
@@ -69,16 +75,16 @@ class Solution {
 
 public:
   TreeNode* lowestCommonAncestor (TreeNode *root, TreeNode* p, TreeNode * q) {
-        if (!root || !p || !q) return nullptr;
-        
-        if (!findNode(root, p)) {
-            return nullptr;
-        }
-        if (!findNode(root, q)) {
-            return nullptr;
-        }
+    if (!root || !p || !q) return nullptr;
+    bool foundP, foundQ;
+    foundP = foundQ = false;
 
-        return lca(root, p, q);
+    TreeNode *ancestor = lca(root, p, q, foundP, foundQ);
+
+    if (foundP and foundQ) {
+      return ancestor;
+    }
+    return nullptr; // either p or q not found, no common ancestor.
   }
 };
 

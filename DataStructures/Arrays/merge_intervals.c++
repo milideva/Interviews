@@ -30,25 +30,38 @@ class Solution {
     return a[0] < b[0];
   }
 public:
-  
-  vector<vector<int>> merge (vector<vector<int>>& intervals) {
-    int len = intervals.size();
-    if (len <=1) return intervals;
-    
-    sort(intervals.begin(), intervals.end(), cmp);
-    vector<vector<int>> result;
-    
-    result.push_back(intervals[0]);
-    for (int i = 1; i < len; i++) {
-      if (intervals[i][0] > result.back()[1]) {
-        result.push_back(intervals[i]);
-        continue;
-      }
-      result.back()[1] = max(result.back()[1],  intervals[i][1]);
-    }
-    
-    return result;
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+    vector<vector<int>> ans;
+
+    ranges::sort(intervals);
+
+    for (const vector<int>& interval : intervals)
+      if (ans.empty() || ans.back()[1] < interval[0])
+        ans.push_back(interval);
+      else
+        ans.back()[1] = max(ans.back()[1], interval[1]);
+
+    return ans;
   }
+  
+  // vector<vector<int>> merge (vector<vector<int>>& intervals) {
+  //   int len = intervals.size();
+  //   if (len <=1) return intervals;
+    
+  //   sort(intervals.begin(), intervals.end(), cmp);
+  //   vector<vector<int>> result;
+    
+  //   result.push_back(intervals[0]);
+  //   for (int i = 1; i < len; i++) {
+  //     if (intervals[i][0] > result.back()[1]) {
+  //       result.push_back(intervals[i]);
+  //       continue;
+  //     }
+  //     result.back()[1] = max(result.back()[1],  intervals[i][1]);
+  //   }
+    
+  //   return result;
+  // }
   
 };
 

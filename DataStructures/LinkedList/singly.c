@@ -466,12 +466,12 @@ node_t *random_clone (node_t *head) {
       // Need to clean up original list and return;
       curr = head;
       while (curr) {
-	node_t *copy = curr->next;
-	if (copy && copy->value == curr->value) {
-	  node_t *next = copy->next;
-	  free(copy);
-	  curr = next;
-	}
+	    node_t *copy = curr->next;
+        if (copy && copy->value == curr->value) {
+	      node_t *next = copy->next;
+          free(copy);
+	      curr = next;
+        }
       }
       return NULL;
     }

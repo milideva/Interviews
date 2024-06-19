@@ -77,10 +77,11 @@ void test_multimap (void) {
     // Deleting a specific occurrence of key keyToDelete by value
     std::string valueToDelete = "Apricot"; // Value of the occurrence to delete
     auto range = myMultimap.equal_range(keyToDelete);
+    // equal_range returns std::pair containing a pair of iterators defining the wanted range: the first pointing to the first element that is not less than key and the second pointing to the first element greater than key.
     for (auto it = range.first; it != range.second; ++it) {
         if (it->second == valueToDelete) {
-            myMultimap.erase(it); // Delete the occurrence
-            break; // Break after deleting the first occurrence with the specified value
+            myMultimap.erase(it);
+            break;
         }
     } 
     std::cout << "\nMultimap elements after deletion of a specific key " << keyToDelete << " with value: " << valueToDelete << std::endl;

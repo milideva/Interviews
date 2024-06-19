@@ -77,8 +77,8 @@ public:
         ListNode *curr = head;
         ListNode *nextPairHead, *next;
         while (curr && curr->next) {
-            next = curr->next; // 2
-            nextPairHead = curr->next->next; //3
+            next = curr->next; // curr: #1 next: #2
+            nextPairHead = curr->next->next; // nextPairHead: #3
             if (nextPairHead && nextPairHead->next) {
                 curr->next = nextPairHead->next;
             } else {

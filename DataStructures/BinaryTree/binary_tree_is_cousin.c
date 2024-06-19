@@ -86,6 +86,43 @@ static node_t *newNode (int key) {
     return n;
 }
 
+// Use BFS to process nodes level by level, which is ideal for this case
+// as we want to compare level and parent
+bool are_cousins(TreeNode* root, int a, int b) {
+    if (root == NULL) return false;
+
+    queue<pair<TreeNode*, TreeNode*>> q; // Pair of (node, parent)
+    q.push({root, nullptr});
+
+    while (!q.empty()) {
+        int size = q.size();
+        TreeNode* parentA = NULL;
+        TreeNode* parentB = NULL;
+
+        for (int i = 0; i < size; ++i) {
+            pair<TreeNode*, TreeNode*> front = q.front();
+            q.pop();
+
+            TreeNode* node = front.first;
+            TreeNode* parent = front.second;
+
+            if (node->val == a) parentA = parent;
+            if (node->val == b) parentB = parent;
+
+            if (node->left) q.push({node->left, node});
+            if (node->right) q.push({node->right, node});
+
+            // Check if both nodes are found at the same level
+            if (parentA && parentB) return parentA != parentB;
+        }
+
+        // If only one node is found at this level, they cannot be cousins
+        if ((parentA && !parentB) || (!parentA && parentB)) return false;
+    }
+
+    return false; // If we exit the loop without finding both nodes
+}
+
 int main () {
 
   /* Constructed binary tree is

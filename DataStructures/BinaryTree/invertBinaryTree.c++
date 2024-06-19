@@ -13,6 +13,22 @@ Output: [4,7,2,9,6,3,1]
 Input: root = [2,1,3]
 Output: [2,3,1]
 
+Example 
+
+Before invert :
+       6
+     /   \
+   13     5
+  / \    / \
+ 7   8  1   3
+
+After invert : 
+       6
+     /   \
+    5     13
+   / \   /  \
+  3   1 8    7
+
 */
 struct TreeNode
 {

@@ -37,10 +37,10 @@ class Solution {
     }
     bool isUni = true;
     if (root->left) {
-      isUni = isUnival(root->left) && (root->val == root->left->val);
+      isUni = (root->val == root->left->val) && isUnival(root->left);
     }
     if (root->right) {
-      isUni = isUnival(root->right) && isUni && (root->val == root->right->val);
+      isUni = isUni && (root->val == root->right->val) && isUnival(root->right);
     }
     if (!isUni) 
       return false;
@@ -52,7 +52,7 @@ public:
   int countUnivalSubtrees(TreeNode* root) {
     if (!root) return 0;
     isUnival(root);
-        return count;
+    return count;
   }
 };
 

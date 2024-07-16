@@ -54,10 +54,13 @@ class Solution {
     int x[4] = {-1,0,1,0};
     int y[4] = {0,1,0,-1};
     
-    void dfs (int i, int j, vector<vector<int>>& grid, bool &flag) {      
+    void dfs (int i, int j, vector<vector<int>>& grid, bool &flag) { 
+        // First mark the node visited.     
         visited[i][j] = true;
+
+        // A closed island, needs to be completely surrounded by water.
         if (i == 0 or j == 0 or i == rows-1 or j == cols-1) {
-            flag = true;
+            flag = true; // // not a closed island
             return;
         }
         for (int k = 0; k < 4; k++) {
@@ -79,12 +82,16 @@ public:
         
         visited.resize(rows, vector<bool> (cols, false));
         
+        // Skip edges for closed islands by starting with 1 instead of 0
+        // and ending with < rows-1 instead of < rows
         for (int i = 1; i < rows-1; i++) {
             for (int j = 1; j < cols-1; j++) {
                 if (grid[i][j] == 0 && visited[i][j] == false) {
                     bool flag = false;
                     dfs(i, j, grid, flag);
-                    if (flag == false) {
+                    if (flag == true) {
+                        // skip counting it
+                    } else {
                         count++;
                     }
                 }

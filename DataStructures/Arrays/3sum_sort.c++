@@ -37,6 +37,7 @@ using namespace std;
   
   <vector<vector <int>> result;
   // This is with sorting allowed. If sorting not allowed, this method wont work
+  // If you need the index in the return, then sorting is not allowed or you need to save original index
   sort(nums.begin(), nums.end());
   
   int len = nums.size();

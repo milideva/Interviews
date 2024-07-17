@@ -7,13 +7,13 @@
 typedef unsigned int (*hash_function)(const void *data);
 typedef struct bloom_filter * bloom_t;
 
-struct bloom_hash {
+struct bloom_hash_funcs {
     hash_function func;
-    struct bloom_hash *next;
+    struct bloom_hash_funcs *next;
 };
 
 struct bloom_filter {
-    struct bloom_hash *func;
+    struct bloom_hash_funcs *func;
     void *bits; // points to size #bytes
     size_t size; // in bytes
 };
@@ -28,7 +28,7 @@ bloom_t bloom_create (size_t size) {
 void bloom_free (bloom_t filter) {
 	if (filter) {
 		while (filter->func) {
-			struct bloom_hash *h;
+			struct bloom_hash_funcs *h;
 			filter->func = h->next;
 			free(h);
 		}
@@ -37,10 +37,10 @@ void bloom_free (bloom_t filter) {
 	}
 }
 
-void bloom_add_hash (bloom_t filter, hash_function func) {
-	struct bloom_hash *h = calloc(1, sizeof(struct bloom_hash));
+void bloom_add_hash_funcs (bloom_t filter, hash_function func) {
+	struct bloom_hash_funcs *h = calloc(1, sizeof(struct bloom_hash_funcs));
 	h->func = func;
-	struct bloom_hash *last = filter->func;
+	struct bloom_hash_funcs *last = filter->func;
 	while (last && last->next) {
 		last = last->next;
 	}
@@ -52,7 +52,7 @@ void bloom_add_hash (bloom_t filter, hash_function func) {
 }
 
 void bloom_add (bloom_t filter, const void *item) {
-	struct bloom_hash *h = filter->func;
+	struct bloom_hash_funcs *h = filter->func;
 	uint8_t *bits = filter->bits;
 	while (h) {
 		unsigned int hash = h->func(item);
@@ -63,7 +63,7 @@ void bloom_add (bloom_t filter, const void *item) {
 }
 
 bool bloom_test (bloom_t filter, const void *item) {
-	struct bloom_hash *h = filter->func;
+	struct bloom_hash_funcs *h = filter->func;
 	uint8_t *bits = filter->bits;
 	while (h) {
 		unsigned int hash = h->func(item);
@@ -103,8 +103,8 @@ unsigned int jenkins (const void *_str) {
 
 int main () {
 	bloom_t bloom = bloom_create(8);
-	bloom_add_hash(bloom, djb2);
-	bloom_add_hash(bloom, jenkins);
+	bloom_add_hash_funcs(bloom, djb2);
+	bloom_add_hash_funcs(bloom, jenkins);
 	printf("Should be 0: %d\n", bloom_test(bloom, "hello world"));
 	bloom_add(bloom, "hello world");
 	printf("Should be 1: %d\n", bloom_test(bloom, "hello world"));

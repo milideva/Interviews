@@ -63,7 +63,7 @@ public:
 class LRUCache {
     int cap;
     unordered_map <int, pair<int, list <int>::iterator>> hashtable; // key <--> { data, itr}
-    list <int> cache; // key @ itr
+    list <int> listcache; // key @ itr
     
 public:
   LRUCache(int capacity) {
@@ -74,33 +74,33 @@ public:
     if (hashtable.find(key) == hashtable.end()) 
       return -1;
     
-    cache.erase(hashtable[key].second);
-    cache.push_back(key);
-    hashtable[key].second = --cache.end();
+    listcache.erase(hashtable[key].second);
+    listcache.push_back(key);
+    hashtable[key].second = --listcache.end();
     
     return hashtable[key].first;
   }
   
   void put(int key, int value) {
     if (hashtable.find(key) != hashtable.end()) {
-      // found in cache - update the value, and LRU location
+      // found key - remove, update the value, and LRU location
       
-      cache.erase(hashtable[key].second);
-      cache.push_back(key);
-      hashtable[key].second = --cache.end();
-      
+      listcache.erase(hashtable[key].second); // remove from listCache using iterator
+      listcache.push_back(key); // update LRU location in listCache to the end
+
+      hashtable[key].second = --listcache.end();
       hashtable[key].first = value;
       return;
     }
     
     // Not found, allocate
-    if (cache.size() == cap) {
-      // evict the front
-      hashtable.erase(cache.front());
-      cache.pop_front();
+    if (listcache.size() == cap) {
+      // evict the front of lru
+      hashtable.erase(listcache.front()); // evict from hashtable, using iterator from front of listcache
+      listcache.pop_front(); // evict the front of listcache now
     }            
-    cache.push_back(key);
-    hashtable[key] = make_pair(value, --cache.end());
+    listcache.push_back(key);
+    hashtable[key] = make_pair(value, --listcache.end()); // save key --->  pair {value, itr} 
     
   }
 };

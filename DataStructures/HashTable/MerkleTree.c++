@@ -3,23 +3,26 @@
 #include <string>
 #include <functional>
 
+using namespace std;
+
 class MerkleNode {
 public:
-    std::size_t hash;
+    size_t hash;
     MerkleNode* left;
     MerkleNode* right;
 
-    MerkleNode(std::size_t hashValue) : hash(hashValue), left(nullptr), right(nullptr) {}
+    MerkleNode(size_t hashValue) : hash(hashValue), left(nullptr), right(nullptr) {}
 };
 
 class MerkleTree {
 public:
     MerkleNode* root;
 
-    MerkleTree(const std::vector<std::string> &dataBlocks) {
-        std::vector<MerkleNode*> leaves;
+    MerkleTree(const vector<string> &dataBlocks) {
+        vector <MerkleNode *> leaves;
         for (const auto &data : dataBlocks) {
-            leaves.push_back(new MerkleNode(std::hash<std::string>{}(data)));
+            MerkleNode *leafNode = new MerkleNode(hash<string>{}(data));
+            leaves.push_back(leafNode);
         }
         root = buildTree(leaves);
     }
@@ -29,16 +32,16 @@ public:
     }
 
 private:
-    MerkleNode* buildTree(std::vector<MerkleNode*> &nodes) {
+    MerkleNode* buildTree (vector <MerkleNode *> &nodes) {
         if (nodes.size() == 1) {
             return nodes[0];
         }
 
-        std::vector<MerkleNode*> parentNodes;
+        vector <MerkleNode *> parentNodes;
 
         for (size_t i = 0; i < nodes.size(); i += 2) {
             if (i + 1 < nodes.size()) {
-                std::size_t combinedHash = std::hash<std::size_t>{}(nodes[i]->hash ^ nodes[i + 1]->hash);
+                size_t combinedHash = hash<size_t>{}(nodes[i]->hash ^ nodes[i + 1]->hash);
                 MerkleNode* parentNode = new MerkleNode(combinedHash);
                 parentNode->left = nodes[i];
                 parentNode->right = nodes[i + 1];
@@ -62,7 +65,7 @@ private:
 };
 
 int main() {
-    std::vector<std::string> dataBlocks = {
+    vector<string> dataBlocks = {
         "block1",
         "block2",
         "block3",
@@ -70,7 +73,7 @@ int main() {
     };
 
     MerkleTree tree(dataBlocks);
-    std::cout << "Merkle Root: " << tree.root->hash << std::endl;
+    cout << "Merkle Root: " << tree.root->hash << endl;
 
     return 0;
 }

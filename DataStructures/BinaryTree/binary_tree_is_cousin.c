@@ -123,6 +123,46 @@ bool are_cousins(TreeNode* root, int a, int b) {
     return false; // If we exit the loop without finding both nodes
 }
 
+// C++ version
+
+// Recursive function to find levels and parents of nodes a and b
+static void findLevelsAndParents(node_t *root, node_t *target, int level, node_t *parent, int &level_target, node_t *&parent_target)
+{
+  if (!root)
+  {
+    return;
+  }
+
+  if (root == target)
+  { // when the target node is found
+    level_target = level;
+    parent_target = parent; // we need to save parent
+    return;                 // Early termination if target found
+  }
+
+  findLevelsAndParents(root->left, target, level + 1, root, level_target, parent_target);
+  findLevelsAndParents(root->right, target, level + 1, root, level_target, parent_target);
+}
+
+static bool isCousin(node_t *root, node_t *a, node_t *b)
+{
+  if (!root || !a || !b)
+  {
+    return false;
+  }
+
+  int level_a = -1, level_b = -1; // level is the depth from root
+  node_t *parent_a = nullptr;
+  node_t *parent_b = nullptr;
+
+  // Find levels and parents for both nodes a and b
+  findLevelsAndParents(root, a, 0, nullptr, level_a, parent_a);
+  findLevelsAndParents(root, b, 0, nullptr, level_b, parent_b);
+
+  // Check if levels are equal and parents are different
+  return level_a != -1 && level_b != -1 && level_a == level_b && parent_a != parent_b;
+}
+
 int main () {
 
   /* Constructed binary tree is

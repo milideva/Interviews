@@ -3,7 +3,7 @@
 using namespace std;
 
 struct node_ {
-    node_ *left, * right;
+    node_ *left, *right;
     int key;
 };
 

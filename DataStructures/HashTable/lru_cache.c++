@@ -22,6 +22,11 @@ Implement the LRUCache class:
 
 using namespace std;
 
+enum class LruCacheReturnCodes {
+    NotFound,
+    Success
+};
+
 // very clear logic
 class LRUCache2 {
 
@@ -34,18 +39,23 @@ public:
   
   LRUCache2 (int capacity) : size(capacity) {}
   
-  int get (int key) {
-    if (k2v.count(key) == 0) return -1;
+  LruCacheReturnCodes get (int key, int &val) {
+    if (k2v.count(key) == 0) {
+      return LruCacheReturnCodes::NotFound;
+    }
     updateLRU(key);
-    return k2v[key];
+    val = k2v[key];
+    return LruCacheReturnCodes::Success;
   }
+
   void put (int key, int value) {
     if (k2v.size() == size && k2v.count(key) == 0)
       evict();
     updateLRU(key);
     k2v[key] = value;
   }
-// lru insert or erase - the beauty is, for List - all other iterators and references unaffected
+
+  // lru insert or erase - the beauty is, for List - all other iterators and references unaffected
   void updateLRU (int key) {
     if (k2v.count(key)) 
       lru.erase(k2itr[key]);

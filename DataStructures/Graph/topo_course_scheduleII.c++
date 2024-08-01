@@ -84,8 +84,9 @@ public:
       // Remove the vertex with no incoming edges
       auto vertex = q.front();
       q.pop();
+      // student has taken the pre-requisite
       result.push_back(vertex);
-      // decrement indegree for the vertex of each edge
+      // decrement indegree for each dependent class
       for (auto pre: preCourses[vertex]) {
         indegrees[pre]--;
         if (indegrees[pre] == 0)

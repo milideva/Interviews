@@ -34,48 +34,23 @@ struct TreeNode {
 
 class Solution {
 
-  vector <int> vec;
-    int sum;
-    int getNumber (void) {
-        int num = 0;
-        for (auto i = 0; i < size(vec); i++) {
-            num = num * 2 + vec[i];
-        }
-        return num;
-    }
-
 public:
 
-    int sumRootToLeaf2 (TreeNode* root) {
-        if (!root) {
-            return 0;
-        }
-        vec.push_back(root->val);
-        if (!root->right && !root->left) {
-            auto n = getNumber();
-	    cout << "Number: " << n << endl;
-            vec.pop_back();
-            sum += n;
-            return sum;
-        }
-        auto l = sumRootToLeaf(root->left);
-        auto r = sumRootToLeaf(root->right);
-        vec.pop_back();
-        return sum;
-    } 
-  
-    int helper (TreeNode *node, int n) {
-        if (!node) return 0;
-        n = (n * 2) + node->val;
-        if (!node->left && !node->right) {
-            return n;
-        }
-        return helper(node->left, n) + helper(node->right, n);
+  void dfs (TreeNode *node, int val, int& ans) {
+    if (!node) return;
+    val = (val * 2) + node->val;
+    if (!node->left && !node->right) {
+      ans += val;
+      return;
     }
-    // Without Global variables
-    int sumRootToLeaf (TreeNode* root) {
-        return helper(root, 0);
-    }
+    dfs(node->left, val, ans);
+    dfs(node->right, val, ans);
+  }
+  int sumRootToLeaf (TreeNode* root) {
+    int ans = 0;
+    dfs(root, 0, ans);
+    return ans;
+  }
 };
 
 static void inorder (TreeNode *root)  {

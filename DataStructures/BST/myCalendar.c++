@@ -41,20 +41,23 @@ Note:
 using namespace std;
 
 class MyCalendar {
-  set<pair<int, int>> cal;
+  set <pair <int, int>> cal; // set is an ordered data structure
 
 public:
     MyCalendar() {   
     }
     
   bool book(int start, int end) {
-    auto curr = cal.lower_bound({start, end});
-    
+    auto curr = cal.lower_bound({start, end}); // lower_bound returns first >= element
+
+    // check curr's start < end
     if (curr != cal.end() && curr->first < end) {
+
       return false;
     }
     if (curr != cal.begin()) {
       auto prev = --curr;
+      // check prev's end time is > start time
       if (prev->second > start)
         return false;
       
@@ -65,13 +68,11 @@ public:
 };
 
 class MyCalendarMap {
-  map<int, int> calMap;
+  map <int, int> calMap;
 
-  bool canAdd(int maxConflicts)
-  {
+  bool canAdd(int maxConflicts) {
     int count = 0;
-    for (auto e : calMap)
-    {
+    for (auto e : calMap) {
       count += e.second;
       if (count > maxConflicts)
         return false;

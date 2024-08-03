@@ -21,7 +21,7 @@ int kthSmallest_sort(int arr[], int n, int k) {
     Method 2
 
     A simple optimization is to create a Min Heap of the given n elements and call extractMin() k times.
-    Time complexity: O(n + k * logn)
+    Time complexity: O(n * log n + k * log n)
     Space complexity: O(n)
 
 */
@@ -45,7 +45,7 @@ int kthSmallest_minHeap(int arr[], int n, int k) {
     We can also use Max Heap for finding the k’th smallest element. 
     
     Following is algorithm.
-    1) Build a Max-Heap MH of the first k elements (arr[0] to arr[k-1]) of the given array. O(k)
+    1) Build a Max-Heap MH of the first k elements (arr[0] to arr[k-1]) of the given array. O(k * log k)
 
     2) For each element, after the k’th element (arr[k] to arr[n-1]), compare it with root of MH.
     ……a) If the element is less than the root then make it root and call heapify for MH
@@ -54,7 +54,7 @@ int kthSmallest_minHeap(int arr[], int n, int k) {
 
     3) Finally, root of the MH is the kth smallest element.
 
-    Time complexity: O(k + (n-k) * logk)
+    Time complexity: O(n * logk)
     Space complexity: O(k)
 */
 

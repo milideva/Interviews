@@ -12,14 +12,18 @@ etc
 
 e.g. ; Docker / Rocket / OpenVz 
 
-Based on 2 fundamental constructs :
+Based on 3 fundamental constructs :
 on top of Linux cgroups and namespaces and jail (chroot)
+
 - cgroup : for grouping : kernel construct that enforces limits on the resources consumed by a
 collection of processes such as memory, block io, net_cls net_prio, cpu, devices cgroup
 
 - namespaces : provides isolation
 Older example of fs ns : jail : chroot changes root of a process (and its children) to a new dir.
 Those programs can not see/access files outside the new root.
+
+- seccomp : filter syscalls 
+
 
 Per container, one cgroup is created and one namespace is created.
 Developers have no control over tweaking the limits.

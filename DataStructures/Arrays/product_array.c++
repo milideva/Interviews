@@ -28,82 +28,75 @@
 
 using namespace std;
 
-class Solution
-{
+class Solution {
 public:
-    vector<int> productExceptSelf1(vector<int> &nums)
-    {
+    vector<int> productExceptSelf1(vector<int> &nums) {
 
         int sz = nums.size();
         if (sz <= 1)
             return nums;
-        vector<int> prod(sz, 0);
 
+        vector<int> prod(sz, 0);
         vector<int> left(sz, 0);
         vector<int> right(sz, 0);
 
         left[0] = 1;
-        for (int i = 1; i < sz; i++)
-        {
+        for (int i = 1; i < sz; i++) {
             left[i] = left[i - 1] * nums[i - 1];
         }
+
         right[sz - 1] = 1;
-        for (int i = sz - 2; i >= 0; i--)
-        {
+        for (int i = sz - 2; i >= 0; i--) {
             right[i] = right[i + 1] * nums[i + 1];
         }
-        for (int i = 0; i < sz; i++)
-        {
+
+        for (int i = 0; i < sz; i++) {
             prod[i] = left[i] * right[i];
         }
+
         return prod;
     }
 
-    vector<int> productExceptSelf2(vector<int> &nums)
-    {
+    vector<int> productExceptSelf2(vector<int> &nums) {
 
         // Without extra space of left and right array
-        int n = nums.size(), prod = 1;
+        int prod, n = nums.size();
         vector<int> ans(n);
 
-        for (int i = 0; i < n; i++)
-        {
+        prod = 1;
+        for (int i = 0; i < n; i++) {
             prod *= nums[i];
             ans[i] = prod;
         }
 
         prod = 1;
-        for (int i = n - 1; i > 0; i--)
-        {
+        for (int i = n - 1; i > 0; i--) {
             ans[i] = ans[i - 1] * prod;
             prod *= nums[i];
         }
+
         ans[0] = prod;
 
         return ans;
     }
 };
 
-void printArray(vector<int> vec, string msg)
-{
+void printArray(vector<int> vec, string msg) {
     cout << msg;
-    for (auto v : vec)
-    {
+    for (auto v : vec) {
         cout << v << "  ";
     }
     cout << endl;
 }
 
-void test (vector<int> &vec)
-{
+void test (vector<int> &vec) {
     Solution sol;
     printArray(vec, "Input array : ");
     auto res = sol.productExceptSelf2(vec);
     printArray(res, "Output product array : ");
 }
 
-int main(void)
-{
+int main(void) {
     vector<int> v = {1, 2, 3, 4};
     test(v);
 

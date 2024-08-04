@@ -1,5 +1,7 @@
 /*
 
+207. Course Schedule
+
 There are a total of n courses you have to take labelled from 0 to n - 1.
 
 Some courses may have prerequisites, for example, if prerequisites[i] = [ai, bi]
@@ -53,76 +55,68 @@ All the pairs [ai, bi] are distinct.
 #include <queue>
 
 using namespace std;
-
 class Solution {
-  vector<int> result;
+    unordered_map <int, vector<int>> prereqMap; // prereqMap[a] = b, c, d etc
+    unordered_map <int, int> numPrereqs; // numPrereqs[a] = 3; a has 3 pre-req.s
 
 public:
-  vector<int> findOrder(int numCourses, vector<vector<int>> &prerequisites) {
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
 
-    vector <int> indegrees(numCourses, 0);
-    vector <vector <int>> preCourses(numCourses, vector<int>());
+        // This init is necessary for the courses that have no pre-req.s
+        for (int i = 0; i < numCourses; ++i) {
+            numPrereqs[i] = 0;
+        }
+        
+        vector <int> courses;
+        for (auto vec: prerequisites) {
+            auto a = vec[0]; // a depends on b
+            auto b = vec[1];
+            prereqMap[b].push_back(a);// course 'a' depends on b, b must come before a
+            numPrereqs[a]++; // how many does course 'a' depend on?
+        }
 
-    for (auto pre: prerequisites) {
-      auto u = pre[0];
-      auto v = pre[1];
-      // v must come before u
-      preCourses[v].push_back(u);
-      // someone before u
-      indegrees[u]++;
-    }
-
-    // BFS
-    // Push all vertices with 0 incoming edge
-    queue<int> q;
-    for (int i = 0; i < numCourses; i++) {
-      if (indegrees[i] == 0)
-        q.push(i);
-    }
-
-    while (!q.empty()) {
-      // Remove the vertex with no incoming edges
-      auto vertex = q.front();
-      q.pop();
-      // student has taken the pre-requisite
-      result.push_back(vertex);
-      // decrement indegree for each dependent class
-      for (auto pre: preCourses[vertex]) {
-        indegrees[pre]--;
-        if (indegrees[pre] == 0)
-          q.push(pre);
-      }
-    }
-
-    if (result.size() == numCourses)
-      return result;
-    // If it is not equal, then a cycle exists!
-
-    // cout << "Cycle: " << result.size() << endl;
-    return {};
-  }
+        queue <int> q;
+        for (auto [course, numPrereqs]: numPrereqs) {
+            if (numPrereqs == 0) {
+                q.push(course);
+            }
+        }
+        while (!q.empty()) {
+            int course = q.front(); q.pop();
+            courses.push_back(course); // take this class that does not depend on any other prereq
+            for (auto dependent : prereqMap[course]) {
+                numPrereqs[dependent]--;
+                if (numPrereqs[dependent] == 0)
+                    q.push(dependent);
+            }
+        }
+        if (courses.size() == numCourses) {
+            return true;
+        }
+        return false;
+    } 
 };
 
-int main () {
+void testCanFinish() {
+    Solution solution;
 
-  class Solution sol;
-  vector<vector<int>> v{{5, 8}, {3, 5}, {1, 9}, {4, 5}, {0, 2}, {7, 8}, {4, 9}};
+    vector<vector<int>> v1{{5, 8}, {3, 5}, {1, 9}, {4, 5}, {0, 2}, {7, 8}, {4, 9}};
+    vector<vector<int>> v2{{1, 2}, {2, 3}, {3, 1}, {1, 0}};
 
-  vector<int> res = sol.findOrder(10, v);
-  cout << "Topo sort on v1: ";
-  for (auto i: res) {
-    cout << i << " ";
-  }
-  cout << "Done" << endl;
+    int numCourses1 = 10; // Number of courses for v1
+    int numCourses2 = 4;  // Number of courses for v2
 
-  // cycle exists
-  vector<vector<int>> v2{{1, 2}, {2, 3}, {3, 1}, {1, 0}};
-  vector<int> res2 = sol.findOrder(4, v2);
+    // Test case 1
+    bool result1 = solution.canFinish(numCourses1, v1);
+    cout << "Test case 1: " << (result1 ? "True" : "False") << endl; // Expected output: True
 
-  cout << "Topo sort on v2 : ";
-  for (auto i: res2) {
-    cout << i << " ";
-  }
-
-  cout << endl;
+    // Test case 2
+    bool result2 = solution.canFinish(numCourses2, v2);
+    cout << "Test case 2: " << (result2 ? "True" : "False") << endl; // Expected output: False
 }
+
+int main() {
+    testCanFinish();
+    return 0;
+}
+

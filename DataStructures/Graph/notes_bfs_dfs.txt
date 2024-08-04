@@ -126,3 +126,14 @@ impractical.
 If the search tree is very deep you will need to restrict the search depth for
 depth first search (DFS), anyway (for example with iterative deepening).
 
+* Some intuitions:
+
+BFS divides the graph into layers that are equally distant from the start vertex. 
+This is why it works for finding distances. 
+The top row of vertices is at distance 1, the next row is at distance 2, etc.
+
+DFS is better when you’re really interested in the leaves of the graph 
+(not exactly leaves, but the nodes that are furthest away). 
+In topological sort, you are interested in nodes that have no outgoing edges. 
+In backtracking algorithms, you’re usually interested in “complete” solutions that can’t be further extended. 
+If you have some kind of goal, you usually want to look for it with DFS.

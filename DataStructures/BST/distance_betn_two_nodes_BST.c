@@ -24,6 +24,17 @@ int height_from_node (node_t *root, node_t *me) {
         return 1 + height_from_node(root->left, me);
     return 1 + height_from_node(root->right, me);
 }
+/*
+
+         6
+       /   \
+     2      8
+    / \    / \
+   0   4  7   9
+      / \
+     3   5
+
+*/
 
 node_t *lowest_common_ancestor (node_t *root, node_t *n1, node_t *n2) {
     if (!root || !n1 || !n2) return NULL;
@@ -31,7 +42,7 @@ node_t *lowest_common_ancestor (node_t *root, node_t *n1, node_t *n2) {
         lowest_common_ancestor(root->left, n1, n2);
     if (n1->key > root->key && n2->key > root->key)
         lowest_common_ancestor(root->right, n1, n2);
-   return root; 
+   return root; // This is where one of the p or q is == root->val 
 }
 
 // input is sorted array

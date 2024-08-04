@@ -1,22 +1,21 @@
 
 #include <vector>
-#include <list>
 #include <iostream>
-#include <unordered_set>
 
 using namespace std;
  
 /*
 
-236. Lowest Common Ancestor of a Binary Tree
+1644. Lowest Common Ancestor of a Binary Tree II
 
-Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+Given the root of a binary tree, return the lowest common ancestor (LCA) of two given nodes, p and q. 
+If either node p or q does not exist in the tree, return null. All values of the nodes in the tree are unique.
 
 According to the definition of LCA on Wikipedia: “The lowest common ancestor is
 defined between two nodes p and q as the lowest node in T that has both p and q
 as descendants (where we allow a node to be a descendant of itself).”
 
-Constraint : one of the nodes may not be in the tree.
+***********   Constraint : one of the nodes may not be in the tree. *************
 
 Example 1:
 Input: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
@@ -34,25 +33,46 @@ Output: 1
 
 */
 
+// Definition for a binary tree node.
 struct TreeNode {
-  int val;
-  TreeNode *left;
-  TreeNode *right;
-  TreeNode *parent;
-  TreeNode(int x) : val(x), left(NULL), right(NULL), parent(nullptr) {}
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
+// Solution class containing the lowestCommonAncestor function.
 class Solution {
+private:
+    TreeNode* lcaHelper(TreeNode* root, TreeNode* p, TreeNode* q, bool& foundP, bool& foundQ) {
+        if (!root) return nullptr;
+
+        TreeNode* left = lcaHelper(root->left, p, q, foundP, foundQ);
+        TreeNode* right = lcaHelper(root->right, p, q, foundP, foundQ);
+
+        if (root == p) {
+            foundP = true;
+            return root;
+        }
+        if (root == q) {
+            foundQ = true;
+            return root;
+        }
+
+        if (left && right) return root;
+        return left ? left : right;
+    }
+
 public:
-  TreeNode* lowestCommonAncestor (TreeNode *root, TreeNode* p, TreeNode * q) {
-    if (!root || !p || !q) return nullptr;
-    if (root->val == p->val or root->val == q->val) 
-      return root;
-    TreeNode *left = lowestCommonAncestor(root->left, p, q);
-    TreeNode *right = lowestCommonAncestor(root->right, p, q);
-    if (left and right) return root;
-    return left ? left : right;
-  }
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        bool foundP = false;
+        bool foundQ = false;
+        TreeNode* lca = lcaHelper(root, p, q, foundP, foundQ);
+        if (foundP && foundQ) {
+            return lca;
+        }
+        return nullptr;
+    }
 };
 
 // Helper function to create a binary tree from a vector.

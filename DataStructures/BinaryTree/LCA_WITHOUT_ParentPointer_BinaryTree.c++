@@ -40,128 +40,78 @@ struct TreeNode {
   TreeNode(int x) : val(x), left(NULL), right(NULL), parent(nullptr) {}
 };
 
+
 class Solution {
-  
 public:
   TreeNode* lowestCommonAncestor (TreeNode *root, TreeNode* p, TreeNode * q) {
-    if (!root) return nullptr;
-    if (root == p || root == q) return root;
-
+    if (!root || !p || !q) return nullptr;
+    if (root->val == p->val or root->val == q->val) 
+      return root;
     TreeNode *left = lowestCommonAncestor(root->left, p, q);
     TreeNode *right = lowestCommonAncestor(root->right, p, q);
-
-    if (left && right) return root;
-    if (!left && !right) return nullptr;
-    
+    if (left and right) return root;
     return left ? left : right;
   }
 };
 
-
-// Test code ######################################################################################
-TreeNode *create_TreeNode (int data) {
-    TreeNode *node = (TreeNode *) calloc(1, sizeof *node);
-    if (node) node->val = data;
-    return node;
+// Helper function to create a binary tree from a vector.
+TreeNode* createTree(const std::vector<int>& values, int index = 0) {
+    if (index >= values.size() || values[index] == -1) {
+        return nullptr;
+    }
+    TreeNode* root = new TreeNode(values[index]);
+    root->left = createTree(values, 2 * index + 1);
+    root->right = createTree(values, 2 * index + 2);
+    return root;
 }
 
-// Helper function to create a BST
-TreeNode *create_BST_from_array (int array[], int start, int end) {
-    if (!array) return NULL;
-    if (end < start) return NULL;
-
-    int mid = (start+end)/2;
-    TreeNode *n = create_TreeNode(array[mid]);
-    if (!n) return n;
-
-    n->left = create_BST_from_array(array, start, mid-1);
-    n->right = create_BST_from_array(array, mid+1, end);
-    if (n->left) 
-      n->left->parent = n;
-    if (n->right) 
-      n->right->parent = n;
-
-    printf("TreeNode:%d left:%d right:%d parent:%d\n", n->val,
-           n->left ? n->left->val : 0,
-           n->right ? n->right->val : 0,
-           n->parent ? n->parent->val : 0);
-    return n;
-}
-
-static void inorder (TreeNode *root)  { 
-    if (root) { 
-        inorder(root->left); 
-        printf("%d parent:%D\n", root->val, root->parent ? root->parent->val : 0); 
-        inorder(root->right); 
-    } 
-}
-
-TreeNode *findNode (TreeNode *root, int val) {
-
-  while (root) {
+// Helper function to find a node by value.
+TreeNode* findNode(TreeNode* root, int val) {
+    if (!root) return nullptr;
     if (root->val == val) return root;
-    if (val < root->val)
-      root = root->left;
-    else
-      root = root->right;
-  }
-  return nullptr;
+    TreeNode* leftResult = findNode(root->left, val);
+    if (leftResult) return leftResult;
+    return findNode(root->right, val);
 }
 
-void print_inorder (TreeNode *n) {
-    printf("print_inorder: ");
-    inorder(n);
+// Test case function.
+void testLowestCommonAncestor(const std::vector<int>& treeValues, int pVal, int qVal, int expectedVal) {
+    TreeNode* root = createTree(treeValues);
+    TreeNode* p = findNode(root, pVal);
+    TreeNode* q = findNode(root, qVal);
+    Solution sol;
+    TreeNode* lca = sol.lowestCommonAncestor(root, p, q);
+    if (lca) {
+        std::cout << "LCA of nodes " << pVal << " and " << qVal << " is: " << lca->val << std::endl;
+        if (lca->val == expectedVal) {
+            std::cout << "Test passed." << std::endl;
+        } else {
+            std::cout << "Test failed. Expected LCA: " << expectedVal << std::endl;
+        }
+    } else {
+        std::cout << "LCA not found." << std::endl;
+        if (expectedVal == -1) {
+            std::cout << "Test passed." << std::endl;
+        } else {
+            std::cout << "Test failed. Expected LCA: " << expectedVal << std::endl;
+        }
+    }
 }
 
-int main (void) {
+int main() {
+    // Example 1
+    std::vector<int> tree1 = {3, 5, 1, 6, 2, 0, 8, -1, -1, 7, 4};
+    testLowestCommonAncestor(tree1, 5, 1, 3);
 
+    // Example 2
+    testLowestCommonAncestor(tree1, 5, 4, 5);
 
- /* Constructed binary tree is
-             300
-             /  \
-            /    \
-           /      \
-          /        \
-         56        800
-        / \         /  \
-       /   \       /    \
-      /     \     600     1000
-     5    100    /  \      / \
-    / \     /\  500  700  /   \
-   /   \   60 233      900   2333
- -10   10
+    // Example 3
+    std::vector<int> tree2 = {1, 2};
+    testLowestCommonAncestor(tree2, 1, 2, 1);
 
-  */
+    // Additional Test Case: Node not in tree
+    testLowestCommonAncestor(tree1, 5, 10, -1);
 
-  int array[] = { -10, 5, 10, 56, 60, 100, 233, 300, 500, 600, 700, 800, 900, 1000, 2333 };
-  int end = sizeof array/ sizeof array[0];
-  
-  TreeNode *root = create_BST_from_array(array, 0, end-1);
-  print_inorder(root);  
-
-  class Solution sol;
-  
-  TreeNode *p, *q;
-  p = findNode(root, 10);
-  q = findNode(root, 60);
-
-  TreeNode *lca = sol.lowestCommonAncestor(root, p, q);
-  if (lca) {
-    cout << "LCA of p:" << p->val << " and q:" << q->val << " is " << lca->val << endl;
-  } else {
-    cout << "LCA of p:" << p->val << " and q:" << q->val << " not found" << endl;
-  }
-
-  p = findNode(root, -10);
-  q = findNode(root, 900);
-
-  lca = sol.lowestCommonAncestor(root, p, q);
-  if (lca) {
-    cout << "LCA of p:" << p->val << " and q:" << q->val << " is " << lca->val << endl;
-  } else {
-    cout << "LCA of p:" << p->val << " and q:" << q->val << " not found" << endl;
-  }
-
-  return 0;
+    return 0;
 }
-

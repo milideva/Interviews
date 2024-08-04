@@ -2,7 +2,7 @@ Types of tree traversals:
 
 * Depth First Traversals:
 (a) Inorder (Left, Root, Right) 
-    In-order traversal is used to retrive data of binary search tree in sorted order.
+    In-order traversal is used to retrieve data of binary search tree in sorted order.
 
 (b) Preorder (Root, Left, Right) 
     Preorder traversal is used to create a copy of the tree.

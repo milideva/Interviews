@@ -103,6 +103,22 @@ public:
     
     return bestVal;
   }
+
+  // Recursive without return value
+  void closestValue(TreeNode* root, double target, int* closest) {
+    if (!root) return;
+
+    // Update the closest value if the current node is closer to the target
+    if (std::abs(root->val - target) < std::abs(*closest - target)) {
+      *closest = root->val;
+    }
+
+    if (target < root->val && root->left) {
+      closestValue(root->left, target, closest);
+    } else if (target > root->val && root->right) {
+      closestValue(root->right, target, closest);
+    }
+  }
 };
 
 

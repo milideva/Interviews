@@ -21,9 +21,7 @@ static bool check_valid (int i, int j, int arr[][COLS], vector <vector <bool>>& 
 
 unsigned int BFS (int arr[] [COLS], int rows, int cols, int isrc, int jsrc, int idst, int jdst) {
 
-//    bool visited[ROWS] [COLS] = {};
     vector <vector <bool>> visited;
-    //visited.resize(ROWS, vector<bool> (COLS, false));
     visited.resize(rows, vector<bool> (cols, false));
 
     queue <node_t> q;

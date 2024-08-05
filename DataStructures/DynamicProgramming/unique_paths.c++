@@ -39,11 +39,17 @@ Output: 6
 #include <string>
 using namespace std;
 
+/*
+
+https://www.reddit.com/r/cs2b/comments/1ab9k2h/tabulation_vs_memoization/
+
+*/
 class Solution {
   unordered_map <string, int> ij2val;
 
 public:
-  // Step 1 - simple recursive code
+  // Step 1
+  // A simple recursive code
   int uniquePathsRecursive (int i, int j) {
     // base case
     if (i == 1 || j == 1) return 1;
@@ -52,8 +58,9 @@ public:
     // Time : 2^n + 2 ^m 
   }
   
-  // Step 2 It's easy to add memoization now
-
+  // Step 2 
+  // It's easy to add memoization now
+  // A top down approach, often with recursion
   int uniquePathsRecursiveMemoized (int i, int j) {
     string ij = to_string(i) + ":" + to_string(j);
     if (ij2val.find(ij) != ij2val.end()) {
@@ -69,8 +76,23 @@ public:
     return ret;
   }
 
+/*
+
+  The problem with memoization is that if we are required to solve all problems (meaning more inputs) 
+  and if we are not only looking for an optimal solution, then due to the recursive nature of memoization, 
+  too many recursive calls could fill up the stack space. 
+
+  This is where we would use tabulation instead since we don't need any overhead for the recursion and 
+  can instead use a preallocated table/array.
+
+  Use recursive approach for small set of subproblems (stack can overflow with large data set).
+  Use iterative approach for large set of subproblems.
+
+*/
+  // Step 3 
   // Now it's easy to convert it to a dp array without recursion
-  int uniquePaths (int m, int n) {
+  // A bottom up approach, often with iterative
+  int uniquePathsIterativeTabulation (int m, int n) {
     int dp[m][n];
     for (int i = 0; i < m; i++) {
       for (int j = 0; j < n; j++) {

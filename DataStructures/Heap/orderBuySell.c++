@@ -91,30 +91,30 @@ public:
       auto price = ord[0], quantity = ord[1], oType =  ord[2];
       order o {price, quantity};
       if (oType == BUY) {
-	buy.push(o);
-	buySize += quantity;
+	      buy.push(o);
+	      buySize += quantity;
       } 
       if (oType == SELL) {
-	sell.push(o);
-	sellSize += quantity;
+	      sell.push(o);
+	      sellSize += quantity;
       }
       while (buy.size() and sell.size() and buy.top().first >= sell.top().first) {
-	auto [bp, bq] = buy.top();
-	buy.pop();
-	buySize -= bq;
-        
-	auto [sp, sq] = sell.top();
-	sell.pop();
-	sellSize -= sq;
-        
-	if (bq > sq) {
-	  buy.emplace(bp, bq - sq);
-	  buySize += (bq - sq);
-	}
-	if (sq > bq) {
-	  sell.emplace(sp, sq - bq);
-	  sellSize += (sq - bq);
-	}
+        auto [bp, bq] = buy.top();
+        buy.pop();
+        buySize -= bq;
+              
+        auto [sp, sq] = sell.top();
+        sell.pop();
+        sellSize -= sq;
+              
+        if (bq > sq) {
+          buy.emplace(bp, bq - sq);
+          buySize += (bq - sq);
+        }
+        if (sq > bq) {
+          sell.emplace(sp, sq - bq);
+          sellSize += (sq - bq);
+        }
       }
     }
     

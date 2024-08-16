@@ -14,7 +14,6 @@ using namespace std;
 
 class Solution {
   unordered_set <int> memoSet;
-  unordered_map <string, bool>  memoMap;
 
   public:
   bool canSum (vector <int>& nums, int targetSum) {
@@ -98,6 +97,8 @@ class Solution {
     }
     return false;
   }
+
+  unordered_map <string, bool>  memoMap;
 
   // Memoized version
   // time complexity is O( n   * m^2 )

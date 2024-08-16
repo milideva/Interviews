@@ -23,6 +23,7 @@ Output: 4
 #include <cmath>
 #include <cfloat>
 #include <iomanip>
+#include <cmath>
 
 using namespace std;
 
@@ -86,22 +87,15 @@ public:
   }
   
   // Iterative
-  int closestValue(TreeNode* root, double target) {
-    double bestDiff = DBL_MAX;
-    int bestVal = INT_MAX;
-    
+  int closestValueIterative(TreeNode* root, double target) {
+    int closest = root->val;
     while (root) {
-      if (abs(root->val - target) < bestDiff) {
-        bestDiff = abs(root->val - target);
-        bestVal = root->val;
+      if (std::abs(root->val - target) < std::abs(closest - target)) {
+        closest = root->val;
       }
-      if (target < root->val)
-        root = root->left;
-      else 
-        root = root->right;
+      root = target < root->val ? root->left : root->right;
     }
-    
-    return bestVal;
+    return closest;
   }
 
   // Recursive without return value
@@ -121,6 +115,146 @@ public:
   }
 };
 
+/*
+           10
+         /    \
+        5      15
+       / \    /  \
+      3   7  13   18
+     /   / \   \
+    1   6   8  14
+
+
+*/
+
+
+#include <iostream>
+#include <cmath>
+
+// Reusing the TreeNode and Solution classes defined earlier
+
+void testClosestValue() {
+    Solution solution;
+
+    // Helper function to print the result of each test case
+    auto printResult = [](const std::string& testName, int expected, int actual) {
+        if (expected == actual) {
+            std::cout << testName << " Passed: Expected = " << expected << ", Actual = " << actual << "\n";
+        } else {
+            std::cout << testName << " Failed: Expected = " << expected << ", Actual = " << actual << "\n";
+        }
+    };
+
+    // Test Case 1: Single Node Tree
+    {
+        TreeNode* root = new TreeNode(10);
+        double target = 9.5;
+        int result = solution.closestValue(root, target);
+        printResult("Test Case 1", 10, result);
+        delete root;
+    }
+
+    // Test Case 2: Extended BST
+    {
+        // Construct the extended BST
+        TreeNode* root = new TreeNode(10);
+        root->left = new TreeNode(5);
+        root->right = new TreeNode(15);
+        root->left->left = new TreeNode(3);
+        root->left->right = new TreeNode(7);
+        root->right->left = new TreeNode(13);
+        root->right->right = new TreeNode(18);
+        root->left->left->left = new TreeNode(1);
+        root->left->right->left = new TreeNode(6);
+        root->left->right->right = new TreeNode(8);
+        root->right->left->right = new TreeNode(14);
+        
+        // Sub-Test Case 2.1: Target is in the middle of the tree
+        {
+            double target = 12.0;
+            int result = solution.closestValue(root, target);
+            printResult("Sub-Test Case 2.1", 13, result);
+        }
+
+        // Sub-Test Case 2.2: Target is very close to a leaf node
+        {
+            double target = 7.1;
+            int result = solution.closestValue(root, target);
+            printResult("Sub-Test Case 2.2", 7, result);
+        }
+
+        // Sub-Test Case 2.3: Target is closer to the middle of a subtree
+        {
+            double target = 14.1;
+            int result = solution.closestValue(root, target);
+            printResult("Sub-Test Case 2.3", 14, result);
+        }
+
+        // Sub-Test Case 2.4: Target is exactly at a node's value
+        {
+            double target = 8.0;
+            int result = solution.closestValue(root, target);
+            printResult("Sub-Test Case 2.4", 8, result);
+        }
+
+        // Sub-Test Case 2.5: Target is less than the smallest node value
+        {
+            double target = 0.5;
+            int result = solution.closestValue(root, target);
+            printResult("Sub-Test Case 2.5", 1, result);
+        }
+
+        // Sub-Test Case 2.6: Target is greater than the largest node value
+        {
+            double target = 20.0;
+            int result = solution.closestValue(root, target);
+            printResult("Sub-Test Case 2.6", 18, result);
+        }
+
+        // Clean up the tree
+        delete root->left->right->right;
+        delete root->left->right->left;
+        delete root->right->left->right;
+        delete root->left->left->left;
+        delete root->right->right;
+        delete root->right->left;
+        delete root->left->right;
+        delete root->left->left;
+        delete root->right;
+        delete root->left;
+        delete root;
+    }
+
+    // Test Case 3: Left-skewed Tree
+    {
+        TreeNode* root = new TreeNode(4);
+        root->left = new TreeNode(3);
+        root->left->left = new TreeNode(2);
+        root->left->left->left = new TreeNode(1);
+        double target = 2.8;
+        int result = solution.closestValue(root, target);
+        printResult("Test Case 3", 3, result);
+        delete root->left->left->left;
+        delete root->left->left;
+        delete root->left;
+        delete root;
+    }
+
+    // Test Case 4: Right-skewed Tree
+    {
+        TreeNode* root = new TreeNode(1);
+        root->right = new TreeNode(2);
+        root->right->right = new TreeNode(3);
+        root->right->right->right = new TreeNode(4);
+        double target = 2.5;
+        int result = solution.closestValue(root, target);
+        printResult("Test Case 4", 3, result);
+        delete root->right->right->right;
+        delete root->right->right;
+        delete root->right;
+        delete root;
+    }
+}
 
 
 ///////////////////////////////// Test code ////////////////////////////////////////
@@ -191,6 +325,10 @@ int main () {
   target = 849.99999;
   res = sol.closestValue(root, target);
   cout << "Target: " << target << " Closest value:" << res << '\n';
+
+
+  testClosestValue();
+  std::cout << "All test cases passed!\n";
 
   return 0;
 }

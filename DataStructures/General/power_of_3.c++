@@ -48,7 +48,7 @@ public:
     bool isPowerOfThreeRecursive (int n) {
         if (n <= 0) return false;
         if (n == 1) return true;
-        if (n % 3 == 2) return false;
+        if (n % 3) return false;
         return isPowerOfThreeRecursive(n/3);
     }
 };

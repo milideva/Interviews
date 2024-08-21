@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <cassert>
 
 using namespace std;
 
@@ -35,63 +36,78 @@ Output: -1
 
 */
 
-
 class Solution {
-  public:
-    int search (vector<int>& nums, int target) {
-        int left = 0;
-        int right = size(nums) - 1;
-        
-        while (left <= right) {
-            // In case of Duplicates, add this code :
-            while (left < right and nums[left] == nums[left+1])
-                left++;
-            while (left < right and nums[right] == nums[right-1])
-                right--;
+public:
+    int search(vector<int>& nums, int target) {
 
-	        int mid = left + (right - left) / 2 ;
-            if (nums[mid] == target) {
+        int l = 0;
+        int r = nums.size() - 1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2 ;
+            if (nums[mid] == target) 
                 return mid;
-            }
-            if (nums[mid] < nums[left]) {
-                // rotated start is in left half
-                if (target > nums[mid] && target <= nums[right]) {
-                    // target is in right half
-                    left = mid + 1;
+
+            if (nums[l] <= nums[mid]) {
+                if (nums[l] <= target and target < nums[mid]) {
+                    r = mid - 1;
                 } else {
-                    // target is in left half, repeat binary search
-                    right = mid - 1;
+                    l = mid + 1;
                 }
-            } else {
-                // rotated start is in the right half
-                if (target < nums[mid] && target >= nums[left]) {
-                    // target is in left half, repeat binary search
-                    right = mid - 1;
+
+            } else  {
+                if (nums[mid] < target and target <= nums[r]) {
+                    l = mid + 1;
                 } else {
-                    // target is in right half
-                    left = mid + 1;
+                    r = mid - 1;
                 }
-                
             }
         }
         return -1;
     }
 };
 
-int main () {
-  Solution sol;
-  vector <int> nums = {4,5,6,7,0,1,2};
-  auto target = 0;
-  auto i = sol.search(nums, target);
+void testSearch() {
+    Solution sol;
 
-  cout << "searching for " << target << " Index: " << i << endl;
+    // Test Case 1
+    vector<int> nums1 = {4, 5, 6, 7, 0, 1, 2};
+    int target1 = 0;
+    int expected1 = 4;
+    assert(sol.search(nums1, target1) == expected1);
+    cout << "Test Case 1 passed!" << endl;
 
-  nums = {4,5,6,7,0,1,2};
-  target = 3;
+    // Test Case 2
+    vector<int> nums2 = {4, 5, 6, 7, 0, 1, 2};
+    int target2 = 3;
+    int expected2 = -1;
+    assert(sol.search(nums2, target2) == expected2);
+    cout << "Test Case 2 passed!" << endl;
 
-  i = sol.search(nums, target);
+    // Test Case 3
+    vector<int> nums3 = {1};
+    int target3 = 0;
+    int expected3 = -1;
+    assert(sol.search(nums3, target3) == expected3);
+    cout << "Test Case 3 passed!" << endl;
 
-  cout << "searching for " << target << " Index: " << i	<< endl;
+    // Additional Test Case 4: No rotation
+    vector<int> nums4 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int target4 = 6;
+    int expected4 = 5;
+    assert(sol.search(nums4, target4) == expected4);
+    cout << "Test Case 4 passed!" << endl;
 
-  return 0;
+    // Additional Test Case 5: Full rotation
+    vector<int> nums5 = {6, 7, 8, 9, 10, 1, 2, 3, 4, 5};
+    int target5 = 1;
+    int expected5 = 5;
+    assert(sol.search(nums5, target5) == expected5);
+    cout << "Test Case 5 passed!" << endl;
+}
+
+int main() {
+    testSearch();
+    cout << "All test cases passed!" << endl;
+    return 0;
 }

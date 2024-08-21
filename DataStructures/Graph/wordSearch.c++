@@ -63,8 +63,8 @@ class Solution {
                 continue;
 
             // Typical mistake#1, return dfs unconditionally
-            // should return only if word is found
-            // otherwise continue the loop to try neighbors
+            // should return true only if word is found
+            // otherwise if dfs returns false, continue the loop to try other neighbors
             if (dfs(board, ix, jy, visited, word, wi+1)) 
                 return true;
         }

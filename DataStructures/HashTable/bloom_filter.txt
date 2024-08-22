@@ -59,3 +59,21 @@ filter.
 Google BigTable and Apache Cassandra use Bloom filters to reduce the disk
 lookups for non-existent rows or columns. Avoiding costly disk lookups
 considerably increases the performance of a database query operation.[7]
+
+Bloom filter calculator 
+inputs: n #of items, p probability of false positives, k #hash functions
+output: m #bits in the filter (size of the bloom filter)
+https://hur.st/bloomfilter/?n=40M&p=1.0E-7&m=&k=8
+
+More hash functions, smaller the size required.
+
+Note
+If  Bloom filter is 128MiB, on older hardware it may not fit into L3 cache! 
+The hashes are uniformly distributed across the large memory range - each hash generates a memory miss!
+This will severely impact performance.
+
+Latency numbers every programmer should know (latest based on Jeff Dean's work in 2011)
+https://colin-scott.github.io/personal_website/research/interactive_latency.html
+
+When Bloom filters don't bloom
+https://blog.cloudflare.com/when-bloom-filters-dont-bloom

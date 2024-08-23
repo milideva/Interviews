@@ -35,6 +35,20 @@ class LRUCache2 {
   unordered_map <int, list<int>::iterator> k2itr; // key -> iterator
   unordered_map <int, int> k2v;                 // key -> value
   
+  // lru insert or erase - the beauty is, for List - all other iterators and references unaffected
+  void updateLRU (int key) {
+    if (k2v.count(key)) 
+      lru.erase(k2itr[key]);  // erase directly using iterator without walking the list, O(1)
+    lru.push_front(key);      // front() has MRU O(1)
+    k2itr[key] = lru.begin();
+  }
+  void evict () {
+    int key = lru.back();
+    k2itr.erase(key);
+    k2v.erase(key);
+    lru.pop_back();
+  }
+
 public:
   
   LRUCache2 (int capacity) : size(capacity) {}
@@ -55,19 +69,6 @@ public:
     k2v[key] = value;
   }
 
-  // lru insert or erase - the beauty is, for List - all other iterators and references unaffected
-  void updateLRU (int key) {
-    if (k2v.count(key)) 
-      lru.erase(k2itr[key]);
-    lru.push_front(key);
-    k2itr[key] = lru.begin();
-  }
-  void evict () {
-    int key = lru.back();
-    k2itr.erase(key);
-    k2v.erase(key);
-    lru.pop_back();
-  }
 };
 
 class LRUCache {

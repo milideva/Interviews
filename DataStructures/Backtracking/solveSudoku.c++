@@ -22,27 +22,19 @@ using namespace std;
     
 */
 
-class Solution
-{
+class Solution {
 public:
-    bool solveSudoku(vector<vector<char>> &board)
-    {
-        for (int i = 0; i < 9; i++)
-        {
-            for (int j = 0; j < 9; j++)
-            {
-                if (board[i][j] == '.')
-                {
+    bool solveSudoku(vector<vector<char>> &board) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == '.') {
                     vector<char> values = getPossibleValues(board, i, j);
-                    if (values.empty())
-                    {
+                    if (values.empty()) {
                         return false;
                     }
-                    for (char value : values)
-                    {
+                    for (char value : values) {
                         board[i][j] = value;
-                        if (solveSudoku(board))
-                        {
+                        if (solveSudoku(board)) {
                             return true;
                         }
                         board[i][j] = '.';
@@ -54,46 +46,37 @@ public:
         return true;
     }
 
-    vector<char> getPossibleValues(vector<vector<char>> &board, int row, int col)
-    {
+    vector<char> getPossibleValues(vector<vector<char>> &board, int row, int col) {
         vector<char> values;
-        for (char c = '1'; c <= '9'; c++)
-        {
-            if (isValid(board, row, col, c))
-            {
+        for (char c = '1'; c <= '9'; c++) {
+            if (isValid(board, row, col, c)) {
                 values.push_back(c);
             }
         }
         return values;
     }
 
-    bool isValid(vector<vector<char>> &board, int row, int col, char value)
-    {
+    bool isValid (vector<vector<char>> &board, int row, int col, char value) {
         // check row
-        for (int i = 0; i < 9; i++)
-        {
-            if (board[row][i] == value)
-            {
+        for (int i = 0; i < 9; i++) {
+            if (board[row][i] == value) {
                 return false;
             }
         }
 
         // check column
-        for (int i = 0; i < 9; i++)
-        {
-            if (board[i][col] == value)
-            {
+        for (int i = 0; i < 9; i++) {
+            if (board[i][col] == value) {
                 return false;
             }
         }
 
         // check 3x3 box
-        for (int i = row / 3 * 3; i < row / 3 * 3 + 3; i++)
-        {
-            for (int j = col / 3 * 3; j < col / 3 * 3 + 3; j++)
-            {
-                if (board[i][j] == value)
-                {
+        int r = row / 3 * 3;
+        int c = col / 3 * 3;
+        for (int i = r; i < r + 3; i++) {
+            for (int j = c; j < c + 3; j++) {
+                if (board[i][j] == value) {
                     return false;
                 }
             }

@@ -1,0 +1,155 @@
+CRI and OCI 
+
+
+High level container creation flow
+
+kubelet(K8s) ----> (CRI)----> High level runtime (containerD, cri-o) ----> (OCI) ----> runc, youki, crun, krun --------> Linux features
+
+Linux features:
+1. pivot_root(2) for changing root fs *
+2. namespace(7) for isolation
+3. cgroup for resource limits
+4. seccomp restrict a container’s syscalls**
+
+*Child processes inherit the root filesystem of their parents. 
+chroot starts a new process with a new root filesystem (instead of inheriting from parent process). 
+pivot_root changes the root filesystem of the present process while keeping the old root accessible
+
+**
+to make a one-way transition into a "secure" state** where it cannot make any system calls except exit, sigreturn, read and write to already-open file descriptors
+
+
+CRI Summary
+
+The CRI is a plugin interface which enables the kubelet to use a wide variety of container runtimes, without having a need to recompile the cluster components.
+
+The Kubernetes Container Runtime Interface (CRI) defines the main gRPC protocol for the communication between the cluster components kubelet and container runtime.
+
+The kubelet acts as a client when connecting to the container runtime via gRPC. 
+The runtime (RuntimeService) and image service (ImageService) endpoints have to be available in the container runtime
+
+RuntimeService provides 
+RunPodSandbox, StopPodSandbox, RemovePodSandbox, PodSandboxStatus, ListPodSandbox, 
+CreateContainer, StartContainer, StopContainer, RemoveContainer, ListContainers, ContainerStatus, UpdateContainerResources, ReopenContainerLog, 
+ExecSync, Exec, Attach, PortForward, 
+ContainerStats, ListContainerStats, PodSandboxStats, ListPodSandboxStats
+UpdateRuntimeConfig, Status
+
+ImageService provides
+ListImages, ImageStatus, PullImage, RemoveImage, ImageFsInfo.
+
+CRI proto definition
+https://github.com/kubernetes/cri-api/blob/c75ef5b/pkg/apis/runtime/v1/api.proto
+
+You need to install a container runtime into each node in the cluster so that Pods can run there.
+
+Kubernetes 1.28 requires that you use a runtime that conforms with the Container Runtime Interface (CRI).
+Examples of runtimes :
+* containerd
+* CRI-O
+* Docker Engine
+* Mirantis Container Runtime
+
+
+
+OCI : Open Container Initiative
+https://opencontainers.org/
+
+First a Note: Specification is different from Standard.
+https://opencontainers.org/faq/#what-is-the-ocis-perspective-on-the-difference-between-a-standard-and-a-specification
+
+
+OCI Summary
+
+Established in June 2015 by Docker and other leaders in the container industry, the OCI currently contains three specifications: the Runtime Specification (runtime-spec), the Image Specification (image-spec) and the Distribution Specification (distribution-spec). The Runtime Specification outlines how to run a “filesystem bundle” that is unpacked on disk. At a high-level an OCI implementation would download an OCI Image then unpack that image into an OCI Runtime filesystem bundle. At this point the OCI Runtime Bundle would be run by an OCI Runtime.
+
+This spec is excellent for containers, because for VMs there is no such standard and it’s all proprietary formats.
+
+Inside OCI, 3 specs
+
+Image-spec 
+(How to package container bundles)
+
++
+
+Runtime-spec
+(How to run containers from bundles)
+
++ 
+
+distribution-spec
+(OCI Distribution Spec defines an API protocol to facilitate and standardize the distribution of content)
+
+
+GitHub for OCI
+
+https://github.com/opencontainers
+
+
+What is runc/crun?
+
+* runc (Golang) is a cli tool for running and spawning containers according to the OCI specification, written in go, open sourced by Docker.
+
+* crun (C) is a fast and low memory footprint OCI runtime written in C. It conforms to OCI’s “container runtime” spec.
+ 
+* youki (Rust) is a container runtime in rust.  https://github.com/containers/youki
+
+image-spec
+
+Indexfile -> points to multiple image manifest file:latest -> image config file (specifies how to run, using cmd, env etc), image layers (.tar.gz)
+Index file points to one or more index manifest json files
+Files are referenced by digest algorithm name and actual digest, example sha256:<digest value>
+
+https://github.com/opencontainers/image-spec/blob/main/spec.md
+
+
+
+runtime spec
+
+https://github.com/opencontainers/runtime-spec/blob/main/spec.md
+
+
+To run a container, you do not need an image, strictly speaking. You need a container bundle.
+
+What exactly is a bundle ?  (Aka filesystem bundle, OCI bundle, container bundle).
+
+* bundle (string, REQUIRED) is the absolute path to the container's bundle directory. This is provided so that consumers can find the container's configuration and root filesystem on the host.
+* Bundle = root file system + a config file, unpacked on a disk.
+
+The config file is a runtime-spec definition of how to run a container.
+(Env, volumes, ports, etc, docker run options end up in this file)
+
+
+Whiteout files (.wh.)
+A whiteout file is a empty file with a special filename that signifies that a path should be deleted
+Whiteouts apply only to parent/lower layers and themselves must be hidden after applying.
+Opaque whiteouts (.wh..wh..opq) indicating all siblings from lower layer are to be deleted.
+
+
+
+Distribution spec
+
+https://github.com/opencontainers/distribution-spec/blob/main/spec.md
+
+Push
+Pull
+Content discovery
+Content management
+
+Examples:
+GET /<version>/<name>/blobs/<digest>  # for blobs
+GET /<version>/<name>/manifests/<reference> # for manifests
+
+* Single POST
+/v2/<name>/blobs/uploads/?digest=<digest>
+
+* POST then PUT
+
+POST /v2/<name>/blobs/uploads/ # To obtain a session ID
+PUT <location>?digest=<digest>
+
+Complete list of API endpoints 
+https://github.com/opencontainers/distribution-spec/blob/main/spec.md#api
+
+Error codes
+https://github.com/opencontainers/distribution-spec/blob/main/spec.md#error-codes
